@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="uk"><head><meta name="robots" content="noindex, nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Im Café · перевірка сайту · Домашнє завдання</title><style>
+:root{--acc:#C0573E;--accline:#E3CFC0;--accsoft:#F7EDE6;--ink:#2B2B2B;--muted:#7A7068;--gap:#B9AEA4;--hand:#1F4E79}
+body{margin:0;background:#FAF7F2;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);font-size:16px;line-height:1.55}
+.page{max-width:780px;margin:0 auto;padding:24px 16px 40px}.chap{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--acc);margin-bottom:18px}
+.chap h1{font-size:28px;margin:6px 0}.bubble{font-size:30px}.sec{font-size:20px;font-weight:700;color:var(--acc);margin:26px 0 8px}
+.ex{background:#fff;border:1px solid var(--accline);border-radius:12px;padding:12px 16px;margin:0 0 14px}.ex h2{font-size:18px;margin:0 0 6px;display:flex;gap:8px;align-items:center}
+.num{background:var(--acc);color:#fff;border-radius:8px;padding:1px 8px;font-size:14px}.stars{color:#D9A400;font-size:13px}.task{color:var(--muted);margin:0 0 8px}
+.it p{margin:6px 0}.n{color:var(--muted);margin-right:6px}.hint{color:var(--muted);font-size:14px}.gap{display:inline-block;border-bottom:1.5px solid var(--gap);width:3em}
+.box{border:1.5px dashed var(--accline);border-radius:8px;padding:6px 10px}.foot{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;border-top:1px solid var(--accline);margin-top:24px;padding-top:8px}
+.inp{font:inherit;font-size:16px;border:0;border-bottom:1.5px solid var(--gap);background:transparent;padding:1px 4px;width:8.5em;max-width:60vw;color:var(--hand);outline:none}
+.inp:focus{border-bottom-color:var(--acc)}.inp.ok{border-bottom-color:#4E9A5B;color:#2F6B3A}.inp.bad{border-bottom-color:#C0573E;color:#A2412B;text-decoration:line-through}
+.fix{font-family:"Caveat",cursive;font-size:20px;color:#2F6B3A;margin-left:6px}
+.btn{font:inherit;font-size:15px;font-weight:600;background:var(--acc);color:#fff;border:0;border-radius:18px;padding:7px 18px;cursor:pointer;min-height:40px}.btn:disabled{background:var(--gap);cursor:default}.btn.big{padding:10px 22px}
+.score{color:var(--muted);font-size:14px;margin-left:8px}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px 26px}.opt{font:inherit;font-size:15px;background:#fff;border:1.5px solid var(--accline);border-radius:16px;padding:5px 14px;cursor:pointer;color:var(--ink);min-height:36px}
+.opt.ok{background:#E3F1E4;border-color:#4E9A5B}.opt.bad{background:#F8E3DD;border-color:#C0573E;text-decoration:line-through}.opt:disabled{cursor:default}
+.txt{width:100%;font:inherit;font-size:16px;line-height:1.6;border:1px solid var(--accline);border-radius:3px;background:#fff;padding:10px 12px;color:var(--ink);resize:vertical}
+.out{margin-top:10px;font-size:13px;background:var(--accsoft)}.bank{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 10px 50px}
+.plan{margin:0 0 8px 50px;padding:0;list-style:none}.plan li{padding:2px 0}
+.w0{max-width:560px;margin:4px auto 6px}.w0bar{height:8px;border-radius:4px;background:var(--accsoft);overflow:hidden;margin-bottom:8px}.w0bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.w0top{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin:6px 2px 4px}
+.wpm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.wpb{font:inherit;font-size:15px;line-height:1.25;border:1.5px solid var(--accline);border-radius:14px;background:#fff;color:var(--ink);padding:12px 8px;cursor:pointer;min-height:64px}
+.wpb small{display:block;font-size:12px;color:var(--muted);margin-top:3px}.wpb.on{border-color:var(--acc);border-width:2.5px}.wpb.done{background:#E3F1E4;border-color:#4E9A5B}.wpb.lock{opacity:.5;cursor:not-allowed}
+.w0card{min-height:250px;border:1.5px solid var(--accline);border-radius:14px;background:#fff;padding:16px 14px;text-align:center}
+.w0dir{font-size:13px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.w0q{font-size:28px;font-weight:600;color:var(--ink);margin:10px 0 4px;line-height:1.25;word-break:break-word}.w0rep{font-size:13px;color:var(--acc);min-height:18px}
+.w0sp{font:inherit;font-size:18px;background:none;border:0;cursor:pointer;vertical-align:middle;padding:0 4px}
+.w0opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}.w0opts .opt{width:100%;font-size:17px;padding:10px 14px;min-height:48px;border-radius:12px}
+.pair{display:block;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:14px;color:var(--muted)}
+.wpimg{display:block;max-width:100%;max-height:230px;margin:6px auto;border-radius:8px}.wppic{display:block;width:100%;border-radius:8px}
+.wpex{font-size:18px;margin:12px 0 2px;line-height:1.45}.wpex u,.wpsent u{text-decoration:none;background:#FBE7A8;padding:0 3px;border-radius:3px}
+.wptr{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--muted);font-size:15px;margin-bottom:10px}
+.wpsent{text-align:left;margin:6px 0;line-height:1.45}.wpsent .wptr{display:inline;margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.chips .opt{border-radius:18px;padding:6px 14px}
+.w0sum{text-align:left}.w0sum p{margin:4px 0}.w0opts .opt.bad,.chips .opt.bad{text-decoration:none}.w0opts .opt.bad .wd,.chips .opt.bad .wd{text-decoration:line-through}
+.sprow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:8px 0}.sprow .btn.rec{background:#C0573E}.sptime{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
+.spdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#C0573E;margin-right:6px;animation:spb 1s infinite}@keyframes spb{50%{opacity:.2}}
+#spa{width:100%;max-width:420px;margin-top:4px}
+.mirror{background:#FFF4CC;border:2px solid #C0573E;border-radius:10px;padding:12px 16px;margin:18px 0 14px;font-size:17px;line-height:1.45;color:#5A2A1C}.mirror a{color:#A2412B;font-weight:600;word-break:break-all}
+@media print{.btn,.out,.mirror{display:none}}
+</style></head><body><div class="page"><div class="chap"><h1>Im Café · перевірка сайту</h1><div class="bubble">🏠</div></div>
+<div class="ex wide"><h2><span class="num">0</span><span>🙋</span>Перед початком</h2><div><p class="task">Напиши своє ім'я. Відповіді перевіряються одразу, але зараховується тільки перша спроба. У кінці натисни «Надіслати викладачу».</p><div class="it"><p><input id="who" class="inp" style="width:16em" placeholder="Ім'я" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off"></p></div></div></div>
+<div class="sec">📚 Лексика</div>
+
+<div class="ex wide"><h2><span class="stars">★</span><span class="num">1.1</span><span>🔤</span>Встав слово</h2><div><p class="task">Впиши в кожне речення слово з рамки (два слова зайві). Потім натисни «Перевірити».</p><div class="box bank"><p>Glas</p><p>Hunger</p><p>Kaffee</p><p>kalt</p><p>Kellner</p><p>kostet</p><p>Kuchen</p><p>Rechnung</p><p>Teller</p><p>warm</p></div><div class="it" id="v1"></div><p class="it"><button class="btn" data-check="v1">Перевірити</button> <span class="score" id="s-v1"></span></p></div></div>
+<div class="ex wide"><h2><span class="stars">★★</span><span class="num">1.2</span><span>🔎</span>Слова теми інших рівнів</h2><div><p class="task">Що означає виділене слово? Натисни на варіант — відповідь з'явиться одразу.</p><div class="it" id="v2"></div></div></div>
+<div class="sec">🧩 Граматика</div>
+<div class="ex wide"><h2><span class="stars">★</span><span class="num">2.1</span><span>⏪</span>Дієслово möchten</h2><div><p class="task">Впиши дієслово з дужок у потрібній формі. Потім натисни «Перевірити».</p><div class="it" id="g1"></div><p class="it"><button class="btn" data-check="g1">Перевірити</button> <span class="score" id="s-g1"></span></p></div></div>
+<div class="ex wide"><h2><span class="stars">★★</span><span class="num">2.2</span><span>🔀</span>Одне з двох</h2><div><p class="task">Натисни правильний варіант — відповідь з'явиться одразу.</p><div class="it" id="g2"></div></div></div>
+<div class="sec">✍️ Письмо</div>
+<div class="ex wide"><h2><span class="num">3.1</span><span>☕</span>У кафе</h2><div><p class="task">Напиши 3–4 речення: що ти замовляєш у кафе. Текст не виправляється автоматично — пиши уважно.</p><ul class="plan"><li><span class="n">1.</span>Напій → möchte</li><li><span class="n">2.</span>Їжа → nehme</li></ul><div class="it"><textarea id="t1" class="txt" rows="5" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" placeholder="Ich möchte …"></textarea><p class="hint" id="c-t1">0 слів</p></div></div></div>
+<div class="sec">🎤 Говоріння</div>
+<div class="ex wide"><h2><span class="num">4</span><span>🎤</span>Моє кафе</h2><div><p class="task">Розкажи, яке твоє улюблене кафе і що ти там замовляєш. Говори вголос до хвилини: на кожен пункт — 1–2 короткі речення. Можна прослухати запис і перезаписати.</p><ul class="plan"><li><span class="n">1.</span>Де це кафе → in</li><li><span class="n">2.</span>Що ти п&#x27;єш → trinke</li><li><span class="n">3.</span>Що ти їси → esse</li></ul><div class="it"><div class="sprow"><button class="btn" id="spgo">🎙 Записати</button><button class="btn rec" id="spend" hidden>⏹ Зупинити</button><span class="sptime" id="spst"></span></div><audio id="spa" controls hidden></audio><p class="hint" id="spok" hidden>Запис готовий — він надійде викладачу разом з ДЗ. Запис не зберігається, якщо закрити сторінку: після запису одразу надішли ДЗ.</p><p class="hint" id="spmsg"></p><p class="hint">Якщо запис тут не працює — запиши голосове повідомлення в месенджері й надішли викладачу.</p></div></div></div>
+<div class="sec">📤 Надіслати</div>
+<div class="ex wide"><h2><span class="num">✓</span><span>📤</span>Надіслати</h2><div><p class="task">Перевір, що всі завдання виконані, і натисни кнопку. Результат одразу прийде викладачу.</p><div class="it"><button class="btn big" id="send">Надіслати викладачу</button> <span class="score" id="msg"></span><div id="fallback" hidden><p class="hint">Не вдалося надіслати. Натисни «Скопіювати» і встав результат у повідомлення викладачу.</p><p class="hint" id="err"></p><button class="btn" id="copy">Скопіювати результат</button> <span class="score" id="copied"></span><textarea id="out" class="txt out" rows="8" readonly></textarea></div></div></div></div>
+<div class="mirror" id="mirror">🔗 Якщо тут щось не працює (кнопки не натискаються, в поля не можна писати або ДЗ не надсилається) — відкрий цей тест на резервній сторінці:<br><a href="https://sprichdeutsch2027.github.io/homework/de0_demo.html">https://sprichdeutsch2027.github.io/homework/de0_demo.html</a></div><script>if(location.href.split(/[?#]/)[0]==="https://sprichdeutsch2027.github.io/homework/de0_demo.html")document.getElementById("mirror").remove()</script>
+<div class="foot"><span>Im Café · перевірка сайту · Домашнє завдання</span><b>A1</b></div></div><script>{
+const C={"k": "Dw5bNA8OBgQ=", "id": "de0_demo", "ui": {"name_title": "Перед початком", "name_task": "Напиши своє ім'я. Відповіді перевіряються одразу, але зараховується тільки перша спроба. У кінці натисни «Надіслати викладачу».", "name_ph": "Ім'я", "sec_vocab": "📚 Лексика", "sec_gram": "🧩 Граматика", "sec_write": "✍️ Письмо", "sec_send": "📤 Надіслати", "v1_title": "Встав слово", "v1_task": "Впиши в кожне речення слово з рамки (два слова зайві). Потім натисни «Перевірити».", "v2_title": "Слова теми інших рівнів", "v2_task": "Що означає виділене слово? Натисни на варіант — відповідь з'явиться одразу.", "g1_title": "Ключова граматика", "g1_task": "Впиши слово з дужок у потрібній формі. Потім натисни «Перевірити».", "g2_title": "Одне з двох", "g2_task": "Натисни правильний варіант — відповідь з'явиться одразу.", "write_note": "Текст не виправляється автоматично — пиши уважно.", "send_title": "Надіслати", "send_task": "Перевір, що всі завдання виконані, і натисни кнопку. Результат одразу прийде викладачу.", "check": "Перевірити", "checked": "Перевірено", "empty_warn": "Є порожні поля ({n}). Натисни ще раз, щоб перевірити", "of": " з ", "words": " слів", "send": "Надіслати викладачу", "sending": "Надсилаю…", "sent": "Надіслано ✓ Дякую!", "sent_btn": "Надіслано", "retry": "Спробувати ще раз", "need_name": "Спочатку напиши своє ім'я вгорі", "fallback": "Не вдалося надіслати. Натисни «Скопіювати» і встав результат у повідомлення викладачу.", "copy": "Скопіювати результат", "copied": "Скопійовано ✓", "copy_manual": "Виділи текст нижче і скопіюй вручну", "server": "Відповідь сервера: ", "not_confirmed": "немає підтвердження — можливо, результат усе ж надійшов; про всяк випадок скопіюй його", "foot": "Домашнє завдання", "no_name": "(без імені)", "student": "Учень / учениця", "start": "Початок", "end": "Кінець", "minutes": "хв", "not_checked": "не перевірено", "no_answer": "без відповіді", "pastes": "вставок з буфера", "case": "регістр", "p_title": "Слова", "p_task": "Пройди три кроки по черзі: наступний відкриється, коли закінчиш попередній.", "p1": "Повторюємо слова", "p2": "Тема", "p3": "Опиши картинку", "w0_task": "Обери правильний переклад. Після відповіді побачиш приклад.", "w2_task": "Яке слово підходить до картинки?", "w3_task": "Натискай слова, які підходять до картинки. Під нею з'являтимуться речення.", "w0_again": "ще раз", "w0_done": "Готово: {ok} з {n}", "w0_review": "Повтори ці слова:", "w0_partial": "пройдено", "w0_listen": "Послухати", "w0_none": "Усе правильно — чудово!", "next": "Далі", "next_part": "Далі: {p}", "locked": "Спочатку пройди попередній крок", "found": "знайдено {a} з {b}", "pic_done": "Усі слова знайдено!", "pic_wrong": "зайвих натискань", "sp_task_note_short": "Говори вголос до хвилини: на кожен пункт — 1–2 короткі речення. Можна прослухати запис і перезаписати.", "mirror": "Якщо тут щось не працює (кнопки не натискаються, в поля не можна писати або ДЗ не надсилається) — відкрий цей тест на резервній сторінці:", "sec_speak": "🎤 Говоріння", "sp_task_note": "Говори вголос 1–2 хвилини. Можна прослухати запис і перезаписати.", "sp_rec": "🎙 Записати", "sp_stop": "⏹ Зупинити", "sp_again": "🔁 Перезаписати", "sp_done": "Запис готовий — він надійде викладачу разом з ДЗ.", "sp_keep": "Запис не зберігається, якщо закрити сторінку: після запису одразу надішли ДЗ.", "sp_fallback": "Якщо запис тут не працює — запиши голосове повідомлення в месенджері й надішли викладачу.", "sp_denied": "Немає доступу до мікрофона", "sp_none": "без запису", "sp_chrome": "розшифровка браузера", "sp_nochrome": "розшифровки браузера немає"}, "endpoint": "https://script.google.com/macros/s/AKfycbyZrV1bz35yxbLZMEaNNCXC7BvaMmYV6dFYiTEX8qKbhrqB3rgSpaUmAg2FnjohKwxO/exec", "token": "61319aa1a62c", "lessonName": "перевірка резервного сайту", "level": "A1", "head": "ТЕСТ · перевірка резервного сайту · A1", "speech": "de-DE", "speak": true, "themeTitle": "Im Café · перевірка сайту", "sp": {"max": 60}, "next": {"U": 1, "passed": "—", "topics": "—"}, "titles": {"w0": "0.1 Повторюємо слова", "w2": "0.2 Тема: Im Café · перевірка сайту", "w3": "0.3 Опиши картинку", "v1": "1.1 Встав слово", "v2": "1.2 Слова теми інших рівнів", "g1": "2.1 Дієслово möchten", "g2": "2.2 Одне з двох", "t1": "3.1 У кафе", "sp": "4 Моє кафе"}, "w": ["t1"]},D={"w0": [], "w2": [], "w3": null, "v1": [{"t": "Der ___ bringt die Getränke.", "a": "H1V+ByItViowRQw=", "tag": "Kellner"}, {"t": "Ich trinke gern ___ mit Milch.", "a": "H1V+AygnXSpgOg==", "tag": "Kaffee"}, {"t": "Ich nehme ein ___ Wasser.", "a": "H1VyDi8yGhI=", "tag": "Glas"}, {"t": "Die ___, bitte! Wir möchten zahlen.", "a": "H1VnBy0pVjosAHNg", "tag": "Rechnung"}, {"t": "Was ___ der Tee? — Drei Euro.", "a": "H1VeDT01XTtgOg==", "tag": "kostet"}, {"t": "Ich habe ___ — ich möchte ein Brötchen.", "a": "H1V9FyAmXT1gOg==", "tag": "Hunger"}, {"t": "Ein Stück ___ mit Sahne, bitte.", "a": "H1V+Fy0pXSFgOg==", "tag": "Kuchen"}, {"t": "Das Wasser ist sehr ___ — mit Eis.", "a": "H1VeAyI1GhI=", "tag": "kalt"}], "v2": [{"t": "Ich möchte eine <u>Quittung</u>.", "o": ["знижку", "квитанцію", "виделку"], "a": "dQ==", "tag": "die Quittung"}, {"t": "Der Kaffee ist <u>lauwarm</u>.", "o": ["теплуватий", "гарячий", "солодкуватий"], "a": "dA==", "tag": "lauwarm"}, {"t": "Das <u>Trinkgeld</u> ist für den Kellner.", "o": ["решта", "рахунок", "чайові"], "a": "dg==", "tag": "das Trinkgeld"}, {"t": "Wir <u>bestellen</u> zwei Tee.", "o": ["випиваємо", "замовляємо", "оплачуємо"], "a": "dQ==", "tag": "bestellen"}, {"t": "Der Tisch ist <u>reserviert</u>.", "o": ["прибраний", "замовлений", "заброньований"], "a": "dg==", "tag": "reserviert"}, {"t": "Möchten Sie <u>getrennt</u> zahlen?", "o": ["окремо", "готівкою", "разом"], "a": "dA==", "tag": "getrennt"}], "g1": [{"t": "Ich ___ einen Kaffee.", "h": "möchten", "a": "H1VYofgiUDsnRQw=", "tag": "G10 · ich möchte"}, {"t": "Du ___ einen Tee, oder?", "h": "möchten", "a": "H1VYofgiUDsnFCUfGQ==", "tag": "G10 · du möchtest"}, {"t": "Er ___ ein Stück Kuchen.", "h": "möchten", "a": "H1VYofgiUDsnRQw=", "tag": "G10 · er möchte"}, {"t": "Wir ___ zahlen.", "h": "möchten", "a": "H1VYofgiUDsnCXNg", "tag": "G10 · wir möchten"}, {"t": "Ihr ___ Wasser?", "h": "möchten", "a": "H1VYofgiUDsnE3Ng", "tag": "G10 · ihr möchtet"}, {"t": "Sie ___ die Rechnung, Frau Berg?", "h": "möchten", "a": "H1VYofgiUDsnCXNg", "tag": "G10 · Sie möchten"}, {"t": "Was ___ du trinken?", "h": "möchten", "a": "H1VYofgiUDsnFCUfGQ==", "tag": "G10 · питання"}, {"t": "Anna und Tom ___ draußen sitzen.", "h": "möchten", "a": "H1VYofgiUDsnCXNg", "tag": "G10 · sie möchten"}], "g2": [{"t": "Ich trinke ___ Kaffee.", "o": ["ein", "einen"], "a": "dQ==", "tag": "G04 · einen"}, {"t": "Ich esse ___ Kuchen.", "o": ["keinen", "kein"], "a": "dA==", "tag": "G05 · keinen"}, {"t": "___ du Milch?", "o": ["Hat", "Hast"], "a": "dQ==", "tag": "G03 · du hast"}, {"t": "Das ___ lecker!", "o": ["sind", "ist"], "a": "dQ==", "tag": "G01 · ist"}, {"t": "Die Brötchen ___ frisch.", "o": ["sind", "ist"], "a": "dA==", "tag": "G01 · sind"}, {"t": "Wir ___ zwei Tee.", "o": ["nehmen", "nimmt"], "a": "dA==", "tag": "G03 · wir nehmen"}]},U=C.ui,$=id=>document.getElementById(id);
+const dec=s=>{const b=Uint8Array.from(atob(s),c=>c.charCodeAt(0)),k=new TextEncoder().encode(C.k);return new TextDecoder().decode(b.map((x,i)=>x^k[i%k.length]))};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const IA='autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off"';
+const res={v1:null,v2:{},g1:null,g2:{}},t0=new Date(),paste={};
+function gaps(id,items,hint){$(id).innerHTML=items.map((d,i)=>{const [a,b]=d.t.split("___");return `<p><span class="n">${i+1}.</span>${esc(a)}<input class="inp" id="${id}-${i}" ${IA}><span class="fix" id="${id}-f${i}"></span>${hint&&d.h?` <span class="hint">(${esc(d.h)})</span>`:""}${esc(b||"")}</p>`}).join("")}
+function choices(id,items,raw){$(id).innerHTML=items.map((d,i)=>`<p><span class="n">${i+1}.</span>${raw?d.t:esc(d.t).replace("___",'<span class="gap s"></span>')}</p><div class="opts">${d.o.map((o,j)=>`<button class="opt" data-ex="${id}" data-i="${i}" data-j="${j}">${esc(o)}</button>`).join("")}</div>`).join("")}
+gaps("v1",D.v1,false);choices("v2",D.v2,true);gaps("g1",D.g1,true);choices("g2",D.g2,false);
+const PW={w0:D.w0||[],w2:D.w2||[]},PIC=D.w3||null,ORD=["w0","w2","w3"].filter(k=>k==="w3"?!!PIC:PW[k].length),LP=C.id+"_wp";
+const SIG=ORD.map(k=>k+(k==="w3"?PIC.c.length:PW[k].length)).join(",");
+let WS={sig:SIG,cur:null};ORD.forEach(k=>WS[k]=k==="w3"?{c:{},o:[],done:false}:{q:PW[k].map((_,i)=>i),p:0,r:{},done:false});
+try{const s=JSON.parse(localStorage.getItem(LP)||"null");if(s&&s.sig===SIG)WS=s}catch(e){}
+let wpBusy=false,lastEx="";
+const wpSave=()=>{try{localStorage.setItem(LP,JSON.stringify(WS))}catch(e){}};
+const wpOk=k=>Object.values(WS[k].r).filter(x=>x.m==="✓").length;
+const dx=d=>JSON.parse(dec(d.x)),strip=h=>String(h).replace(/<[^>]+>/g,"");
+const canSay=!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);
+function say(t){if(!canSay||!t)return;try{const pre=C.speech.slice(0,2).toLowerCase(),v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith(pre));
+ if(!v&&speechSynthesis.getVoices().length)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=C.speech;if(v)u.voice=v;u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+const picFit=()=>PIC.c.map(x=>JSON.parse(dec(x.x)).f),picFound=()=>Object.values(WS.w3.c).filter(v=>v==="✓").length;
+function wpLabel(k){return k==="w0"?U.p1:k==="w2"?U.p2+": "+C.themeTitle:U.p3}
+function wpScore(k){if(k==="w3"){const f=picFit().filter(Boolean).length;return U.found.replace("{a}",picFound()).replace("{b}",f)}
+ const n=PW[k].length;return WS[k].done?"✓ "+wpOk(k)+" / "+n:Object.keys(WS[k].r).length+" / "+n}
+function wpOpen(k){return ORD.indexOf(k)===0||WS[ORD[ORD.indexOf(k)-1]].done}
+function wpMenu(){$("wpm").innerHTML=ORD.map(k=>`<button class="wpb ${WS.cur===k?"on":""} ${WS[k].done?"done":""} ${wpOpen(k)?"":"lock"}" data-wpk="${k}">${WS[k].done?"✓ ":wpOpen(k)?"":"🔒 "}${esc(wpLabel(k))}<small>${wpScore(k)}</small></button>`).join("")}
+function wpGo(k){if(!wpOpen(k)){$("wpn").textContent=U.locked;return}WS.cur=k;wpSave();wpMenu();k==="w3"?picDraw():cardDraw(k)}
+function wpBar(a,b){$("w0p").style.width=(b?100*a/b:0)+"%"}
+function cardDraw(k){const S=WS[k],Lk=PW[k],c=$("wps"),done=Object.keys(S.r).length,ok=wpOk(k);
+ wpBar(done,Lk.length);$("wpn").textContent=done+" / "+Lk.length;$("wpsc").textContent="✓ "+ok+"   ✗ "+(done-ok);
+ if(S.p>=S.q.length){S.done=true;wpSave();wpMenu();const bad=Lk.map((d,i)=>[d,S.r[i]]).filter(([d,x])=>x&&x.m!=="✓"),nx=ORD[ORD.indexOf(k)+1];
+  c.innerHTML=`<div class="w0q">${U.w0_done.replace("{ok}",ok).replace("{n}",Lk.length)}</div><div class="w0sum">`+(bad.length?`<p class="hint">${U.w0_review}</p>`+bad.map(([d])=>{const y=dx(d);return `<p>• ${esc(y.tag)} — ${esc(y.tr)}</p>`}).join(""):`<p style="text-align:center">${U.w0_none}</p>`)+`</div>`+(nx?`<p><button class="btn" data-wpk="${nx}">${U.next_part.replace("{p}",esc(wpLabel(nx)))} →</button></p>`:"");return}
+ const i=S.q[S.p],d=Lk[i],again=S.r[i]!==undefined,ord=d.o.map((_,j)=>j);
+ if(again)for(let a=ord.length-1;a>0;a--){const b=Math.floor(Math.random()*(a+1));[ord[a],ord[b]]=[ord[b],ord[a]]}
+ const q=d.img?`<img class="wpimg" src="${d.img}" alt="">`:`<div class="w0q">${esc(d.q)}</div>`;
+ c.innerHTML=`<div class="w0dir">${esc(d.dl)}</div>${q}<div class="w0rep">${again?U.w0_again:""}</div><div class="w0opts">${ord.map((j,n)=>`<button class="opt" data-wp="${j}"><span class="hint">${n+1}</span>  <span class="wd">${esc(d.o[j])}</span><span class="pair" id="wpp${j}"></span></button>`).join("")}</div><div id="wpfb"></div>`;
+ wpBusy=false}
+function cardPick(j){const k=WS.cur;if(wpBusy||!k||k==="w3")return;wpBusy=true;const S=WS[k],i=S.q[S.p],d=PW[k][i],a=+dec(d.a),y=dx(d),first=S.r[i]===undefined;
+ $("wps").querySelectorAll("[data-wp]").forEach(x=>{x.disabled=true;const xj=+x.dataset.wp;if(xj===a)x.classList.add("ok");else if(xj===j)x.classList.add("bad");const pp=$("wpp"+xj);if(pp)pp.textContent=y.p[xj]});
+ if(first){S.r[i]={m:j===a?"✓":"✗",a:d.o[j]};if(j!==a)S.q.push(i)}
+ S.p++;wpSave();save();lastEx=strip(y.ex);
+ $("wpfb").innerHTML=(y.ex?`<div class="wpex">${y.ex}${canSay?` <button class="w0sp" title="${U.w0_listen}" data-say="1">🔊</button>`:""}</div><div class="wptr">${esc(y.et)}</div>`:"")+`<button class="btn" id="wpnext">${U.next} →</button>`;
+ if(C.speak)say(lastEx);const nb=$("wpnext");if(nb)nb.focus({preventScroll:true})}
+function picDraw(){const S=WS.w3,c=$("wps"),fit=picFit(),nf=fit.filter(Boolean).length;
+ wpBar(picFound(),nf);$("wpn").textContent=U.found.replace("{a}",picFound()).replace("{b}",nf);$("wpsc").textContent=Object.values(S.c).filter(v=>v==="✗").length?U.pic_wrong+": "+Object.values(S.c).filter(v=>v==="✗").length:"";
+ c.innerHTML=`<p class="task" style="margin:0 0 8px">${esc(U.w3_task)}</p><img class="wppic" src="${PIC.img}" alt=""><div id="wpsent"></div>`+(S.done?`<div class="w0q" style="font-size:20px">${U.pic_done}</div>`:"")+
+  `<div class="chips">${PIC.c.map((x,j)=>`<button class="opt" data-ch="${j}"><span class="wd">${esc(x.w)}</span><span class="pair" id="wpc${j}"></span></button>`).join("")}</div>`;
+ S.o.forEach(j=>picShow(j,false))}
+function picShow(j,speak){const x=JSON.parse(dec(PIC.c[j].x)),b=c=>document.querySelector(`[data-ch="${j}"]`);const el=b();if(!el)return;el.disabled=true;el.classList.add(x.f?"ok":"bad");
+ if(x.f){$("wpsent").insertAdjacentHTML("beforeend",`<p class="wpsent">${x.ex}<span class="wptr">${esc(x.et)}</span></p>`);if(speak&&C.speak)say(strip(x.ex))}else $("wpc"+j).textContent=x.tr}
+function chipPick(j){const S=WS.w3;if(S.c[j])return;const x=JSON.parse(dec(PIC.c[j].x));S.c[j]=x.f?"✓":"✗";S.o.push(j);
+ if(picFound()===picFit().filter(Boolean).length)S.done=true;wpSave();save();wpMenu();
+ if(S.done)picDraw();else{picShow(j,true);const nf=picFit().filter(Boolean).length,bad=Object.values(S.c).filter(v=>v==="✗").length;wpBar(picFound(),nf);$("wpn").textContent=U.found.replace("{a}",picFound()).replace("{b}",nf);$("wpsc").textContent=bad?U.pic_wrong+": "+bad:""}}
+if(ORD.length){wpMenu();if(WS.cur)wpGo(WS.cur);else{$("wps").innerHTML=`<div class="w0q" style="font-size:18px;margin-top:80px">👆 ${esc(wpLabel(ORD[0]))}</div>`}
+ document.addEventListener("click",e=>{const m=e.target.closest("[data-wpk]");if(m){wpGo(m.dataset.wpk);return}
+  const b=e.target.closest("[data-wp]");if(b&&!b.disabled){cardPick(+b.dataset.wp);return}
+  if(e.target.closest("#wpnext")){cardDraw(WS.cur);return}
+  const ch=e.target.closest("[data-ch]");if(ch&&!ch.disabled){chipPick(+ch.dataset.ch);return}
+  if(e.target.closest("[data-say]"))say(lastEx)});
+ document.addEventListener("keydown",e=>{const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName))return;const c=$("wps"),r=c.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+  if(/^[1-9]$/.test(e.key)&&!wpBusy){const b=c.querySelectorAll("[data-wp]")[+e.key-1];if(b&&!b.disabled)cardPick(+b.dataset.wp)}
+  else if(e.key==="Enter"&&$("wpnext")){e.preventDefault();cardDraw(WS.cur)}})}
+const norm=s=>s.trim().replace(/\s+/g," ").replace(/[.!?]$/,"");
+function check(id){const items=D[id];let ok=0;const out=[];
+ items.forEach((d,i)=>{const el=$(id+"-"+i),raw=el.value,a=norm(raw),acc=JSON.parse(dec(d.a));
+  let m="✗";if(a==="")m="—";else if(acc.includes(a))m="✓";else if(acc.some(x=>x.toLowerCase()===a.toLowerCase()))m="✓ ("+U.case+")";
+  if(m.startsWith("✓"))ok++;el.classList.add(m.startsWith("✓")?"ok":"bad");el.readOnly=true;
+  if(!m.startsWith("✓"))$(id+"-f"+i).textContent=acc[0];out.push({n:i+1,a:raw,k:acc[0],m,tag:d.tag})});
+ res[id]={ok,all:items.length,items:out};const b=document.querySelector(`[data-check="${id}"]`);b.disabled=true;b.textContent=U.checked;
+ $("s-"+id).textContent=ok+U.of+items.length;save()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-check]");
+ if(b&&!b.disabled){const id=b.dataset.check,empty=D[id].filter((_,i)=>!$(id+"-"+i).value.trim()).length;
+  if(empty&&!b.dataset.warned){b.dataset.warned="1";b.textContent=U.empty_warn.replace("{n}",empty)}else check(id)}
+ const o=e.target.closest(".opt");if(o&&!o.disabled&&o.dataset.ex){const id=o.dataset.ex,i=+o.dataset.i,j=+o.dataset.j,d=D[id][i],k=+dec(d.a);
+  o.parentElement.querySelectorAll(".opt").forEach((x,xj)=>{x.disabled=true;if(xj===k)x.classList.add("ok")});if(j!==k)o.classList.add("bad");
+  res[id][i]={a:d.o[j],k:d.o[k],m:j===k?"✓":"✗",tag:d.tag};save()}});
+const words=s=>(s.match(/[\p{L}\p{N}]+/gu)||[]).length;
+C.w.forEach(w=>{const t=$(w);paste[w]=0;t.addEventListener("paste",()=>{paste[w]++});t.addEventListener("input",()=>{$("c-"+w).textContent=words(t.value)+U.words;save()})});
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).toUpperCase().padStart(8,"0")}
+const p2=n=>String(n).padStart(2,"0"),fmt=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+const who=()=>$("who").value.trim();
+function mcScore(id){return Object.values(res[id]).filter(x=>x.m==="✓").length}
+function report(){const L=[],now=new Date();
+ L.push(`=== ${C.head} ===`,`${U.student}: ${who()||U.no_name}`,`${U.start}: ${fmt(t0)} · ${U.end}: ${fmt(now)} · ${Math.round((now-t0)/60000)} ${U.minutes}`);
+ const g=(id,title)=>{const r=res[id];L.push("",`[${title}] `+(r?r.ok+"/"+r.all:U.not_checked));
+  if(r)r.items.forEach(x=>L.push(`${x.n}. ${x.m} «${x.a}»${x.m.startsWith("✓")?"":" → "+x.k}`));else D[id].forEach((d,i)=>L.push(`${i+1}. — «${$(id+"-"+i).value}»`))};
+ const c=(id,title)=>{L.push("",`[${title}] ${mcScore(id)}/${D[id].length}`);D[id].forEach((d,i)=>{const x=res[id][i];L.push(x?`${i+1}. ${x.m} «${x.a}»${x.m==="✓"?"":" → "+x.k}`:`${i+1}. — ${U.no_answer}`)})};
+ ["w0","w2"].forEach(k=>{if(!PW[k].length)return;const S=WS[k],done=Object.keys(S.r).length;L.push("",`[${C.titles[k]}] ${wpOk(k)}/${PW[k].length}`+(done<PW[k].length?` (${U.w0_partial} ${done})`:""));
+  PW[k].forEach((d,i)=>{const x=S.r[i];if(x&&x.m!=="✓"){const y=dx(d);L.push(`✗ ${d.img?"🖼 "+y.tag:d.q} → ${d.o[+dec(d.a)]} («${x.a}»)${k==="w0"&&d.dir==="t"?"":k==="w0"?" · "+y.tag:""}`)}})});
+ if(PIC){const fit=picFit(),bad=PIC.c.filter((x,j)=>WS.w3.c[j]==="✗").map(x=>x.w),miss=PIC.c.filter((x,j)=>fit[j]&&!WS.w3.c[j]).map(x=>x.w);
+  L.push("",`[${C.titles.w3}] ${picFound()}/${fit.filter(Boolean).length} · ${U.pic_wrong}: ${bad.length}`+(bad.length?" — "+bad.join(", "):"")+(miss.length?` · не знайдено: ${miss.join(", ")}`:""))}
+ g("v1",C.titles.v1);c("v2",C.titles.v2);g("g1",C.titles.g1);c("g2",C.titles.g2);
+ C.w.forEach((w,n)=>{const v=$(w).value;L.push("",`[${C.titles[w]}] ${words(v)}${U.words} · ${U.pastes}: ${paste[w]}`,"<<<",v,">>>")});
+ if(SP)L.push("",`[${C.titles.sp}] `+(spBlob?mmss(spSec):U.sp_none),spBlob?(spText()?`${U.sp_chrome}:`:U.sp_nochrome):"",...(spBlob&&spText()?["<<<",spText(),">>>"]:[]));
+ const body=L.join("\n");return body+"\n\nКод: "+hash(body)}
+function profile(code){const now=new Date(),name=who()||U.no_name;
+ const wrong=(id)=>{const r=res[id];if(!r)return D[id].map(d=>d.tag);return (Array.isArray(r.items)?r.items:Object.values(r)).filter(x=>!x.m.startsWith("✓")).map(x=>x.tag)};
+ const unansweredMC=id=>D[id].map((d,i)=>res[id][i]?null:d.tag).filter(Boolean);
+ const wv=wrong("v1"),wo=[...wrong("v2"),...unansweredMC("v2")],wg=[...wrong("g1"),...wrong("g2"),...unansweredMC("g2")];
+ const wErr=k=>PW[k].map((d,i)=>WS[k].r[i]&&WS[k].r[i].m!=="✓"?dx(d).tag:null).filter(Boolean);
+ const ww=wErr("w0");wv.push(...wErr("w2"));
+ const picBad=PIC?PIC.c.filter((x,j)=>WS.w3.c[j]==="✗").map(x=>x.w):[];
+ const cnt={};wg.forEach(t=>{const m=String(t).match(/^[A-Z]{1,3}\d{1,3}/);if(m)cnt[m[0]]=(cnt[m[0]]||0)+1});
+ const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+ const sc=id=>res[id]&&res[id].items?res[id].ok+"/"+res[id].all:(id==="v2"||id==="g2")?mcScore(id)+"/"+D[id].length:"не проверено";
+ const M=[`# Профиль · ${name} · ${C.level}`,"","## Для следующего урока",
+  `Номер урока: ${C.next.U} · ${C.next.label||"Пройденная грамматика"}: ${C.next.passed}`,
+  `Пройденные темы: ${C.next.topics||"—"}`,
+  `Грамматика на повторение: ${top.length?top.join(", "):"—"}`,
+  `Слова на повторение: ${wv.length?[...new Set(wv)].join(", "):"—"}`,
+  `Слова разминки с ошибкой: ${ww.length?ww.join(", "):"—"}`,
+  `Заметки к уроку: письменные тексты ниже — при подготовке урока оцени их и выпиши 1–3 главные ошибки сюда.`,"",
+  "## Журнал","",`### ${fmt(now).slice(0,10)} · ${C.lessonName} · тест (${Math.round((now-t0)/60000)} мин, код ${code})`,
+  ...(PW.w0.length?[`- Повторяем слова ${wpOk("w0")}/${PW.w0.length}${ww.length?": ошибки — "+ww.join(", "):""}`]:[]),
+  ...(PW.w2.length?[`- Тема (коллаж) ${wpOk("w2")}/${PW.w2.length}${wErr("w2").length?": ошибки — "+wErr("w2").join(", "):""}`]:[]),
+  ...(PIC?[`- Опиши картинку ${picFound()}/${picFit().filter(Boolean).length}, лишних нажатий ${picBad.length}${picBad.length?" — "+picBad.join(", "):""}`]:[]),
+  `- Лексика урока ${sc("v1")}${wv.length?": ошибки — "+[...new Set(wv)].join(", "):""}`,
+  `- Слова темы других уровней ${sc("v2")}${wo.length?": не знает — "+[...new Set(wo)].join(", "):""}`,
+  `- Ключевая грамматика ${sc("g1")}`+((res.g1?res.g1.items:[]).filter(x=>!x.m.startsWith("✓")).map(x=>`\n  - ${x.tag}: «${x.a||"—"}» → ${x.k}`).join("")),
+  `- Сопутствующая грамматика и повторение ${sc("g2")}`+Object.values(res.g2).filter(x=>x.m!=="✓").map(x=>`\n  - ${x.tag}: «${x.a}» → ${x.k}`).join("")+(unansweredMC("g2").length?`\n  - без ответа: ${unansweredMC("g2").join(", ")}`:"")];
+ if(SP)M.push(`- ${C.titles.sp}: ${spBlob?"запись "+mmss(spSec)+" (файл — во вложении письма)":"без записи"}`,"  Расшифровка браузера (проверить по записи):","```",spBlob?(spText()||"(нет)"):"—","```");
+ C.w.forEach(w=>{const v=$(w).value;M.push(`- ${C.titles[w]} (${words(v)} слов, вставок из буфера ${paste[w]}):`,"```",v||"(пусто)","```")});
+ return M.join("\n")+"\n"}
+function save(){try{const s={who:$("who").value};C.w.forEach(w=>s[w]=$(w).value);localStorage.setItem(C.id,JSON.stringify(s))}catch(e){}}
+try{const s=JSON.parse(localStorage.getItem(C.id)||"null");if(s){$("who").value=s.who||"";C.w.forEach(w=>{$(w).value=s[w]||"";$("c-"+w).textContent=words(s[w]||"")+U.words})}}catch(e){}
+$("who").addEventListener("input",save);
+const SP=C.sp;let spRec=null,spBlob=null,spSec=0,spTimer=null,spRg=null,spFin="",spCur="",spStopping=false;
+const mmss=n=>Math.floor(n/60)+":"+String(n%60).padStart(2,"0"),spText=()=>(spFin+" "+spCur).trim();
+function spUI(st){if(!SP)return;$("spgo").hidden=st==="rec";$("spend").hidden=st!=="rec";$("spgo").textContent=st==="done"?U.sp_again:U.sp_rec;
+ $("spst").innerHTML=st==="rec"?'<span class="spdot"></span>'+mmss(spSec)+" / "+mmss(SP.max):st==="done"?mmss(spSec):"";$("spok").hidden=st!=="done"}
+async function spStart(){if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){$("spmsg").textContent=U.sp_fallback;return}
+ let st;try{st=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){$("spmsg").textContent=U.sp_denied+" ("+(e.name||e)+"). "+U.sp_fallback;return}
+ const ty=["audio/webm;codecs=opus","audio/ogg;codecs=opus","audio/mp4","audio/webm"].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||"";
+ const ch=[];spRec=new MediaRecorder(st,ty?{mimeType:ty,audioBitsPerSecond:32000}:{});spRec.ondataavailable=e=>{if(e.data&&e.data.size)ch.push(e.data)};
+ spRec.onstop=()=>{st.getTracks().forEach(t=>t.stop());spBlob=new Blob(ch,{type:spRec.mimeType||ty||"audio/webm"});const a=$("spa");a.src=URL.createObjectURL(spBlob);a.hidden=false;spUI("done")};
+ spBlob=null;$("spa").hidden=true;spSec=0;spFin="";spCur="";spStopping=false;spRec.start(1000);spUI("rec");$("spmsg").textContent="";
+ spTimer=setInterval(()=>{spSec++;spUI("rec");if(spSec>=SP.max)spEnd()},1000);
+ const R=window.SpeechRecognition||window.webkitSpeechRecognition;spRg=null;
+ if(R){try{spRg=new R();spRg.lang=C.speech;spRg.continuous=true;spRg.interimResults=true;
+  spRg.onresult=e=>{let f="",i="";for(let k=0;k<e.results.length;k++){const r=e.results[k];if(r.isFinal)f+=r[0].transcript+" ";else i+=r[0].transcript+" "}spCur=(f+i).trim()};
+  spRg.onend=()=>{spFin=spText();spCur="";if(!spStopping&&spRec&&spRec.state==="recording"){try{spRg.start()}catch(e){}}};
+  spRg.onerror=()=>{};spRg.start()}catch(e){spRg=null}}}
+function spEnd(){clearInterval(spTimer);spStopping=true;try{spRg&&spRg.stop()}catch(e){}if(spRec&&spRec.state!=="inactive")spRec.stop()}
+if(SP){$("spgo").addEventListener("click",spStart);$("spend").addEventListener("click",spEnd);spUI("idle")}
+const b64=bl=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=no;r.readAsDataURL(bl)});
+const msg=$("msg"),send=$("send");
+send.addEventListener("click",async()=>{if(!who()){msg.textContent=U.need_name;$("who").scrollIntoView({block:"center"});$("who").focus();return}
+ const txt=report(),code=txt.slice(-8),md=profile(code),safe=who().replace(/[^\p{L}\p{N}]+/gu,"_");
+ const sc=id=>res[id]&&res[id].items?res[id].ok+"/"+res[id].all:(id==="v2"||id==="g2")?mcScore(id)+"/"+D[id].length:U.not_checked;
+ const p={token:C.token,lesson:C.lessonName,name:who(),v1:sc("v1"),v2:sc("v2"),g1:sc("g1"),g2:sc("g2"),w0:ORD.map(k=>k==="w3"?"0.3 "+picFound()+"/"+picFit().filter(Boolean).length:(k==="w0"?"0.1 ":"0.2 ")+wpOk(k)+"/"+PW[k].length).join(" · "),min:Math.round((new Date()-t0)/60000),code,report:txt,md,mdName:`${C.id}_${safe}_${fmt(new Date()).slice(0,10)}.md`};
+ C.w.forEach((w,n)=>{const v=$(w).value;p["t"+(n+1)]=v;p["t"+(n+1)+"words"]=words(v);p["t"+(n+1)+"paste"]=paste[w]});
+ $("out").value=txt;send.disabled=true;msg.textContent=U.sending;
+ if(SP&&spBlob){try{const ext=(spBlob.type.match(/(webm|ogg|mp4)/)||["","webm"])[1];p.audio=await b64(spBlob);p.audioMime=spBlob.type||"audio/webm";p.audioName=`${C.id}_${safe}_${fmt(new Date()).slice(0,10)}.${ext==="mp4"?"m4a":ext}`;p.audioSec=spSec;p.spChrome=spText()}catch(e){}}
+ const fail=m=>{msg.textContent="";send.disabled=false;send.textContent=U.retry;$("fallback").hidden=false;$("err").textContent=U.server+m};
+ if(!C.endpoint)return fail("—");
+ p.sid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ try{await fetch(C.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)})}catch(e){return fail(e&&e.message?e.message:String(e))}
+ const jsonp=u=>new Promise((ok,no)=>{const cb="cb"+Math.random().toString(36).slice(2),s=document.createElement("script"),t=setTimeout(()=>{delete window[cb];s.remove();no(new Error("timeout"))},8000);
+  window[cb]=r=>{clearTimeout(t);delete window[cb];s.remove();ok(r)};s.onerror=()=>{clearTimeout(t);delete window[cb];s.remove();no(new Error("check failed"))};s.src=u+(u.includes("?")?"&":"?")+"callback="+cb;document.head.appendChild(s)});
+ let last="—";
+ for(let i=0;i<8;i++){await new Promise(r=>setTimeout(r,i?2000:1200));
+  try{const r=await jsonp(C.endpoint+"?check="+p.sid);
+   if(r.status==="ok"){msg.textContent=U.sent;send.textContent=U.sent_btn;return}
+   if(r.status==="error")return fail(r.msg||"error");last="pending"}catch(e){last=e.message}}
+ fail(last==="pending"?U.not_confirmed:last)});
+$("copy").addEventListener("click",async()=>{const out=$("out"),m=$("copied");
+ try{await navigator.clipboard.writeText(out.value);m.textContent=U.copied}catch(e){out.focus();out.select();try{document.execCommand("copy");m.textContent=U.copied}catch(e2){m.textContent=U.copy_manual}}});
+}</script></body></html>
