@@ -390,7 +390,8 @@ function reviewSet(t, p, extra, n) {
   const line = t ? od.filter(k => D.byId[P.srs[k].t] && D.byId[P.srs[k].t].line === t.line) : [];
   const order = [...hw, ...od.slice(0, Math.ceil(n * .6)), ...line, ...od];
   const out = [], seenT = {};
-  for (const k of order) { if (out.length >= n) break; if (out.includes(k)) continue; const tt = P.srs[k].t; if ((seenT[tt] || 0) >= Math.max(3, n / 4) && order.length > n) continue; seenT[tt] = (seenT[tt] || 0) + 1; out.push(k) }
+  for (const k of order) { if (out.length >= n) break; if (out.includes(k)) continue; const tt = P.srs[k].t; if ((seenT[tt] || 0) >= Math.max(3, n / 4)) continue; seenT[tt] = (seenT[tt] || 0) + 1; out.push(k) }
+  for (const k of order) { if (out.length >= n) break; if (!out.includes(k)) out.push(k) }
   if (out.length < n) { const weak = Object.entries(P.srs).filter(([k, s]) => word(k) && !out.includes(k) && !extra.includes(k) && s.b < 5).sort((a, b) => a[1].b - b[1].b || a[1].d - b[1].d).map(([k]) => k); out.push(...weak.slice(0, Math.min(n - out.length, 3))) }
   return out;
 }
@@ -476,7 +477,8 @@ async function reviewStep(E) {
 async function sceneStep(E) {
   const t = E.t, p = prof(t, E.dk);
   const own = shuffle(t.words.filter(w => w.first === t.id && word(w.k) && (P.srs[w.k] || {}).b >= 1).map(w => word(w.k)));
-  const far = shuffle(Object.values(D.lex).filter(x => Math.abs(x.t - t.id) > 8 && D.byId[x.t] && D.byId[x.t].line !== t.line));
+  let far = shuffle(Object.values(D.lex).filter(x => Math.abs(x.t - t.id) > 8 && D.byId[x.t] && D.byId[x.t].line !== t.line));
+  const easyFar = far.filter(x => ["A1", "A2", "Basis", "CORE"].includes(x.lvl)); if (p.i <= 3 && easyFar.length >= 8) far = easyFar;
   app().innerHTML = head() + stepsBar(4) + `<div id="host"></div>`;
   const host = $("#host");
   if (p.scene === "cloud" || !own.length) {
