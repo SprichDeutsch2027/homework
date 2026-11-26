@@ -181,6 +181,12 @@ def groups(t, words):
             "deferred": deferred, "lvl": lvl_of}
 
 
+def art_slug(w):
+    w = re.sub(r"^(der|die|das)\s+", "", w.strip())
+    w = w.lower().replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss").replace("'", "")
+    return re.sub(r"[^a-z0-9]+", "-", w).strip("-")
+
+
 def main():
     ap = argparse.ArgumentParser()
     W0 = "/home/claude/work"
@@ -227,8 +233,10 @@ def main():
                     (errs if x.strict else warns).append(f"{tid}: нет текста для слова '{w}'")
             if first == tid:
                 index[k] = tid
+                art = f"img/T{tid:03d}/a_{art_slug(w)}.webp"   # рисунки мелками (приоритет)
                 code = BI.get((tid, k))
-                if code:
+                if os.path.exists(os.path.join(root, art)): item["img"] = art
+                elif code:
                     img = f"img/T{tid:03d}/{code}.webp"
                     if os.path.exists(os.path.join(root, img)): item["img"] = img
             out["words"].append(item)
