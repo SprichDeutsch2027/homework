@@ -40,7 +40,16 @@ const UI = {
     intro: "Знайомство зі словами", skipShow: "До тренування", empty: "Для цієї теми тексти ще пишуться.", hero: "Герой", place: "Місце",
     back: "Назад", lvl: "рівень слова", choosePlace: "Тема, з якої почати (як на уроці):", diffShort: { easy: "↓", hard: "↑", harder: "↑↑" },
     report: "Звіт", copy: "Скопіювати", copied: "Скопійовано", hwLink: "Слова з домашнього тесту додано на повторення.", ofTopic: "тема",
-    nameNeed: "Напиши ім’я.", exists: "Такий учень уже є на цьому пристрої — відкриваю його профіль."
+    nameNeed: "Напиши ім’я.", exists: "Такий учень уже є на цьому пристрої — відкриваю його профіль.",
+    go: "Продовжити", goReview: "Повторити слова", goSoon: "Нові теми скоро", home: "Головна", more: "Ще",
+    regT: "Реєстрація", regSub: "Вкажіть ім’я та e-mail. Викладач схвалить доступ — і на пошту прийде лист.",
+    email: "E-mail", regBtn: "Надіслати заявку", haveAcc: "Вже зареєстровані? Увійти", loginT: "Вхід",
+    loginSub: "Ім’я та e-mail — такі самі, як у заявці.", loginBtn: "Увійти", waitT: "Заявку надіслано ✓",
+    waitTxt: "Коли викладач схвалить доступ, на пошту прийде лист. Тоді натисніть кнопку нижче.", check2: "Перевірити",
+    notYet: "Ще не схвалено. Спробуйте трохи пізніше.", rejected: "Доступ не схвалено. Напишіть викладачеві.",
+    net: "Немає зв’язку з сервером. Спробуйте ще раз.", oldServer: "Реєстрація ще не ввімкнена на сервері. Напишіть викладачеві.",
+    notFound: "Заявку з таким іменем і e-mail не знайдено.", emailBad: "Перевірте e-mail.", change: "Змінити дані",
+    sendingReg: "Надсилаю…", lvlWords: "слів вивчено", ofAll: "з 750"
   },
   ru: {
     hello: "Привет! Это Wortreise — путешествие по словам курса «10 Stufen».", who: "Как тебя зовут?", lang: "Язык подсказок", create: "Начать",
@@ -66,7 +75,16 @@ const UI = {
     intro: "Знакомство со словами", skipShow: "К тренировке", empty: "Для этой темы тексты ещё пишутся.", hero: "Герой", place: "Место",
     back: "Назад", lvl: "уровень слова", choosePlace: "Тема, с которой начать (как на уроке):", diffShort: { easy: "↓", hard: "↑", harder: "↑↑" },
     report: "Отчёт", copy: "Скопировать", copied: "Скопировано", hwLink: "Слова из домашнего теста добавлены на повторение.", ofTopic: "тема",
-    nameNeed: "Напиши имя.", exists: "Такой ученик уже есть на этом устройстве — открываю его профиль."
+    nameNeed: "Напиши имя.", exists: "Такой ученик уже есть на этом устройстве — открываю его профиль.",
+    go: "Продолжить", goReview: "Повторить слова", goSoon: "Новые темы скоро", home: "Главная", more: "Ещё",
+    regT: "Регистрация", regSub: "Укажите имя и e-mail. Преподаватель одобрит доступ — и на почту придёт письмо.",
+    email: "E-mail", regBtn: "Отправить заявку", haveAcc: "Уже зарегистрированы? Войти", loginT: "Вход",
+    loginSub: "Имя и e-mail — такие же, как в заявке.", loginBtn: "Войти", waitT: "Заявка отправлена ✓",
+    waitTxt: "Когда преподаватель одобрит доступ, на почту придёт письмо. Тогда нажмите кнопку ниже.", check2: "Проверить",
+    notYet: "Ещё не одобрено. Попробуйте чуть позже.", rejected: "Доступ не одобрен. Напишите преподавателю.",
+    net: "Нет связи с сервером. Попробуйте ещё раз.", oldServer: "Регистрация ещё не включена на сервере. Напишите преподавателю.",
+    notFound: "Заявка с таким именем и e-mail не найдена.", emailBad: "Проверьте e-mail.", change: "Изменить данные",
+    sendingReg: "Отправляю…", lvlWords: "слов выучено", ofAll: "из 750"
   }
 };
 let L = "uk", U = UI.uk;
@@ -77,7 +95,7 @@ async function getJSON(p) { const r = await fetch(p, { cache: "no-cache" }); if 
 async function boot() {
   [D.meta, D.heroes, D.st] = await Promise.all(["data/meta.json", "data/heroes.json", "data/stufen.json"].map(getJSON));
   D.byId = {}; D.meta.topics.forEach(t => D.byId[t.id] = t);
-  window.addEventListener("hashchange", route); route();
+  window.addEventListener("hashchange", route); route(); recheck();
 }
 async function topic(id) {
   if (D.topics[id]) return D.topics[id];
@@ -292,32 +310,33 @@ async function runDeck(host, cards, p, onEach) {
 function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200) }
 function head() {
   if (!P) return `<header class="top"><a class="brand" href="#/">Wort<b>reise</b></a><span class="sp"></span><a class="chip" href="../">Sprich Deutsch</a></header>`;
-  const h = hero(), due = dueList().length;
-  return `<header class="top"><a class="brand" href="#/map">Wort<b>reise</b></a>${h ? `<span class="chip">${h.emoji} ${esc(chr(h.key)[L])}</span>` : ""}<span class="chip">⭐ ${P.xp}</span>${P.streak > 1 ? `<span class="chip">🔥 ${P.streak}</span>` : ""}<span class="sp"></span>
-  <a class="chip" href="#/review">🔁 ${due}</a><a class="chip" href="#/diary">📔</a><a class="chip" href="#/me">👤 ${esc(P.name)}</a></header>`;
+  return `<header class="top"><a class="brand" href="#/">Wort<b>reise</b></a><span class="sp"></span><span class="chip">⭐ ${P.xp}</span>${P.streak > 1 ? `<span class="chip">🔥 ${P.streak}</span>` : ""}<a class="chip home" href="#/" title="${U.home}">⌂</a></header>`;
 }
 function route() {
   if (window.speechSynthesis) try { speechSynthesis.cancel() } catch (e) { }
   const hsh = location.hash.replace(/^#/, "") || "/", [path, qs] = hsh.split("?"), parts = path.split("/").filter(Boolean);
   const q = new URLSearchParams(qs || "");
   if (!P) { const cur = localStorage.getItem("wr_cur"), p = cur && load(cur); if (p) useProfile(p) }
-  if (!P && parts[0] !== "new") return viewProfiles();
+  if (parts[0] === "new") { P = null; return viewRegister() }
+  if (parts[0] === "login") { P = null; return viewLogin() }
+  if (!P) return pending() ? viewWaiting() : profiles().length && parts[0] !== "reg" ? viewProfiles() : viewRegister();
+  if (!P.reg || P.reg.status !== "approved") return P.reg && P.reg.status === "rejected" ? viewBlocked() : viewRegister(P.name, P.l1);
   if (q.get("review")) { importWords(q.get("review").split(",")); toast(U.hwLink); history.replaceState(null, "", "#/" + parts.join("/")) }
-  if (parts[0] === "new") return viewNew();
   if (!P.hero || parts[0] === "hero") return viewHero();
   if (parts[0] === "t") return viewTopic(+parts[1]);
   if (parts[0] === "review") return viewReview(parts[1], +parts[2]);
   if (parts[0] === "diary") return viewDiary();
   if (parts[0] === "me") return viewMe();
-  if (parts[0] === "users") return viewProfiles();
-  return viewMap();
+  if (parts[0] === "users") { P = null; localStorage.removeItem("wr_cur"); return viewProfiles() }
+  if (parts[0] === "map") return viewMap();
+  return viewHome();
 }
 function viewProfiles() {
   const ps = profiles();
   app().innerHTML = head() + `<h1>${UI.uk.hello}</h1><p class="mute">${UI.ru.hello}</p>
   ${ps.length ? `<h2>${U.profiles}</h2><div class="row">${ps.map(n => `<button data-p="${esc(n)}">👤 ${esc(n)}</button>`).join("")}</div>` : ""}
-  <div class="row" style="margin-top:14px"><a class="btn main" href="#/new">＋ ${U.newp}</a></div>`;
-  $$("[data-p]").forEach(b => b.onclick = () => { const p = load(b.dataset.p); if (p) { useProfile(p); save(); location.hash = "#/map"; route() } });
+  <div class="row" style="margin-top:14px"><a class="btn" href="#/new">＋ ${U.newp}</a></div>`;
+  $$("[data-p]").forEach(b => b.onclick = () => { const p = load(b.dataset.p); if (p) { useProfile(p); save(); location.hash = "#/"; route() } });
 }
 function viewNew() {
   app().innerHTML = head() + `<div class="box"><h1>Wortreise</h1><label>${UI.uk.who} / ${UI.ru.who}<input type="text" id="nm" maxlength="40" autocomplete="off"></label>
@@ -338,7 +357,7 @@ function viewHero() {
   $$("[data-h]").forEach(b => b.onclick = () => {
     P.hero = b.dataset.h; const st = $("#st");
     if (st) { const n = Math.max(1, Math.min(750, +st.value || 1)); P.start = n; P.cur = n; for (let i = 1; i < n; i++) P.t[i] = { st: "skip" } }
-    save(); location.hash = "#/map";
+    save(); location.hash = "#/";
   });
 }
 const tStatus = id => { const r = P.t[id]; if (r && r.st === "done") return "done"; if (r && r.st === "skip") return "skip"; if (id === P.cur) return "cur"; return id < P.cur ? "open" : "lock" };
@@ -415,11 +434,11 @@ function intro(E) {
   app().innerHTML = head() + stepsBar(0) + `<div class="box scene"><small class="mute">${U.topic} ${t.id} · ${U.stufe} ${t.stufe} · ${t.niveau}</small><h1>${esc(t.name)}</h1>
    <p>${esc(gform((t.scene || {})[L] || ""))}</p>${ent[L] ? `<p><b>${esc(chr(P.hero)[L])}:</b> ${esc(gform(ent[L]))}</p>` : ""}
    ${host ? `<div class="host"><b>${esc(hostC ? hostC[L] : host.who)}:</b> <span class="de">${host.de}</span> ${sayBtn(host.de)}<div class="tr">${esc(gform(host[L]))}</div></div>` : ""}</div>
-   <div class="box"><h3>${U.diff}</h3><div class="diff">${D.st.diff.map(d => `<button data-d="${d.key}" class="${d.key === E.dk ? "on" : ""}">${d[L]}</button>`).join("")}</div>
+   <div class="sticky"><button class="main big" id="go">▶ ${U.startEp}</button></div>
+   <details class="box diffbox"><summary>${U.diff}: <b>${D.st.diff.find(d => d.key === E.dk)[L]}</b></summary><div class="diff" style="margin-top:10px">${D.st.diff.map(d => `<button data-d="${d.key}" class="${d.key === E.dk ? "on" : ""}">${d[L]}</button>`).join("")}</div>
    <label class="row mute" style="margin-top:8px"><input type="checkbox" id="keep" ${P.shift === D.st.diff.find(d => d.key === E.dk).shift && P.shift !== 0 ? "checked" : ""}> ${U.keep}</label>
-   <p class="mute" style="margin:8px 0 0">${pl.nw.length + pl.back.length} ${U.newWords} · ${pl.rv.length + pl.qk.length + Math.min(due, p.review)} ${U.revWords}${pl.chest.length ? ` · ${U.chest}: ${pl.chest.length}` : ""}</p></div>
-   <div class="sticky"><button class="main" id="go" style="width:100%">▶ ${U.startEp}</button></div>`;
-  $$("[data-d]").forEach(b => b.onclick = () => { E.dk = b.dataset.d; P.t[t.id] = Object.assign(P.t[t.id] || {}, { d: E.dk }); if ($("#keep").checked) P.shift = D.st.diff.find(d => d.key === E.dk).shift; save(); intro(E) });
+   <p class="mute" style="margin:8px 0 0">${pl.nw.length + pl.back.length} ${U.newWords} · ${pl.rv.length + pl.qk.length + Math.min(due, p.review)} ${U.revWords}${pl.chest.length ? ` · ${U.chest}: ${pl.chest.length}` : ""}</p></details>`;
+  $$("[data-d]").forEach(b => b.onclick = () => { E.dk = b.dataset.d; P.t[t.id] = Object.assign(P.t[t.id] || {}, { d: E.dk }); if ($("#keep").checked) P.shift = D.st.diff.find(d => d.key === E.dk).shift; save(); intro(E); const db = $(".diffbox"); if (db) db.open = true });
   $("#keep").onchange = e => { P.shift = e.target.checked ? D.st.diff.find(d => d.key === E.dk).shift : 0; save() };
   $("#go").onclick = () => { if (host) say(host.de); E.plan = plan(t, E.dk); showStep(E) };
 }
@@ -545,12 +564,12 @@ function finish(E) {
   app().innerHTML = head() + stepsBar(5) + `<div class="box"><h1>🎉 ${U.done}</h1><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div><div><b>${E.plan.nw.length + E.plan.back.length}</b>${U.newWords}</div></div>
    ${ent ? `<p style="margin-top:12px">📔 ${esc(gform(ent))}</p>` : ""}${bad.length ? `<p class="mute">${U.wrong} ${bad.map(esc).join(", ")}</p>` : ""}</div>
    ${sug ? `<div class="box hint">${sug === "easy" ? U.suggestEasy : U.suggestHard} <button id="sgY">${U.yes}</button> <button id="sgN">${U.no}</button></div>` : ""}
-   ${E.plan.chest.length ? `<div class="box"><h3>🧰 ${U.chest}</h3><p>${U.chestTxt(E.plan.chest.length)}</p><button id="chest">${U.openChest}</button></div>` : ""}
-   <div class="row"><button class="main" id="nxT" ${nx && nx.ready ? "" : "disabled"}>${U.nextTopic} ▶</button><a class="btn" href="#/map">${U.toMap}</a><button id="snd">📤 ${U.send}</button></div><p id="smsg" class="mute"></p>`;
+   <a class="btn main big" href="${nextAction().href}">${U.next} ▶</a>
+   ${E.plan.chest.length ? `<div class="box" style="margin-top:16px"><h3>🧰 ${U.chest}</h3><p>${U.chestTxt(E.plan.chest.length)}</p><button id="chest">${U.openChest}</button></div>` : ""}
+   <p class="links"><a href="#/">${U.home}</a></p>`;
   if ($("#sgY")) { $("#sgY").onclick = () => { const order = ["easy", "course", "hard", "harder"], i = order.indexOf(E.dk); const nk = sug === "easy" ? order[Math.max(0, i - 1)] : order[Math.min(3, i + 1)]; P.shift = D.st.diff.find(d => d.key === nk).shift; P.scores = []; save(); $("#sgY").parentNode.remove() }; $("#sgN").onclick = () => { P.scores = []; save(); $("#sgN").parentNode.remove() } }
   if ($("#chest")) $("#chest").onclick = () => chestRun(E);
-  $("#nxT").onclick = () => { location.hash = "#/t/" + nextId };
-  $("#snd").onclick = () => sendReport($("#snd"), $("#smsg"), [P.log[P.log.length - 1]]);
+
 }
 async function chestRun(E) {
   const t = E.t, p = prof(t, E.dk), list = E.plan.chest.slice(0, 12);
@@ -564,7 +583,7 @@ async function chestRun(E) {
   const r = await runDeck(host, shuffle(list).map(k => makeCard(pickType(word(k), p, "rec", null), word(k), p)), p, (c, ok) => { if (c.k) learnNew(c.k, ok, t.id) });
   const xp = Math.round(r.ok * D.st.xp.chest * D.st.diff.find(d => d.key === E.dk).xp); P.xp += xp; badge("chest", L === "uk" ? "Відкрита скриня" : "Открытый сундук"); save();
   E.plan.chest = E.plan.chest.slice(12);
-  host.innerHTML = `<div class="box"><h2>🧰 +${xp} ${U.xp}</h2><p>${r.ok}/${r.all} ${U.score}</p><div class="row"><a class="btn main" href="#/t/${t.id + 1}">${U.nextTopic} ▶</a><a class="btn" href="#/map">${U.toMap}</a></div></div>`;
+  host.innerHTML = `<div class="box"><h2>🧰 +${xp} ${U.xp}</h2><p>${r.ok}/${r.all} ${U.score}</p><a class="btn main big" href="${nextAction().href}">${U.next} ▶</a></div>`;
 }
 
 /* ---------- Повторение отдельно, праздник, экзамен ---------- */
@@ -576,7 +595,7 @@ async function viewReview(kind, n) {
   if (kind === "fest") { title = U.fest(n); keys = shuffle(Object.keys(P.srs).filter(k => word(k) && P.srs[k].t > n - 25 && P.srs[k].t <= n)).slice(0, 30) }
   else if (kind === "exam") { title = U.exam(n); need = 80; keys = shuffle(Object.keys(P.srs).filter(k => word(k) && Math.ceil(P.srs[k].t / 75) === n)).slice(0, 40) }
   else { title = U.review; keys = reviewSet(t, p, [], Math.max(p.review, 20)) }
-  if (!keys.length) { app().innerHTML = head() + `<div class="box"><h2>${title}</h2><p>${U.noDue}</p><a class="btn" href="#/map">${U.toMap}</a></div>`; return }
+  if (!keys.length) { app().innerHTML = head() + `<div class="box"><h2>${title}</h2><p>${U.noDue}</p><a class="btn main big" href="#/">${U.home}</a></div>`; return }
   app().innerHTML = head() + `<h2>${title}</h2><div id="host"></div>`;
   const cards = kind === "exam" ? keys.map(k => makeCard(pickType(word(k), p, "hard", null), word(k), p)) : reviewCards(keys, p);
   const r = await runDeck($("#host"), cards, p, (c, ok) => { if (c.k) { grade(c.k, ok); if (ok) P.hw = P.hw.filter(x => x !== c.k) } });
@@ -587,8 +606,7 @@ async function viewReview(kind, n) {
   P.log.push({ id: kind || "review", name: title, at: Date.now(), s: pc, ok: r.ok, all: r.all, bad: r.bad, nw: 0 }); P.log = P.log.slice(-200);
   checkBadges(); save();
   $("#host").innerHTML = `<div class="box"><h2>${U.reviewDone}</h2><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div></div>${msg ? `<p><b>${msg}</b></p>` : ""}${r.bad.length ? `<p class="mute">${U.wrong} ${r.bad.map(esc).join(", ")}</p>` : ""}
-   <div class="row"><a class="btn main" href="#/map">${U.toMap}</a><button id="snd">📤 ${U.send}</button></div><p id="smsg" class="mute"></p></div>`;
-  $("#snd").onclick = () => sendReport($("#snd"), $("#smsg"), [P.log[P.log.length - 1]]);
+   <a class="btn main big" href="${nextAction().href}">${U.next} ▶</a></div>`;
 }
 
 /* ---------- Дневник и профиль ---------- */
@@ -601,17 +619,15 @@ function viewMe() {
   app().innerHTML = head() + `<h1>👤 ${esc(P.name)}</h1><div class="stat"><div><b>${done}</b>${U.topics}</div><div><b>${s.filter(x => x.b >= 3).length}</b>${U.learned}</div><div><b>${s.length}</b>${U.inSrs}</div><div><b>${P.streak}</b>${U.streak}</div><div><b>${P.xp}</b>${U.xp}</div></div>
   ${fr.length ? `<h2>${U.friends}</h2><div>${fr.map(([k, n]) => `<div class="row" style="margin:4px 0"><span style="width:150px">${esc(chr(k)[L])}</span><div class="bar" style="flex:1"><i style="width:${Math.min(100, n * 5)}%"></i></div><small>${n}</small></div>`).join("")}</div>` : ""}
   ${P.badges.length ? `<h2>${U.badges}</h2><div>${P.badges.map(b => `<span class="badge">🏅 ${esc(b.txt)}</span>`).join("")}</div>` : ""}
-  <h2>📤 ${U.send}</h2><div class="row"><button id="snd">${U.send}</button></div><p id="smsg" class="mute"></p>
   <h2>${U.hw}</h2><p class="mute">${U.hwTxt}</p><textarea id="hwt"></textarea><div class="row" style="margin-top:6px"><button id="hwb">${U.hwBtn}</button></div>
   <h2>${U.backup}</h2><div class="row"><button id="exp">💾 ${U.exp}</button><label class="btn">📂 ${U.imp}<input type="file" id="imp" accept=".json" hidden></label></div>
   <h2>⚙️</h2><div class="row"><a class="btn" href="#/hero">${U.switchHero}</a><button id="lang">${L === "uk" ? "Русский" : "Українська"}</button><button id="usr">${U.switchUser}</button><button id="del">${U.del}</button></div>
   <p class="mute" style="margin-top:20px"><a href="../">Sprich Deutsch · домашні завдання</a></p>`;
-  $("#snd").onclick = () => sendReport($("#snd"), $("#smsg"), P.log.filter(x => x.at > (P.sent || 0)));
   $("#hwb").onclick = async () => { const n = await importHW($("#hwt").value); toast(U.hwOk(n)) };
   $("#exp").onclick = () => { const b = new Blob([JSON.stringify(P)], { type: "application/json" }), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `wortreise_${P.name.replace(/[^\p{L}\p{N}]+/gu, "_")}_${new Date().toISOString().slice(0, 10)}.json`; a.click(); P.lastExport = Date.now(); save() };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const p = JSON.parse(r.result); if (!p.name || !p.srs) throw 0; const ps = profiles(); if (!ps.includes(p.name)) { ps.push(p.name); saveProfiles(ps) } useProfile(p); save(); toast("✓"); route() } catch (x) { toast("✗ JSON") } }; r.readAsText(f) };
   $("#lang").onclick = () => { P.l1 = L === "uk" ? "ru" : "uk"; useProfile(P); save(); viewMe() };
-  $("#usr").onclick = () => { P = null; localStorage.removeItem("wr_cur"); location.hash = "#/users"; route() };
+  $("#usr").onclick = () => { location.hash = "#/users" };
   $("#del").onclick = () => { if (!confirm(U.delQ)) return; localStorage.removeItem(PK(P.name)); saveProfiles(profiles().filter(n => n !== P.name)); localStorage.removeItem("wr_cur"); P = null; location.hash = "#/"; route() };
 }
 async function importWords(ws) {
@@ -625,30 +641,127 @@ function importHW(txt) {
   return importWords(ws);
 }
 
-/* ---------- Отчёт преподавателю ---------- */
-function reportText(items) {
-  const h = hero(), done = Object.values(P.t).filter(r => r.st === "done").map((r, i) => r), ids = Object.entries(P.t).filter(([k, r]) => r.st === "done" && /^\d+$/.test(k)).map(([k]) => +k).sort((a, b) => a - b);
-  const ranges = []; ids.forEach(i => { const l = ranges[ranges.length - 1]; if (l && l[1] === i - 1) l[1] = i; else ranges.push([i, i]) });
-  const weak = Object.entries(P.srs).filter(([k, s]) => s.f > 0 && s.b <= 2 && word(k)).sort((a, b) => b[1].f - a[1].f).slice(0, 20).map(([k]) => word(k).w);
-  const dname = k => (D.st.diff.find(d => d.key === k) || {})[L] || "";
-  const L1 = [`Wortreise · ${P.name} · ${U.hero}: ${h ? chr(h.key)[L] : "—"}`, `${U.topics}: ${ids.length} · ${U.learned}: ${Object.values(P.srs).filter(s => s.b >= 3).length} · ${U.inSrs}: ${Object.keys(P.srs).length} · ${U.due(dueList().length)}`, ""];
-  items.forEach(x => L1.push(`${new Date(x.at).toLocaleString()} · ${typeof x.id === "number" ? U.topic + " " + x.id + " · " + x.name : x.name}${x.d ? " · " + dname(x.d) : ""} · ${x.ok}/${x.all} (${x.s}%)${x.nw ? " · " + U.newWords + ": " + x.nw : ""}${x.min != null ? " · " + x.min + " хв" : ""}${x.bad && x.bad.length ? "\n  " + U.wrong + " " + x.bad.join(", ") : ""}`));
-  const md = [`# Wortreise · ${P.name}`, "", "## Для следующего урока", `Пройденные темы: ${ranges.map(r => r[0] === r[1] ? r[0] : r[0] + "-" + r[1]).join(", ") || "—"}`,
-    `Последняя тема: ${ids.length ? ids[ids.length - 1] : "—"} · сложность: ${items.length && items[items.length - 1].d ? dname(items[items.length - 1].d) : "—"}`,
-    `Слова на повторение: ${weak.join(", ") || "—"}`, `Слова разминки с ошибкой: ${[...new Set(items.flatMap(x => x.bad || []))].join(", ") || "—"}`, "",
-    "## Журнал", ...items.map(x => `- ${new Date(x.at).toISOString().slice(0, 10)} · ${typeof x.id === "number" ? "тема " + x.id + " · " + x.name : x.name}${x.d ? " · " + x.d : ""} · ${x.ok}/${x.all}${x.bad && x.bad.length ? ": ошибки — " + x.bad.join(", ") : ""}`)].join("\n") + "\n";
-  return { txt: L1.join("\n"), md };
+/* ---------- Регистрация: заявка → одобрение преподавателем (письмо) → доступ ---------- */
+function jsonp(u) {
+  return new Promise((ok, no) => {
+    const cb = "cb" + Math.random().toString(36).slice(2), s = document.createElement("script");
+    const tm = setTimeout(() => { delete window[cb]; s.remove(); no(new Error("timeout")) }, 10000);
+    window[cb] = r => { clearTimeout(tm); delete window[cb]; s.remove(); ok(r) };
+    s.onerror = () => { clearTimeout(tm); delete window[cb]; s.remove(); no(new Error("net")) };
+    s.src = u + (u.includes("?") ? "&" : "?") + "callback=" + cb; document.head.appendChild(s);
+  });
 }
-async function sendReport(btn, msg, items) {
-  items = items.filter(Boolean); if (!items.length) { msg.textContent = "—"; return }
-  const { txt, md } = reportText(items), last = items[items.length - 1], safe = P.name.replace(/[^\p{L}\p{N}]+/gu, "_");
-  const p = { token: CFG.token, type: "words", name: P.name, lesson: `Wortreise · ${typeof last.id === "number" ? "тема " + last.id + " · " + last.name : last.name}`, v1: `${last.ok}/${last.all}`, v2: "", g1: "", g2: "", w0: items.map(x => (typeof x.id === "number" ? "T" + x.id : x.id) + " " + x.ok + "/" + x.all).join(" · "), min: items.reduce((a, x) => a + (x.min || 0), 0), code: "", report: txt, md, mdName: `wortreise_${safe}_${new Date().toISOString().slice(0, 10)}.md`, sid: Date.now().toString(36) + Math.random().toString(36).slice(2, 8) };
-  btn.disabled = true; msg.textContent = U.sending;
-  const fail = () => { btn.disabled = false; msg.innerHTML = `${U.sendFail}<textarea readonly style="margin-top:6px">${esc(txt)}</textarea>` };
-  try { await fetch(CFG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(p) }) } catch (e) { return fail() }
-  const jsonp = u => new Promise((ok, no) => { const cb = "cb" + Math.random().toString(36).slice(2), s = document.createElement("script"), tm = setTimeout(() => { delete window[cb]; s.remove(); no(new Error("timeout")) }, 8000); window[cb] = r => { clearTimeout(tm); delete window[cb]; s.remove(); ok(r) }; s.onerror = () => { clearTimeout(tm); delete window[cb]; s.remove(); no(new Error("x")) }; s.src = u + "&callback=" + cb; document.head.appendChild(s) });
-  for (let i = 0; i < 8; i++) { await new Promise(r => setTimeout(r, i ? 2000 : 1200)); try { const r = await jsonp(CFG.endpoint + "?check=" + p.sid); if (r.status === "ok") { msg.textContent = U.sent; btn.textContent = U.sent; P.sent = Date.now(); save(); return } if (r.status === "error") return fail() } catch (e) { } }
-  fail();
+const api = q => jsonp(CFG.endpoint + "?" + q);
+function pending() { try { return JSON.parse(localStorage.getItem("wr_pending") || "null") } catch (e) { return null } }
+function setPending(x) { try { x ? localStorage.setItem("wr_pending", JSON.stringify(x)) : localStorage.removeItem("wr_pending") } catch (e) { } }
+const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+function langBtns(l1) {
+  return `<div class="seg">${[["uk", "Українська"], ["ru", "Русский"]].map(([k, n]) => `<button type="button" data-l="${k}" class="${k === l1 ? "on" : ""}">${n}</button>`).join("")}</div>`;
+}
+function bindLang(cb) { $$("[data-l]").forEach(b => b.onclick = () => { $$("[data-l]").forEach(x => x.classList.toggle("on", x === b)); cb(b.dataset.l) }) }
+function welcome() { return `<div class="welcome"><div class="logo">Wort<b>reise</b></div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p></div>` }
+
+function viewRegister(name, l1) {
+  l1 = l1 || L || "uk"; const T = () => UI[l1];
+  const draw = () => {
+    app().innerHTML = welcome() + `<div class="box form"><h1>${T().regT}</h1><p class="mute">${T().regSub}</p>
+     <label>${T().who}<input type="text" id="nm" maxlength="40" autocomplete="name" value="${esc(name || "")}"></label>
+     <label>${T().email}<input type="email" id="em" maxlength="80" autocomplete="email" inputmode="email"></label>
+     <p class="lbl">${T().lang}</p>${langBtns(l1)}
+     <p id="msg" class="msg"></p><button class="main big" id="go">${T().regBtn}</button>
+     <p class="links"><a href="#/login">${T().haveAcc}</a>${profiles().length ? ` · <a href="#/users">${T().profiles}</a>` : ""}</p></div>`;
+    bindLang(k => { name = $("#nm").value; const em = $("#em").value; l1 = k; draw(); $("#em").value = em });
+    $("#go").onclick = async () => {
+      const n = $("#nm").value.trim(), em = $("#em").value.trim(), msg = $("#msg");
+      if (!n) { msg.textContent = T().nameNeed; return }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.textContent = T().emailBad; return }
+      const r = { rid: rid(), name: n, email: em, l1, at: Date.now() };
+      $("#go").disabled = true; msg.textContent = T().sendingReg;
+      try { await fetch(CFG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ token: CFG.token, type: "register", rid: r.rid, name: n, email: em, l1 }) }) }
+      catch (e) { $("#go").disabled = false; msg.textContent = T().net; return }
+      for (let i = 0; i < 6; i++) {
+        await new Promise(z => setTimeout(z, i ? 2000 : 1200));
+        try {
+          const x = await api("reg=" + encodeURIComponent(r.rid));
+          if (x.v !== 6) { $("#go").disabled = false; msg.textContent = T().oldServer; return }
+          if (x.status !== "unknown") { setPending(r); location.hash = "#/"; route(); return }
+        } catch (e) { }
+      }
+      $("#go").disabled = false; msg.textContent = T().net;
+    };
+  };
+  draw();
+}
+function viewLogin() {
+  let l1 = L || "uk"; const T = () => UI[l1];
+  const draw = () => {
+    app().innerHTML = welcome() + `<div class="box form"><h1>${T().loginT}</h1><p class="mute">${T().loginSub}</p>
+     <label>${T().who}<input type="text" id="nm" maxlength="40" autocomplete="name"></label>
+     <label>${T().email}<input type="email" id="em" maxlength="80" autocomplete="email" inputmode="email"></label>
+     <p id="msg" class="msg"></p><button class="main big" id="go">${T().loginBtn}</button>
+     <p class="links"><a href="#/new">${T().regT}</a></p></div>`;
+    $("#go").onclick = async () => {
+      const n = $("#nm").value.trim(), em = $("#em").value.trim(), msg = $("#msg");
+      if (!n || !em) { msg.textContent = T().nameNeed; return }
+      $("#go").disabled = true; msg.textContent = "…";
+      let x; try { x = await api("login=" + encodeURIComponent(em) + "&name=" + encodeURIComponent(n)) } catch (e) { $("#go").disabled = false; msg.textContent = T().net; return }
+      $("#go").disabled = false;
+      if (x.v !== 6) { msg.textContent = T().oldServer; return }
+      if (x.status === "approved") return grant({ rid: x.rid, name: n, email: em, l1: x.l1 === "ru" ? "ru" : "uk" });
+      if (x.status === "pending") { setPending({ rid: x.rid, name: n, email: em, l1: x.l1 === "ru" ? "ru" : "uk", at: Date.now() }); location.hash = "#/"; return route() }
+      msg.textContent = x.status === "rejected" ? T().rejected : T().notFound;
+    };
+  };
+  draw();
+}
+function grant(r) {
+  const ps = profiles(); let p = load(r.name);
+  if (!p) { p = newProfile(r.name, r.l1); ps.push(r.name); saveProfiles(ps) }
+  p.reg = { rid: r.rid, email: r.email, status: "approved", at: Date.now() };
+  useProfile(p); save(); setPending(null); location.hash = "#/hero"; route();
+}
+async function viewWaiting() {
+  const r = pending(), T = UI[r.l1 || "uk"];
+  app().innerHTML = welcome() + `<div class="box form center"><div class="big-ico">✉️</div><h1>${T.waitT}</h1><p>${esc(r.name)} · ${esc(r.email)}</p>
+   <p class="mute">${T.waitTxt}</p><p id="msg" class="msg"></p><button class="main big" id="go">${T.check2}</button>
+   <p class="links"><a href="#" id="chg">${T.change}</a></p></div>`;
+  const check = async quiet => {
+    const msg = $("#msg"); if (!quiet) msg.textContent = "…";
+    try {
+      const x = await api("reg=" + encodeURIComponent(r.rid));
+      if (x.status === "approved") return grant(r);
+      msg.textContent = x.status === "rejected" ? T.rejected : quiet ? "" : T.notYet;
+    } catch (e) { if (!quiet) msg.textContent = T.net }
+  };
+  $("#go").onclick = () => check(false);
+  $("#chg").onclick = e => { e.preventDefault(); setPending(null); location.hash = "#/new"; route() };
+  check(true);
+}
+function viewBlocked() {
+  app().innerHTML = welcome() + `<div class="box form center"><h1>Wortreise</h1><p>${U.rejected}</p><p class="links"><a href="#/users">${U.switchUser}</a></p></div>`;
+}
+let rechecked = false;
+async function recheck() {   // раз за сеанс: доступ могли отозвать
+  if (rechecked || !P || !P.reg || !P.reg.rid) return; rechecked = true;
+  try { const x = await api("reg=" + encodeURIComponent(P.reg.rid)); if (x.v === 6 && x.status === "rejected") { P.reg.status = "rejected"; save(); route() } } catch (e) { }
+}
+
+/* ---------- Главная: одна кнопка ---------- */
+function nextAction() {
+  const due = dueList().length, cur = D.byId[Math.min(750, P.cur)];
+  if (due > 60) return { href: "#/review", label: U.goReview, sub: U.due(due), ico: "🔁" };
+  if (cur && cur.ready) return { href: "#/t/" + cur.id, label: U.go, sub: `${U.topic} ${cur.id} · ${cur.name}`, ico: "▶" };
+  if (due > 0) return { href: "#/review", label: U.goReview, sub: U.due(due), ico: "🔁" };
+  return { href: "#/", label: U.goSoon, sub: "", ico: "⏳", off: true };
+}
+function viewHome() {
+  const h = hero(), c = chr(h.key), a = nextAction(), done = Object.values(P.t).filter(r => r.st === "done").length;
+  const learned = Object.values(P.srs).filter(x => x.b >= 3).length, due = dueList().length, pc = Math.round(done * 100 / 750);
+  app().innerHTML = head() + `<div class="homecard"><div class="avatar">${h.emoji}</div><div><div class="hname">${esc(c[L])}</div><small class="mute">${esc(h.lineName[L])} · ${esc(h.place[L])}</small></div></div>
+   <a class="btn main huge ${a.off ? "off" : ""}" href="${a.href}"><span class="ico">${a.ico}</span><span><b>${a.label}</b>${a.sub ? `<small>${esc(a.sub)}</small>` : ""}</span></a>
+   <div class="progress"><div class="bar"><i style="width:${Math.max(2, pc)}%"></i></div><small class="mute">${done} ${U.ofAll} · ${learned} ${U.lvlWords}</small></div>
+   <nav class="quick"><a href="#/map">🗺️<span>${U.map}</span></a><a href="#/review">🔁<span>${U.review}${due ? ` (${due})` : ""}</span></a><a href="#/diary">📔<span>${U.diary}</span></a><a href="#/me">👤<span>${U.me}</span></a></nav>`;
+  if (Date.now() - (P.lastExport || 0) > 7 * 864e5 && Object.keys(P.srs).length > 30) { P.lastExport = Date.now() - 5 * 864e5; save(); toast(U.remind) }
 }
 
 boot().catch(e => { app().innerHTML = `<div class="box"><h2>⚠️</h2><p>${esc(e.message)}</p></div>` });
