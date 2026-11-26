@@ -49,7 +49,10 @@ const UI = {
     notYet: "Ще не схвалено. Спробуйте трохи пізніше.", rejected: "Доступ не схвалено. Напишіть викладачеві.",
     net: "Немає зв’язку з сервером. Спробуйте ще раз.", oldServer: "Реєстрація ще не ввімкнена на сервері. Напишіть викладачеві.",
     notFound: "Заявку з таким іменем і e-mail не знайдено.", emailBad: "Перевірте e-mail.", change: "Змінити дані",
-    sendingReg: "Надсилаю…", lvlWords: "слів вивчено", ofAll: "з 750"
+    sendingReg: "Надсилаю…", lvlWords: "слів вивчено", ofAll: "з 750",
+    startT: "Почнімо!", startSub: "Введіть ім’я або нік. Під ним зберігається ваш прогрес — на будь-якому пристрої.", nick: "Ім’я або нік",
+    contAs: "Продовжити як:", itsMe: "Так, це я", otherNick: "Ні, інший нік", synced: "Прогрес оновлено з іншого пристрою",
+    found2: (n, d, x) => `Знайдено прогрес «${esc(n)}»: ${d} тем, ⭐ ${x}. Це ви?`
   },
   ru: {
     hello: "Привет! Это Wortreise — путешествие по словам курса «10 Stufen».", who: "Как тебя зовут?", lang: "Язык подсказок", create: "Начать",
@@ -84,7 +87,10 @@ const UI = {
     notYet: "Ещё не одобрено. Попробуйте чуть позже.", rejected: "Доступ не одобрен. Напишите преподавателю.",
     net: "Нет связи с сервером. Попробуйте ещё раз.", oldServer: "Регистрация ещё не включена на сервере. Напишите преподавателю.",
     notFound: "Заявка с таким именем и e-mail не найдена.", emailBad: "Проверьте e-mail.", change: "Изменить данные",
-    sendingReg: "Отправляю…", lvlWords: "слов выучено", ofAll: "из 750"
+    sendingReg: "Отправляю…", lvlWords: "слов выучено", ofAll: "из 750",
+    startT: "Начнём!", startSub: "Введите имя или ник. Под ним сохраняется ваш прогресс — на любом устройстве.", nick: "Имя или ник",
+    contAs: "Продолжить как:", itsMe: "Да, это я", otherNick: "Нет, другой ник", synced: "Прогресс обновлён с другого устройства",
+    found2: (n, d, x) => `Найден прогресс «${esc(n)}»: ${d} тем, ⭐ ${x}. Это вы?`
   }
 };
 let L = "uk", U = UI.uk;
@@ -95,7 +101,7 @@ async function getJSON(p) { const r = await fetch(p, { cache: "no-cache" }); if 
 async function boot() {
   [D.meta, D.heroes, D.st] = await Promise.all(["data/meta.json", "data/heroes.json", "data/stufen.json"].map(getJSON));
   D.byId = {}; D.meta.topics.forEach(t => D.byId[t.id] = t);
-  window.addEventListener("hashchange", route); route(); recheck();
+  window.addEventListener("hashchange", route); route(); cloudPull();
 }
 async function topic(id) {
   if (D.topics[id]) return D.topics[id];
@@ -317,17 +323,14 @@ function route() {
   const hsh = location.hash.replace(/^#/, "") || "/", [path, qs] = hsh.split("?"), parts = path.split("/").filter(Boolean);
   const q = new URLSearchParams(qs || "");
   if (!P) { const cur = localStorage.getItem("wr_cur"), p = cur && load(cur); if (p) useProfile(p) }
-  if (parts[0] === "new") { P = null; return viewRegister() }
-  if (parts[0] === "login") { P = null; return viewLogin() }
-  if (!P) return pending() ? viewWaiting() : profiles().length && parts[0] !== "reg" ? viewProfiles() : viewRegister();
-  if (!P.reg || P.reg.status !== "approved") return P.reg && P.reg.status === "rejected" ? viewBlocked() : viewRegister(P.name, P.l1);
+  if (parts[0] === "users" || parts[0] === "new") { P = null; try { localStorage.removeItem("wr_cur") } catch (e) { } }
+  if (!P) return viewStart();
   if (q.get("review")) { importWords(q.get("review").split(",")); toast(U.hwLink); history.replaceState(null, "", "#/" + parts.join("/")) }
   if (!P.hero || parts[0] === "hero") return viewHero();
   if (parts[0] === "t") return viewTopic(+parts[1]);
   if (parts[0] === "review") return viewReview(parts[1], +parts[2]);
   if (parts[0] === "diary") return viewDiary();
   if (parts[0] === "me") return viewMe();
-  if (parts[0] === "users") { P = null; localStorage.removeItem("wr_cur"); return viewProfiles() }
   if (parts[0] === "map") return viewMap();
   return viewHome();
 }
@@ -357,7 +360,7 @@ function viewHero() {
   $$("[data-h]").forEach(b => b.onclick = () => {
     P.hero = b.dataset.h; const st = $("#st");
     if (st) { const n = Math.max(1, Math.min(750, +st.value || 1)); P.start = n; P.cur = n; for (let i = 1; i < n; i++) P.t[i] = { st: "skip" } }
-    save(); location.hash = "#/";
+    save(); cloudSave(); location.hash = "#/";
   });
 }
 const tStatus = id => { const r = P.t[id]; if (r && r.st === "done") return "done"; if (r && r.st === "skip") return "skip"; if (id === P.cur) return "cur"; return id < P.cur ? "open" : "lock" };
@@ -558,7 +561,7 @@ function finish(E) {
   P.scores.push(pc); P.scores = P.scores.slice(-6);
   P.log.push({ id: t.id, name: t.name, at: Date.now(), d: E.dk, s: pc, ok, all, nw: E.plan.nw.length + E.plan.back.length, bad, min: Math.round((Date.now() - E.t0) / 6e4), scene: E.scene });
   P.log = P.log.slice(-200);
-  checkBadges(); save();
+  checkBadges(); save(); cloudSave();
   const s2 = P.scores.slice(-2), sug = s2.length === 2 && s2.every(x => x < 60) && E.dk !== "easy" ? "easy" : s2.length === 2 && s2.every(x => x > 95) && E.dk !== "harder" ? "up" : null;
   const nextId = t.id + 1, nx = D.byId[nextId];
   app().innerHTML = head() + stepsBar(5) + `<div class="box"><h1>🎉 ${U.done}</h1><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div><div><b>${E.plan.nw.length + E.plan.back.length}</b>${U.newWords}</div></div>
@@ -581,7 +584,7 @@ async function chestRun(E) {
     say(it.w); await new Promise(r => $("#nx").onclick = r);
   }
   const r = await runDeck(host, shuffle(list).map(k => makeCard(pickType(word(k), p, "rec", null), word(k), p)), p, (c, ok) => { if (c.k) learnNew(c.k, ok, t.id) });
-  const xp = Math.round(r.ok * D.st.xp.chest * D.st.diff.find(d => d.key === E.dk).xp); P.xp += xp; badge("chest", L === "uk" ? "Відкрита скриня" : "Открытый сундук"); save();
+  const xp = Math.round(r.ok * D.st.xp.chest * D.st.diff.find(d => d.key === E.dk).xp); P.xp += xp; badge("chest", L === "uk" ? "Відкрита скриня" : "Открытый сундук"); save(); cloudSave();
   E.plan.chest = E.plan.chest.slice(12);
   host.innerHTML = `<div class="box"><h2>🧰 +${xp} ${U.xp}</h2><p>${r.ok}/${r.all} ${U.score}</p><a class="btn main big" href="${nextAction().href}">${U.next} ▶</a></div>`;
 }
@@ -604,7 +607,7 @@ async function viewReview(kind, n) {
   if (kind === "fest") { P.t["f" + n] = { s: pc, at: Date.now() }; badge("f" + n, title.split(":")[0] + " " + n) }
   if (kind === "exam") { if (pc >= need) { P.t["x" + n] = { s: pc, at: Date.now() }; badge("x" + n, U.exam(n)); msg = U.examPass } else msg = U.examFail }
   P.log.push({ id: kind || "review", name: title, at: Date.now(), s: pc, ok: r.ok, all: r.all, bad: r.bad, nw: 0 }); P.log = P.log.slice(-200);
-  checkBadges(); save();
+  checkBadges(); save(); cloudSave();
   $("#host").innerHTML = `<div class="box"><h2>${U.reviewDone}</h2><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div></div>${msg ? `<p><b>${msg}</b></p>` : ""}${r.bad.length ? `<p class="mute">${U.wrong} ${r.bad.map(esc).join(", ")}</p>` : ""}
    <a class="btn main big" href="${nextAction().href}">${U.next} ▶</a></div>`;
 }
@@ -661,89 +664,64 @@ function langBtns(l1) {
 function bindLang(cb) { $$("[data-l]").forEach(b => b.onclick = () => { $$("[data-l]").forEach(x => x.classList.toggle("on", x === b)); cb(b.dataset.l) }) }
 function welcome() { return `<div class="welcome"><div class="logo">Wort<b>reise</b></div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p></div>` }
 
-function viewRegister(name, l1) {
-  l1 = l1 || L || "uk"; const T = () => UI[l1];
-  const draw = () => {
-    app().innerHTML = welcome() + `<div class="box form"><h1>${T().regT}</h1><p class="mute">${T().regSub}</p>
-     <label>${T().who}<input type="text" id="nm" maxlength="40" autocomplete="name" value="${esc(name || "")}"></label>
-     <label>${T().email}<input type="email" id="em" maxlength="80" autocomplete="email" inputmode="email"></label>
-     <p class="lbl">${T().lang}</p>${langBtns(l1)}
-     <p id="msg" class="msg"></p><button class="main big" id="go">${T().regBtn}</button>
-     <p class="links"><a href="#/login">${T().haveAcc}</a>${profiles().length ? ` · <a href="#/users">${T().profiles}</a>` : ""}</p></div>`;
-    bindLang(k => { name = $("#nm").value; const em = $("#em").value; l1 = k; draw(); $("#em").value = em });
-    $("#go").onclick = async () => {
-      const n = $("#nm").value.trim(), em = $("#em").value.trim(), msg = $("#msg");
-      if (!n) { msg.textContent = T().nameNeed; return }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.textContent = T().emailBad; return }
-      const r = { rid: rid(), name: n, email: em, l1, at: Date.now() };
-      $("#go").disabled = true; msg.textContent = T().sendingReg;
-      try { await fetch(CFG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ token: CFG.token, type: "register", rid: r.rid, name: n, email: em, l1 }) }) }
-      catch (e) { $("#go").disabled = false; msg.textContent = T().net; return }
-      for (let i = 0; i < 6; i++) {
-        await new Promise(z => setTimeout(z, i ? 2000 : 1200));
-        try {
-          const x = await api("reg=" + encodeURIComponent(r.rid));
-          if (x.v !== 6) { $("#go").disabled = false; msg.textContent = T().oldServer; return }
-          if (x.status !== "unknown") { setPending(r); location.hash = "#/"; route(); return }
-        } catch (e) { }
-      }
-      $("#go").disabled = false; msg.textContent = T().net;
-    };
-  };
-  draw();
-}
-function viewLogin() {
+/* ---------- Вход по имени или нику; прогресс — на устройстве и в облаке (скрипт Google v7) ---------- */
+const nickNorm = s => String(s || "").trim().replace(/\s+/g, " ").slice(0, 40);
+function viewStart() {
   let l1 = L || "uk"; const T = () => UI[l1];
+  const ps = profiles();
   const draw = () => {
-    app().innerHTML = welcome() + `<div class="box form"><h1>${T().loginT}</h1><p class="mute">${T().loginSub}</p>
-     <label>${T().who}<input type="text" id="nm" maxlength="40" autocomplete="name"></label>
-     <label>${T().email}<input type="email" id="em" maxlength="80" autocomplete="email" inputmode="email"></label>
-     <p id="msg" class="msg"></p><button class="main big" id="go">${T().loginBtn}</button>
-     <p class="links"><a href="#/new">${T().regT}</a></p></div>`;
+    app().innerHTML = welcome() + (ps.length ? `<div class="box form"><p class="lbl">${T().contAs}</p><div class="plist">${ps.map(n => `<button class="main" data-p="${esc(n)}">▶ ${esc(n)}</button>`).join("")}</div></div>` : "") +
+     `<div class="box form"><h1>${ps.length ? T().newp : T().startT}</h1><p class="mute">${T().startSub}</p>
+     <label>${T().nick}<input type="text" id="nm" maxlength="40" autocomplete="nickname" autocapitalize="words"></label>
+     <p class="lbl">${T().lang}</p>${langBtns(l1)}
+     <p id="msg" class="msg"></p><button class="main big" id="go">${T().create}</button></div>`;
+    bindLang(k => { const v = $("#nm").value; l1 = k; draw(); $("#nm").value = v });
+    $$("[data-p]").forEach(b => b.onclick = () => { const p = load(b.dataset.p); if (p) { useProfile(p); save(); location.hash = "#/"; route(); cloudPull() } });
+    $("#nm").onkeydown = e => { if (e.key === "Enter") $("#go").click() };
     $("#go").onclick = async () => {
-      const n = $("#nm").value.trim(), em = $("#em").value.trim(), msg = $("#msg");
-      if (!n || !em) { msg.textContent = T().nameNeed; return }
+      const n = nickNorm($("#nm").value), msg = $("#msg");
+      if (!n) { msg.textContent = T().nameNeed; return }
+      const local = load(n);
+      if (local) { useProfile(local); save(); location.hash = "#/"; route(); return cloudPull() }
       $("#go").disabled = true; msg.textContent = "…";
-      let x; try { x = await api("login=" + encodeURIComponent(em) + "&name=" + encodeURIComponent(n)) } catch (e) { $("#go").disabled = false; msg.textContent = T().net; return }
-      $("#go").disabled = false;
-      if (x.v !== 6) { msg.textContent = T().oldServer; return }
-      if (x.status === "approved") return grant({ rid: x.rid, name: n, email: em, l1: x.l1 === "ru" ? "ru" : "uk" });
-      if (x.status === "pending") { setPending({ rid: x.rid, name: n, email: em, l1: x.l1 === "ru" ? "ru" : "uk", at: Date.now() }); location.hash = "#/"; return route() }
-      msg.textContent = x.status === "rejected" ? T().rejected : T().notFound;
+      let srv = null; try { srv = await api("load=" + encodeURIComponent(n)) } catch (e) { }
+      $("#go").disabled = false; msg.textContent = "";
+      if (srv && srv.v === 7 && srv.found) {
+        let p = null; try { p = JSON.parse(srv.data) } catch (e) { }
+        if (p && p.srs) {
+          const done = Object.values(p.t || {}).filter(r => r.st === "done").length;
+          msg.innerHTML = `<span class="found">${T().found2(n, done, p.xp || 0)}</span><span class="row" style="margin-top:8px;justify-content:center"><button class="main" id="yes">${T().itsMe}</button><button id="no">${T().otherNick}</button></span>`;
+          $("#yes").onclick = () => { p.name = n; addProfile(n); useProfile(p); save(); location.hash = "#/"; route() };
+          $("#no").onclick = () => { msg.textContent = ""; $("#nm").value = ""; $("#nm").focus() };
+          return;
+        }
+      }
+      const p = newProfile(n, l1); addProfile(n); useProfile(p); save(); cloudSave(true); location.hash = "#/hero"; route();
     };
   };
   draw();
 }
-function grant(r) {
-  const ps = profiles(); let p = load(r.name);
-  if (!p) { p = newProfile(r.name, r.l1); ps.push(r.name); saveProfiles(ps) }
-  p.reg = { rid: r.rid, email: r.email, status: "approved", at: Date.now() };
-  useProfile(p); save(); setPending(null); location.hash = "#/hero"; route();
-}
-async function viewWaiting() {
-  const r = pending(), T = UI[r.l1 || "uk"];
-  app().innerHTML = welcome() + `<div class="box form center"><div class="big-ico">✉️</div><h1>${T.waitT}</h1><p>${esc(r.name)} · ${esc(r.email)}</p>
-   <p class="mute">${T.waitTxt}</p><p id="msg" class="msg"></p><button class="main big" id="go">${T.check2}</button>
-   <p class="links"><a href="#" id="chg">${T.change}</a></p></div>`;
-  const check = async quiet => {
-    const msg = $("#msg"); if (!quiet) msg.textContent = "…";
-    try {
-      const x = await api("reg=" + encodeURIComponent(r.rid));
-      if (x.status === "approved") return grant(r);
-      msg.textContent = x.status === "rejected" ? T.rejected : quiet ? "" : T.notYet;
-    } catch (e) { if (!quiet) msg.textContent = T.net }
+function addProfile(n) { const ps = profiles(); if (!ps.includes(n)) { ps.push(n); saveProfiles(ps) } }
+
+let saveTimer = null, pulled = false;
+function cloudSave(now) {   // после эпизода, повторения, выбора героя; без ожидания ответа
+  if (!P) return; clearTimeout(saveTimer);
+  const go = () => {
+    P.upd = Date.now(); save();
+    const done = Object.values(P.t).filter(r => r.st === "done").length, learned = Object.values(P.srs).filter(x => x.b >= 3).length;
+    const body = JSON.stringify({ token: CFG.token, type: "save", nick: P.name, data: JSON.stringify(P), stat: { cur: P.cur, done, learned, xp: P.xp, hero: P.hero || "", l1: P.l1 } });
+    try { fetch(CFG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body }).catch(() => { }) } catch (e) { }
   };
-  $("#go").onclick = () => check(false);
-  $("#chg").onclick = e => { e.preventDefault(); setPending(null); location.hash = "#/new"; route() };
-  check(true);
+  now ? go() : (saveTimer = setTimeout(go, 1500));
 }
-function viewBlocked() {
-  app().innerHTML = welcome() + `<div class="box form center"><h1>Wortreise</h1><p>${U.rejected}</p><p class="links"><a href="#/users">${U.switchUser}</a></p></div>`;
-}
-let rechecked = false;
-async function recheck() {   // раз за сеанс: доступ могли отозвать
-  if (rechecked || !P || !P.reg || !P.reg.rid) return; rechecked = true;
-  try { const x = await api("reg=" + encodeURIComponent(P.reg.rid)); if (x.v === 6 && x.status === "rejected") { P.reg.status = "rejected"; save(); route() } } catch (e) { }
+async function cloudPull() {   // раз за сеанс: если в облаке прогресс новее (с другого устройства) — берём его
+  if (pulled || !P) return; pulled = true;
+  try {
+    const x = await api("load=" + encodeURIComponent(P.name));
+    if (!x || x.v !== 7 || !x.found) return;
+    const p = JSON.parse(x.data);
+    if (p && p.srs && (p.upd || 0) > (P.upd || 0) + 1000) { p.name = P.name; useProfile(p); save(); toast(U.synced); route() }
+  } catch (e) { }
 }
 
 /* ---------- Главная: одна кнопка ---------- */
