@@ -243,7 +243,7 @@ function feedback(c, ok, p) {
 /* Показ карточки; resolve({ok}) по первой попытке */
 function runCard(host, c, p, meta) {
   return new Promise(res => {
-    host.innerHTML = cardHTML(c, p, meta); window.__card = c;
+    host.innerHTML = cardHTML(c, p, meta); try { if (localStorage.getItem('wr_debug')) window.__card = c } catch (e) { }
     if (c.auto) setTimeout(() => say(c.auto), 250);
     if (P.nt[c.type] == null) P.nt[c.type] = 0;
     const done = ok => {
