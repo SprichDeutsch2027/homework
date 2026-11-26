@@ -1,0 +1,36 @@
+{"profiles":[
+{"niveau":"A1.1","from":1,"add":["de2l1","l12de","img2de"],"opts":3,"l1":"always","review":8,"scene":"cloud","ctx":"3–6 слів, Präsens"},
+{"niveau":"A1.2","from":26,"add":["audio"],"opts":3,"l1":"always","review":10,"scene":"cloud","ctx":"4–7, модальні"},
+{"niveau":"A2.1","from":51,"add":["article"],"opts":3,"l1":"after","review":12,"scene":"cloud","ctx":"5–9, Perfekt"},
+{"niveau":"A2.2","from":76,"add":["spell"],"opts":4,"l1":"after","review":15,"scene":"build","ctx":"6–11, weil/dass"},
+{"niveau":"B1.1","from":101,"add":["me"],"opts":4,"l1":"after","review":15,"scene":"build","ctx":"6–11, Präteritum"},
+{"niveau":"B1.2","from":126,"add":[],"opts":4,"l1":"after","review":15,"scene":"build","ctx":"6–11"},
+{"niveau":"B2.1","from":151,"add":["cloze"],"opts":4,"l1":"tap","review":18,"scene":"build","ctx":"8–14, Passiv"},
+{"niveau":"B2.2","from":226,"add":["mecloze"],"opts":4,"l1":"tap","review":20,"scene":"build","ctx":"10–16, Konjunktiv II"},
+{"niveau":"C1.1","from":301,"add":["def2de"],"opts":5,"l1":"def","review":22,"scene":"choose","ctx":"12–18, Nominalstil"},
+{"niveau":"C1.2","from":376,"add":[],"opts":5,"l1":"def","review":22,"scene":"choose","ctx":"12–18, Konjunktiv I"},
+{"niveau":"C2","from":451,"add":["odd"],"opts":5,"l1":"dict","review":25,"scene":"choose","ctx":"15–22, ідіоматика"},
+{"niveau":"C2+","from":601,"add":[],"opts":5,"l1":"dict","review":25,"scene":"choose","ctx":"до 25, регістри"}
+],
+"names":{
+ "de2l1":{"uk":"Що це означає?","ru":"Что это значит?"},
+ "l12de":{"uk":"Як це німецькою?","ru":"Как это по-немецки?"},
+ "img2de":{"uk":"Що на картинці?","ru":"Что на картинке?"},
+ "audio":{"uk":"Послухай і обери","ru":"Послушай и выбери"},
+ "article":{"uk":"der, die чи das?","ru":"der, die или das?"},
+ "spell":{"uk":"Збери слово з літер","ru":"Собери слово из букв"},
+ "me":{"uk":"Твоя репліка: обери слово","ru":"Твоя реплика: выбери слово"},
+ "cloze":{"uk":"Впиши слово в речення","ru":"Впиши слово в предложение"},
+ "mecloze":{"uk":"Впиши слово у свою репліку","ru":"Впиши слово в свою реплику"},
+ "def2de":{"uk":"Яке слово за тлумаченням?","ru":"Какое слово по толкованию?"},
+ "odd":{"uk":"Знайди зайве","ru":"Найди лишнее"}
+},
+"xp":{"card":10,"first":5,"episode":50,"chest":5,"review":6},
+"diff":[
+ {"key":"easy","uk":"Легше","ru":"Легче","shift":-1,"xp":0.8},
+ {"key":"course","uk":"Як у курсі","ru":"Как в курсе","shift":0,"xp":1},
+ {"key":"hard","uk":"Складніше","ru":"Сложнее","shift":1,"xp":1.3},
+ {"key":"harder","uk":"Ще складніше","ru":"Ещё сложнее","shift":2,"xp":1.6}
+],
+"box":[{"d":0,"e":0},{"d":1,"e":1},{"d":3,"e":3},{"d":7,"e":8},{"d":21,"e":20},{"d":60,"e":50}]
+}

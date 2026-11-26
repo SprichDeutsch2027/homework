@@ -1,0 +1,1071 @@
+{
+"heroes": [
+{
+"key": "jana",
+"line": "01",
+"g": "f",
+"emoji": "🏠",
+"lineName": {
+"uk": "Сім’я",
+"ru": "Семья"
+},
+"place": {
+"uk": "Lindenstraße 12",
+"ru": "Lindenstraße 12"
+}
+},
+{
+"key": "selin",
+"line": "02",
+"g": "f",
+"emoji": "🔑",
+"lineName": {
+"uk": "Житло й дім",
+"ru": "Жильё и дом"
+},
+"place": {
+"uk": "Lindenstraße 12",
+"ru": "Lindenstraße 12"
+}
+},
+{
+"key": "marco",
+"line": "03",
+"g": "m",
+"emoji": "🍲",
+"lineName": {
+"uk": "Їжа й кухня",
+"ru": "Еда и кухня"
+},
+"place": {
+"uk": "бістро «Linde»",
+"ru": "бистро «Linde»"
+}
+},
+{
+"key": "klaus",
+"line": "04",
+"g": "m",
+"emoji": "🩺",
+"lineName": {
+"uk": "Здоров’я",
+"ru": "Здоровье"
+},
+"place": {
+"uk": "практика доктора Хаддад",
+"ru": "практика доктора Хаддад"
+}
+},
+{
+"key": "nora",
+"line": "05",
+"g": "f",
+"emoji": "💬",
+"lineName": {
+"uk": "Почуття й психіка",
+"ru": "Чувства и психика"
+},
+"place": {
+"uk": "кав’ярня біля річки",
+"ru": "кафе у реки"
+}
+},
+{
+"key": "paul",
+"line": "06",
+"g": "m",
+"emoji": "💼",
+"lineName": {
+"uk": "Робота й кар’єра",
+"ru": "Работа и карьера"
+},
+"place": {
+"uk": "офіс фірми Келлер",
+"ru": "офис фирмы Келлер"
+}
+},
+{
+"key": "max",
+"line": "07",
+"g": "m",
+"emoji": "💶",
+"lineName": {
+"uk": "Гроші й покупки",
+"ru": "Деньги и покупки"
+},
+"place": {
+"uk": "банк і ринок",
+"ru": "банк и рынок"
+}
+},
+{
+"key": "lea",
+"line": "08",
+"g": "f",
+"emoji": "🎒",
+"lineName": {
+"uk": "Школа й навчання",
+"ru": "Школа и учёба"
+},
+"place": {
+"uk": "школа на Шульштрасе",
+"ru": "школа на Шульштрассе"
+}
+},
+{
+"key": "kofi",
+"line": "09",
+"g": "m",
+"emoji": "🔬",
+"lineName": {
+"uk": "Наука",
+"ru": "Наука"
+},
+"place": {
+"uk": "університет",
+"ru": "университет"
+}
+},
+{
+"key": "sophie",
+"line": "10",
+"g": "f",
+"emoji": "💻",
+"lineName": {
+"uk": "Техніка й цифрове",
+"ru": "Техника и цифровое"
+},
+"place": {
+"uk": "айті-майстерня Софі",
+"ru": "айти-мастерская Софи"
+}
+},
+{
+"key": "katja",
+"line": "11",
+"g": "f",
+"emoji": "🐕",
+"lineName": {
+"uk": "Тварини й природа",
+"ru": "Животные и природа"
+},
+"place": {
+"uk": "ветклініка й ліс",
+"ru": "ветклиника и лес"
+}
+},
+{
+"key": "malik",
+"line": "12",
+"g": "m",
+"emoji": "🌱",
+"lineName": {
+"uk": "Екологія й клімат",
+"ru": "Экология и климат"
+},
+"place": {
+"uk": "сусідський город",
+"ru": "соседский огород"
+}
+},
+{
+"key": "clara",
+"line": "13",
+"g": "f",
+"emoji": "🚆",
+"lineName": {
+"uk": "Подорожі й транспорт",
+"ru": "Путешествия и транспорт"
+},
+"place": {
+"uk": "вокзал",
+"ru": "вокзал"
+}
+},
+{
+"key": "tim",
+"line": "14",
+"g": "m",
+"emoji": "⚽",
+"lineName": {
+"uk": "Дозвілля й спорт",
+"ru": "Досуг и спорт"
+},
+"place": {
+"uk": "спортзал і парк",
+"ru": "спортзал и парк"
+}
+},
+{
+"key": "mara",
+"line": "15",
+"g": "f",
+"emoji": "📰",
+"lineName": {
+"uk": "Медіа й зв’язок",
+"ru": "Медиа и связь"
+},
+"place": {
+"uk": "редакція газети",
+"ru": "редакция газеты"
+}
+},
+{
+"key": "jan",
+"line": "16",
+"g": "m",
+"emoji": "🏛️",
+"lineName": {
+"uk": "Політика й держава",
+"ru": "Политика и государство"
+},
+"place": {
+"uk": "ратуша",
+"ru": "ратуша"
+}
+},
+{
+"key": "yasmin",
+"line": "17",
+"g": "f",
+"emoji": "⚖️",
+"lineName": {
+"uk": "Право й порядок",
+"ru": "Право и порядок"
+},
+"place": {
+"uk": "суд і поліція",
+"ru": "суд и полиция"
+}
+},
+{
+"key": "amir",
+"line": "18",
+"g": "m",
+"emoji": "🤝",
+"lineName": {
+"uk": "Суспільство й цінності",
+"ru": "Общество и ценности"
+},
+"place": {
+"uk": "«Treffpunkt Nord»",
+"ru": "«Treffpunkt Nord»"
+}
+},
+{
+"key": "emma",
+"line": "19",
+"g": "f",
+"emoji": "🏺",
+"lineName": {
+"uk": "Історія",
+"ru": "История"
+},
+"place": {
+"uk": "міський музей",
+"ru": "городской музей"
+}
+},
+{
+"key": "ella",
+"line": "20",
+"g": "f",
+"emoji": "🎨",
+"lineName": {
+"uk": "Мистецтво й музика",
+"ru": "Искусство и музыка"
+},
+"place": {
+"uk": "майстерня й сцена",
+"ru": "мастерская и сцена"
+}
+},
+{
+"key": "felix",
+"line": "21",
+"g": "m",
+"emoji": "📚",
+"lineName": {
+"uk": "Література й кіно",
+"ru": "Литература и кино"
+},
+"place": {
+"uk": "книгарня Іди й кіно",
+"ru": "книжный Иды и кино"
+}
+},
+{
+"key": "yusuf",
+"line": "22",
+"g": "m",
+"emoji": "🕯️",
+"lineName": {
+"uk": "Релігія й філософія",
+"ru": "Религия и философия"
+},
+"place": {
+"uk": "церква й бібліотека",
+"ru": "церковь и библиотека"
+}
+},
+{
+"key": "hannah",
+"line": "23",
+"g": "f",
+"emoji": "🏔️",
+"lineName": {
+"uk": "Регіони D-A-CH",
+"ru": "Регионы D-A-CH"
+},
+"place": {
+"uk": "дорога: Відень, Цюрих, Гамбург",
+"ru": "дорога: Вена, Цюрих, Гамбург"
+}
+},
+{
+"key": "jule",
+"line": "24",
+"g": "f",
+"emoji": "🪚",
+"lineName": {
+"uk": "Ремесло й виробництво",
+"ru": "Ремесло и производство"
+},
+"place": {
+"uk": "столярня майстра Вернера",
+"ru": "столярная мастерская Вернера"
+}
+},
+{
+"key": "vanessa",
+"line": "25",
+"g": "f",
+"emoji": "✂️",
+"lineName": {
+"uk": "Зовнішність, стиль, речі",
+"ru": "Внешность, стиль, вещи"
+},
+"place": {
+"uk": "салон «Schnittpunkt»",
+"ru": "салон «Schnittpunkt»"
+}
+}
+],
+"chars": {
+"jana": {
+"key": "jana",
+"de": "Jana",
+"uk": "Яна",
+"ru": "Яна",
+"g": "f",
+"age": 38,
+"role": {
+"uk": "мама Лілли й Бена, живе на Lindenstraße 12",
+"ru": "мама Лилли и Бена, живёт на Lindenstraße 12"
+},
+"card": "Jana, 38, woman with a red bob haircut, green cardigan"
+},
+"tom": {
+"key": "tom",
+"de": "Tom",
+"uk": "Том",
+"ru": "Том",
+"g": "m",
+"age": 40,
+"role": {
+"uk": "чоловік Яни",
+"ru": "муж Яны"
+},
+"card": "Tom, 40, man with a short brown beard and round glasses, navy hoodie"
+},
+"lilli": {
+"key": "lilli",
+"de": "Lilli",
+"uk": "Ліллі",
+"ru": "Лилли",
+"g": "f",
+"age": 9,
+"role": {
+"uk": "донька Яни й Тома",
+"ru": "дочь Яны и Тома"
+},
+"card": "Lilli, 9, girl with two blond braids, yellow raincoat"
+},
+"ben": {
+"key": "ben",
+"de": "Ben",
+"uk": "Бен",
+"ru": "Бен",
+"g": "m",
+"age": 14,
+"role": {
+"uk": "син Яни й Тома",
+"ru": "сын Яны и Тома"
+},
+"card": "Ben, 14, boy with dark curly hair, orange hoodie"
+},
+"gisela": {
+"key": "gisela",
+"de": "Oma Gisela",
+"uk": "бабуся Гізела",
+"ru": "бабушка Гизела",
+"g": "f",
+"age": 72,
+"role": {
+"uk": "бабуся Беккерів",
+"ru": "бабушка Беккеров"
+},
+"card": "Oma Gisela, 72, woman with short white hair and a purple scarf"
+},
+"selin": {
+"key": "selin",
+"de": "Selin",
+"uk": "Селін",
+"ru": "Селин",
+"g": "f",
+"age": 29,
+"role": {
+"uk": "нова мешканка Lindenstraße 12, працює у відділі кадрів",
+"ru": "новая жиличка Lindenstraße 12, работает в отделе кадров"
+},
+"card": "Selin, 29, woman with a long black ponytail, mustard jacket"
+},
+"albrecht": {
+"key": "albrecht",
+"de": "Herr Albrecht",
+"uk": "пан Альбрехт",
+"ru": "господин Альбрехт",
+"g": "m",
+"age": 66,
+"role": {
+"uk": "доглядач будинку",
+"ru": "смотритель дома"
+},
+"card": "Herr Albrecht, 66, house caretaker with a grey moustache, brown vest and a key ring"
+},
+"marco": {
+"key": "marco",
+"de": "Marco",
+"uk": "Марко",
+"ru": "Марко",
+"g": "m",
+"age": 35,
+"role": {
+"uk": "кухар бістро «Linde»",
+"ru": "повар бистро «Linde»"
+},
+"card": "Marco, 35, cook with dark hair, white chef jacket and a red bandana"
+},
+"anna": {
+"key": "anna",
+"de": "Anna",
+"uk": "Анна",
+"ru": "Анна",
+"g": "f",
+"age": 30,
+"role": {
+"uk": "пекарка",
+"ru": "пекарь"
+},
+"card": "Anna, 30, baker with a blond bun and a flour-dusted beige apron"
+},
+"haddad": {
+"key": "haddad",
+"de": "Dr. Haddad",
+"uk": "лікарка Хаддад",
+"ru": "доктор Хаддад",
+"g": "f",
+"age": 45,
+"role": {
+"uk": "сімейна лікарка",
+"ru": "семейный врач"
+},
+"card": "Dr. Leila Haddad, 45, family doctor with dark hair in a bun, white coat, teal stethoscope"
+},
+"klaus": {
+"key": "klaus",
+"de": "Klaus",
+"uk": "Клаус",
+"ru": "Клаус",
+"g": "m",
+"age": 60,
+"role": {
+"uk": "пацієнт доктора Хаддад, шахіст",
+"ru": "пациент доктора Хаддад, шахматист"
+},
+"card": "Klaus, 60, bald man with round glasses and a blue checked shirt"
+},
+"nora": {
+"key": "nora",
+"de": "Nora",
+"uk": "Нора",
+"ru": "Нора",
+"g": "f",
+"age": 26,
+"role": {
+"uk": "найкраща подруга Селін",
+"ru": "лучшая подруга Селин"
+},
+"card": "Nora, 26, woman with short blue-dyed hair, oversized grey sweater, small notebook"
+},
+"jonas": {
+"key": "jonas",
+"de": "Jonas",
+"uk": "Йонас",
+"ru": "Йонас",
+"g": "m",
+"age": 28,
+"role": {
+"uk": "друг Нори",
+"ru": "друг Норы"
+},
+"card": "Jonas, 28, man with messy blond hair, denim jacket"
+},
+"paul": {
+"key": "paul",
+"de": "Paul",
+"uk": "Пауль",
+"ru": "Пауль",
+"g": "m",
+"age": 32,
+"role": {
+"uk": "офісний працівник у фірмі доктора Келлер",
+"ru": "офисный сотрудник в фирме доктора Келлер"
+},
+"card": "Paul, 32, office worker, slim man in light blue shirt and dark trousers"
+},
+"keller": {
+"key": "keller",
+"de": "Dr. Keller",
+"uk": "доктор Келлер",
+"ru": "доктор Келлер",
+"g": "f",
+"age": 52,
+"role": {
+"uk": "керівниця фірми",
+"ru": "руководитель фирмы"
+},
+"card": "Dr. Keller, 52, boss with a silver pixie cut and black blazer"
+},
+"emre": {
+"key": "emre",
+"de": "Emre",
+"uk": "Емре",
+"ru": "Эмре",
+"g": "m",
+"age": 19,
+"role": {
+"uk": "учень-практикант",
+"ru": "практикант"
+},
+"card": "Emre, 19, apprentice with a grey cap and dark blue work overalls"
+},
+"lisa": {
+"key": "lisa",
+"de": "Lisa",
+"uk": "Ліза",
+"ru": "Лиза",
+"g": "f",
+"age": 34,
+"role": {
+"uk": "банківська консультантка, сестра Яни",
+"ru": "консультант в банке, сестра Яны"
+},
+"card": "Lisa, 34, bank adviser with a brown ponytail and burgundy blazer (Jana's sister)"
+},
+"max": {
+"key": "max",
+"de": "Max",
+"uk": "Макс",
+"ru": "Макс",
+"g": "m",
+"age": 24,
+"role": {
+"uk": "студент",
+"ru": "студент"
+},
+"card": "Max, 24, student with a knitted beanie and a worn green parka"
+},
+"yilmaz": {
+"key": "yilmaz",
+"de": "Herr Yılmaz",
+"uk": "пан Йилмаз",
+"ru": "господин Йылмаз",
+"g": "m",
+"age": 42,
+"role": {
+"uk": "вчитель",
+"ru": "учитель"
+},
+"card": "Herr Yılmaz, 42, teacher with a short black beard and a tweed jacket"
+},
+"lea": {
+"key": "lea",
+"de": "Lea",
+"uk": "Лея",
+"ru": "Лея",
+"g": "f",
+"age": 12,
+"role": {
+"uk": "школярка з класу пана Йилмаза",
+"ru": "школьница из класса господина Йылмаза"
+},
+"card": "Lea, 12, girl with glasses and a pink backpack"
+},
+"finn": {
+"key": "finn",
+"de": "Finn",
+"uk": "Фінн",
+"ru": "Финн",
+"g": "m",
+"age": 12,
+"role": {
+"uk": "однокласник Леї",
+"ru": "одноклассник Леи"
+},
+"card": "Finn, 12, freckled boy with a green T-shirt"
+},
+"vogel": {
+"key": "vogel",
+"de": "Prof. Vogel",
+"uk": "професорка Фогель",
+"ru": "профессор Фогель",
+"g": "f",
+"age": 56,
+"role": {
+"uk": "науковиця",
+"ru": "учёная"
+},
+"card": "Prof. Ingrid Vogel, 56, scientist with curly grey hair, red glasses, white lab coat"
+},
+"kofi": {
+"key": "kofi",
+"de": "Kofi",
+"uk": "Кофі",
+"ru": "Кофи",
+"g": "m",
+"age": 28,
+"role": {
+"uk": "аспірант професорки Фогель",
+"ru": "аспирант профессора Фогель"
+},
+"card": "Kofi, 28, PhD student with short black hair and a yellow sweater"
+},
+"sophie": {
+"key": "sophie",
+"de": "Sophie",
+"uk": "Софі",
+"ru": "Софи",
+"g": "f",
+"age": 31,
+"role": {
+"uk": "айтішниця",
+"ru": "айтишница"
+},
+"card": "Sophie, 31, IT specialist with a dark undercut, black T-shirt, headphones around her neck"
+},
+"rolf": {
+"key": "rolf",
+"de": "Rolf",
+"uk": "Рольф",
+"ru": "Рольф",
+"g": "m",
+"age": 69,
+"role": {
+"uk": "тато Софі",
+"ru": "отец Софи"
+},
+"card": "Rolf, 69, her father, grey hair, beige cardigan, reading glasses on his nose"
+},
+"katja": {
+"key": "katja",
+"de": "Katja",
+"uk": "Катя",
+"ru": "Катя",
+"g": "f",
+"age": 36,
+"role": {
+"uk": "ветеринарка, господиня пса Бруно",
+"ru": "ветеринар, хозяйка пса Бруно"
+},
+"card": "Katja, 36, vet and nature lover with a long brown braid and a green fleece"
+},
+"bruno": {
+"key": "bruno",
+"de": "Bruno",
+"uk": "Бруно",
+"ru": "Бруно",
+"g": "m",
+"age": 5,
+"role": {
+"uk": "пес Каті",
+"ru": "пёс Кати"
+},
+"card": "Bruno, Katja's brown-and-white mixed-breed dog with one floppy ear"
+},
+"malik": {
+"key": "malik",
+"de": "Malik",
+"uk": "Малік",
+"ru": "Малик",
+"g": "m",
+"age": 22,
+"role": {
+"uk": "студент і волонтер",
+"ru": "студент и волонтёр"
+},
+"card": "Malik, 22, student with glasses, green rain jacket, cloth tote bag"
+},
+"petra": {
+"key": "petra",
+"de": "Petra",
+"uk": "Петра",
+"ru": "Петра",
+"g": "f",
+"age": 58,
+"role": {
+"uk": "городниця з двору соседського центру",
+"ru": "огородница со двора соседского центра"
+},
+"card": "Petra, 58, community gardener with a straw hat and denim dungarees"
+},
+"clara": {
+"key": "clara",
+"de": "Clara",
+"uk": "Клара",
+"ru": "Клара",
+"g": "f",
+"age": 35,
+"role": {
+"uk": "мандрівниця",
+"ru": "путешественница"
+},
+"card": "Clara, 35, woman with a red scarf and a small backpack"
+},
+"david": {
+"key": "david",
+"de": "David",
+"uk": "Давид",
+"ru": "Давид",
+"g": "m",
+"age": 37,
+"role": {
+"uk": "колега Пауля",
+"ru": "коллега Пауля"
+},
+"card": "David, 37, tall man with a brown beard and a grey beanie"
+},
+"tim": {
+"key": "tim",
+"de": "Tim",
+"uk": "Тім",
+"ru": "Тим",
+"g": "m",
+"age": 26,
+"role": {
+"uk": "фітнес-тренер",
+"ru": "фитнес-тренер"
+},
+"card": "Tim, 26, fitness coach in a red tracksuit with a headband"
+},
+"heinz": {
+"key": "heinz",
+"de": "Opa Heinz",
+"uk": "дідусь Гайнц",
+"ru": "дедушка Хайнц",
+"g": "m",
+"age": 76,
+"role": {
+"uk": "колекціонер і шахіст",
+"ru": "коллекционер и шахматист"
+},
+"card": "Opa Heinz, 76, man with a flat cap and a tweed jacket, collector and chess player"
+},
+"mara": {
+"key": "mara",
+"de": "Mara",
+"uk": "Мара",
+"ru": "Мара",
+"g": "f",
+"age": 33,
+"role": {
+"uk": "журналістка",
+"ru": "журналистка"
+},
+"card": "Mara, 33, journalist with short brown hair, beige trench coat, camera bag"
+},
+"leo": {
+"key": "leo",
+"de": "Leo",
+"uk": "Лео",
+"ru": "Лео",
+"g": "m",
+"age": 20,
+"role": {
+"uk": "відеоблогер",
+"ru": "видеоблогер"
+},
+"card": "Leo, 20, video creator with a colourful hoodie and a small ring light"
+},
+"brandl": {
+"key": "brandl",
+"de": "Frau Brandl",
+"uk": "пані Брандль",
+"ru": "госпожа Брандль",
+"g": "f",
+"age": 58,
+"role": {
+"uk": "мерка Лінденбрюка",
+"ru": "мэр Линденбрюка"
+},
+"card": "Helga Brandl, 58, mayor with a grey bob, navy suit and pearl necklace"
+},
+"jan": {
+"key": "jan",
+"de": "Jan",
+"uk": "Ян",
+"ru": "Ян",
+"g": "m",
+"age": 41,
+"role": {
+"uk": "держслужбовець у ратуші",
+"ru": "госслужащий в ратуше"
+},
+"card": "Jan, 41, civil servant with a sweater vest and a folder under his arm"
+},
+"yasmin": {
+"key": "yasmin",
+"de": "Yasmin",
+"uk": "Ясмін",
+"ru": "Ясмин",
+"g": "f",
+"age": 39,
+"role": {
+"uk": "адвокатка",
+"ru": "адвокат"
+},
+"card": "Yasmin, 39, lawyer with a burgundy headscarf and a dark suit"
+},
+"kuehn": {
+"key": "kuehn",
+"de": "Herr Kühn",
+"uk": "пан Кюн",
+"ru": "господин Кюн",
+"g": "m",
+"age": 46,
+"role": {
+"uk": "поліцейський",
+"ru": "полицейский"
+},
+"card": "Stefan Kühn, 46, police officer with a moustache in a dark blue police uniform"
+},
+"rosa": {
+"key": "rosa",
+"de": "Rosa",
+"uk": "Роза",
+"ru": "Роза",
+"g": "f",
+"age": 64,
+"role": {
+"uk": "керівниця сусідського центру «Treffpunkt Nord»",
+"ru": "руководитель соседского центра «Treffpunkt Nord»"
+},
+"card": "Rosa, 64, head of the neighbourhood centre, curly red-grey hair, colourful shawl"
+},
+"amir": {
+"key": "amir",
+"de": "Amir",
+"uk": "Амір",
+"ru": "Амир",
+"g": "m",
+"age": 19,
+"role": {
+"uk": "волонтер у центрі Рози",
+"ru": "волонтёр в центре Розы"
+},
+"card": "Amir, 19, volunteer with black curls and white sneakers"
+},
+"hartmann": {
+"key": "hartmann",
+"de": "Dr. Hartmann",
+"uk": "доктор Гартман",
+"ru": "доктор Хартман",
+"g": "m",
+"age": 69,
+"role": {
+"uk": "історик і екскурсовод музею",
+"ru": "историк и экскурсовод музея"
+},
+"card": "Dr. Hartmann, 69, retired history teacher and museum guide, white beard, bow tie"
+},
+"emma": {
+"key": "emma",
+"de": "Emma",
+"uk": "Емма",
+"ru": "Эмма",
+"g": "f",
+"age": 16,
+"role": {
+"uk": "онука доктора Гартмана",
+"ru": "внучка доктора Хартмана"
+},
+"card": "Emma, 16, his granddaughter, ponytail, denim jacket, history fan"
+},
+"ella": {
+"key": "ella",
+"de": "Ella",
+"uk": "Елла",
+"ru": "Элла",
+"g": "f",
+"age": 29,
+"role": {
+"uk": "художниця",
+"ru": "художница"
+},
+"card": "Ella, 29, painter with paint-stained overalls and a beret"
+},
+"samuel": {
+"key": "samuel",
+"de": "Samuel",
+"uk": "Самуель",
+"ru": "Самуэль",
+"g": "m",
+"age": 41,
+"role": {
+"uk": "джазовий піаніст",
+"ru": "джазовый пианист"
+},
+"card": "Samuel, 41, jazz pianist with a black turtleneck and a hat"
+},
+"ida": {
+"key": "ida",
+"de": "Ida",
+"uk": "Іда",
+"ru": "Ида",
+"g": "f",
+"age": 51,
+"role": {
+"uk": "власниця книгарні",
+"ru": "владелица книжного"
+},
+"card": "Ida, 51, bookshop owner with a long grey braid, big glasses, cardigan"
+},
+"felix": {
+"key": "felix",
+"de": "Felix",
+"uk": "Фелікс",
+"ru": "Феликс",
+"g": "m",
+"age": 34,
+"role": {
+"uk": "сценарист",
+"ru": "сценарист"
+},
+"card": "Felix, 34, screenwriter with a long scarf and a laptop bag"
+},
+"ruth": {
+"key": "ruth",
+"de": "Ruth",
+"uk": "Рут",
+"ru": "Рут",
+"g": "f",
+"age": 48,
+"role": {
+"uk": "пасторка",
+"ru": "пастор"
+},
+"card": "Ruth, 48, pastor with short dark hair and a dark shirt with a white clerical collar"
+},
+"yusuf": {
+"key": "yusuf",
+"de": "Yusuf",
+"uk": "Юсуф",
+"ru": "Юсуф",
+"g": "m",
+"age": 24,
+"role": {
+"uk": "студент-філософ, підробляє в книгарні Іди",
+"ru": "студент-философ, подрабатывает в книжном Иды"
+},
+"card": "Yusuf, 24, philosophy student with a short beard and an olive coat"
+},
+"hannah": {
+"key": "hannah",
+"de": "Hannah",
+"uk": "Ганна",
+"ru": "Ханна",
+"g": "f",
+"age": 30,
+"role": {
+"uk": "тревел-блогерка з Відня, двоюрідна сестра Тома",
+"ru": "тревел-блогер из Вены, двоюродная сестра Тома"
+},
+"card": "Hannah, 30, Austrian travel blogger with a blond braid and a mint jacket"
+},
+"luca": {
+"key": "luca",
+"de": "Luca",
+"uk": "Лука",
+"ru": "Лука",
+"g": "m",
+"age": 31,
+"role": {
+"uk": "друг Ганни зі Швейцарії",
+"ru": "друг Ханны из Швейцарии"
+},
+"card": "Luca, 31, Swiss friend with a red sweater and a camera"
+},
+"werner": {
+"key": "werner",
+"de": "Meister Werner",
+"uk": "майстер Вернер",
+"ru": "мастер Вернер",
+"g": "m",
+"age": 56,
+"role": {
+"uk": "столяр",
+"ru": "столяр"
+},
+"card": "Meister Werner, 56, carpenter with a grey beard, beige work overalls, pencil behind the ear"
+},
+"jule": {
+"key": "jule",
+"de": "Jule",
+"uk": "Юле",
+"ru": "Юле",
+"g": "f",
+"age": 18,
+"role": {
+"uk": "учениця майстра Вернера",
+"ru": "ученица мастера Вернера"
+},
+"card": "Jule, 18, apprentice with a red ponytail and safety goggles on her head"
+},
+"vanessa": {
+"key": "vanessa",
+"de": "Vanessa",
+"uk": "Ванесса",
+"ru": "Ванесса",
+"g": "f",
+"age": 34,
+"role": {
+"uk": "перукарка салону «Schnittpunkt»",
+"ru": "парикмахер салона «Schnittpunkt»"
+},
+"card": "Vanessa, 34, hairdresser with a pink-tinted bob and a black salon apron"
+},
+"guenter": {
+"key": "guenter",
+"de": "Herr Günter",
+"uk": "пан Гюнтер",
+"ru": "господин Гюнтер",
+"g": "m",
+"age": 71,
+"role": {
+"uk": "елегантний пан з капелюхом",
+"ru": "элегантный пожилой господин в шляпе"
+},
+"card": "Herr Günter, 71, elegant old man with a hat and a bow tie"
+}
+}
+}
