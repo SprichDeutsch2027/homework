@@ -107,7 +107,7 @@ async function useLang(tl) {   // загрузить данные изучаем
   let fam = null, extra = { kanal: [], divan: [] };
   try { [fam, extra] = await Promise.all([dr + "family.json", dr + "extra.json"].map(getJSON)) } catch (e) { fam = null }
   let gest = null; try { gest = await getJSON(dr + "gesture.json") } catch (e) { }
-  if (!D.room) try { D.room = await getJSON("data/room.json") } catch (e) { }
+  if (!D.ev) try { D.ev = await getJSON("data/evening.json") } catch (e) { }
   TL = tl; DR = dr; CFG.lang = TLS[tl].voice;
   Object.assign(D, { meta, st, fam, extra, gest, topics: {}, lex: {}, index: null, byId: {}, tl });
   meta.topics.forEach(t => D.byId[t.id] = t);
@@ -209,7 +209,7 @@ function pickType(it, p, want, ep) {
   // want: "rec" — узнавание; "hard" — самый трудный разрешённый; "prod" — L1→DE; "me" — реплика
   const ok = t => p.types.includes(t) && canType(t, it, p);
   const hi = p.l1 === "def" || p.l1 === "dict";
-  if (want === "rec") { if (gestOf(it) || (famOn() && it.img)) return Math.random() < .8 ? "show" : (canType("tv", it, p) ? "tv" : "show"); if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
+  if (want === "rec") { if (D.ev && (gestOf(it) || (famOn() && it.img))) return Math.random() < .8 ? "show" : (canType("tv", it, p) ? "tv" : "show"); if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
   if (want === "prod") { if (hi) return ok("cloze") ? "cloze" : "me"; return ok("audio") && Math.random() < .3 ? "audio" : "l12de" }
   if (want === "me") { if (ok("mecloze") && Math.random() < .6) return "mecloze"; if (ok("me")) return "me"; return "l12de" }
   let c = p.types.filter(t => ok(t) && t !== "de2l1" && t !== "odd");
@@ -405,7 +405,7 @@ function sofa(box, it) {
     } catch (e) { $("#sfn").textContent = f.noMic }
   };
 }
-const FAM6 = ["vitya", "danya", "irina", "igor", "nika", "lyuda"];
+const FAM6 = ["vitya", "danya", "irina", "igor", "nika", "lyuda"], ADULT6 = FAM6;
 const famOn = () => !!(D.fam && P && !P.famOff);
 const pick = a => a[Math.floor(Math.random()*a.length)];
 let streakN = 0;
@@ -480,68 +480,113 @@ function drawPic(el, src, crayon) {       // рисунок мелками по�
     requestAnimationFrame(tick);
   });
 }
+const EV = "img/fam/ev/";
+const evBlobs = {};
+async function evURL(name, fresh) {      // разовые сцены — новый blob-адрес, чтобы ролик начинался сначала
+  if (!evBlobs[name]) evBlobs[name] = fetch(EV + name + ".webp?v=1").then(r => r.blob()).catch(() => null);
+  const b = await evBlobs[name]; return b ? (fresh ? URL.createObjectURL(b) : (b.__u || (b.__u = URL.createObjectURL(b)))) : EV + name + ".webp?v=1";
+}
 function runShow(host, c, p, meta, res) {
   const sid = String(Math.random()); host.dataset.sid = sid;
-  const Q = q => host.dataset.sid === sid ? host.querySelector(q) : null;   // только своя карточка
-  const it = c.it, f = F(), g = gestOf(it), order = shuffle(FAM6), M = D.fam.mini;
-  const props = c.opts.map((o, i) => ({ o, who: order[i] }));
+  const Q = q => host.dataset.sid === sid ? host.querySelector(q) : null;
+  const alive = () => host.isConnected && host.dataset.sid === sid;
+  const it = c.it, f = F(), g = gestOf(it), E = D.ev, M = D.fam.mini;
+  // кто говорит: вступление и три версии из разных мест комнаты, чтобы пузыри не наезжали друг на друга
+  const zones = shuffle([["vitya", "danya"], ["irina", "igor"], ["lyuda", "nika"]]).map(z => shuffle(z));
+  const props = c.opts.slice(0, 3).map((o, i) => ({ o, who: zones[i][0] }));
+  const introWho = zones[Math.floor(Math.random()*3)][1];
   P.nt.show = (P.nt.show || 0) + 1;
-  const R = D.room, cx = R ? (R.quad[0][0] + R.quad[2][0])/2 : 0, cy = R ? (R.quad[0][1] + R.quad[2][1])/2 : 0;
   host.innerHTML = `<div class="card show"><div class="kind">${esc(f.tableT)}<span style="flex:1"></span>${meta || ""}</div>
-    ${R ? `<div class="room" id="room" style="aspect-ratio:${R.w}/${R.h}"><img class="bg" src="img/fam/${L}/room.webp?v=1" alt="">
+    <div class="eve" id="eve" style="aspect-ratio:${E.w}/${E.h}"><img class="bg" id="evbg" alt="">
       ${it.img ? `<div class="closeup" id="draw"><i class="crayon" id="crayon"></i></div>` : ""}
-      ${g ? `<div class="gclip" id="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}
-      <span class="zoomhint">🔍</span></div>` : ""}
-    <div id="kidsays"></div><div class="props" id="props"></div><div id="react"></div><div id="tvon"></div><div id="talk"></div><div id="fb"></div></div>`;
-  let answered = false; const box = Q("#props"), step = reduced() ? 150 : 1150;
-  const line = (arr, who) => (arr.find(x => x.who === who) || pick(arr))[L];
-  const head = () => { };
-  if (Q("#room")) Q("#room").onclick = () => zoomSheet(Q("#draw"));
-  const pickProp = i => {
-    if (answered) return; answered = true; const x = props[i], ok = x.o.ok, right = props.find(y => y.o.ok);
-    box.querySelectorAll(".prop").forEach(b => { b.disabled = true; const pj = props[+b.dataset.i]; b.querySelector(".tw").textContent = pj.o.label; if (pj.o.ok) b.classList.add("ok") });
-    if (!ok) box.querySelector(`[data-i="${i}"]`).classList.add("bad");
-    famAnswer(ok, true); head(x.who);
-    let r = bubbleRaw(x.who, esc(line(ok ? M.ok : M.bad, x.who)), famImg(x.who, ok ? "joy" : "facepalm"), true);
-    if (!ok) r += bubbleRaw(right.who, esc(f.itIs.replace("{w}", it.w).replace("{tr}", it.tr[L])), famImg(right.who, "told"), true, 0.8);
-    Q("#react").innerHTML = r; say(it.w);
-    const talk = () => {
-      if (host.dataset.sid !== sid) return;
-      const a = g ? g.who : pick(FAM6), b = pick(FAM6.filter(w => w !== a && w !== x.who)) || "lyuda";
-      Q("#talk").innerHTML = bubbleRaw(a, `${gformG(it.ex.de, FG[a])} ${sayBtn(it.ex.de)}<div class="tr">${esc(gformG(it.ex[L], FG[a]))}</div>`, g ? `img/fam/${L}/g_${g.g}.webp?v=1` : famImg(a, "act"), true)
-        + bubbleRaw(b, `${gformG(it.me.de, FG[b])} ${sayBtn(gformG(it.me.de, FG[b]))}<div class="tr">${esc(gformG(it.me[L], FG[b]))}</div>`, famImg(b, "act"), true, 0.9);
-      Q("#fb").innerHTML = `<div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${it.dv ? `<button id="sofaB">🛋 ${f.sofa}</button>` : ""}</div><div id="sofa"></div>`;
-      Q("#nx").onclick = () => res({ ok });
-      if (Q("#sofaB")) Q("#sofaB").onclick = () => { Q("#sofaB").remove(); sofa(Q("#sofa"), it) };
+      ${g ? `<div class="gclip" id="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""></div>` : ""}
+      <div class="bubbles" id="bubbles"></div><span class="zoomhint">🔍</span></div><div id="fb"></div></div>`;
+  const setBg = async (name, fresh) => { const u = await evURL(name, fresh); const bg = Q("#evbg"); if (bg) bg.src = u };
+  ["done", "still", ...props.map(x => "talk_" + x.who), "talk_" + introWho, "cheer", "tv"].forEach(n => evURL(n));
+  const pct = (xy, dy) => ({ x: xy[0]/E.w*100, y: (xy[1] + (dy || 0))/E.h*100 });
+  const bubbleAt = (who, html, cls, extra) => {      // комиксовый пузырь над головой говорящего
+    const h = who === "tv" ? pct(E.tv, 70) : pct(E.heads[who]); const bx = who === "tv" ? Math.min(66, Math.max(34, h.x)) : Math.min(78, Math.max(22, h.x));
+    const d = document.createElement("div"); d.className = "cb " + (cls || ""); d.dataset.who = who;
+    const ew = (Q("#eve") || {}).clientWidth || 360;
+    d.style.left = bx + "%"; d.style.bottom = (100 - h.y + 3) + "%"; d.style.setProperty("--tx", ((h.x - bx)/100*ew) + "px");
+    d.innerHTML = html + (extra || ""); const box = Q("#bubbles"); if (!box) return d;
+    if (d.textContent.length > 46) d.classList.add("long");
+    box.appendChild(d);
+    const fit = () => {     // не вылезать за край кадра: если сверху не помещается — пузырь под головой, хвостик вверх
+      if (d.offsetTop >= 2) return;
+      d.classList.add("below"); d.style.bottom = ""; d.style.top = (h.y + (who === "tv" ? 0 : 4)) + "%";
+      const over = d.offsetTop + d.offsetHeight - box.clientHeight + 2; if (over > 0) d.style.top = Math.max(2, d.offsetTop - over) + "px";
     };
-    if (it.kn) setTimeout(() => {
-      if (!host.isConnected || host.dataset.sid !== sid) return;
-      Q("#tvon").innerHTML = tvScreen(it.kn, false); const tb = Q("#tvon .tvbox"); tb.classList.add("poweron", ok ? "cheer" : "groan");
-      setTimeout(() => say(it.kn.de), 900); setTimeout(talk, reduced() ? 300 : 2600);
-    }, reduced() ? 200 : 1400);
-    else setTimeout(talk, 1200);
+    fit(); setTimeout(fit, 60); return d;
   };
-  const offer = () => props.forEach((x, i) => setTimeout(() => {
-    if (!box.isConnected || host.dataset.sid !== sid) return;
-    const b = document.createElement("button"); b.className = "prop"; b.dataset.i = i;
-    b.innerHTML = `<img src="${famImg(x.who, "head")}" alt=""><span class="pt"><b>${esc(nick(x.who))}</b><span class="tw"></span></span>`;
-    box.appendChild(b); head(x.who);
-    if (answered) { b.disabled = true; b.querySelector(".tw").textContent = x.o.label; if (x.o.ok) b.classList.add("ok"); return }
-    typeText(b.querySelector(".tw"), x.o.label); b.onclick = () => pickProp(i);
-  }, i*step));
+  const clearB = keep => { const box = Q("#bubbles"); if (box) [...box.children].forEach(x => { if (!keep || !keep.includes(x)) { x.classList.add("gone"); setTimeout(() => x.remove(), 350) } }) };
+  const line = (arr, who) => (arr.find(x => x.who === who) || pick(arr))[L];
+  if (Q("#eve")) Q("#eve").onclick = e => { if (!e.target.closest(".cb")) zoomSheet(Q("#draw")) };
+  let answered = false;
+  const pickProp = (i, el) => {
+    if (answered) return; answered = true; const x = props[i], ok = x.o.ok, right = props.find(y => y.o.ok);
+    Q("#bubbles").querySelectorAll(".cb.prop").forEach(b => { b.classList.add(+b.dataset.i === i ? (ok ? "ok" : "bad") : (props[+b.dataset.i].o.ok ? "ok" : "dim")) });
+    famAnswer(ok, true); say(it.w);
+    setTimeout(() => {
+      if (!alive()) return;
+      clearB([...Q("#bubbles").querySelectorAll(".cb.ok")]);
+      if (ok) { setBg("cheer"); bubbleAt(x.who, esc(line(M.ok, x.who)), "say") }
+      else {
+        setBg("oops_" + x.who); bubbleAt(x.who, esc(line(M.bad, x.who)), "say");
+        setTimeout(() => { if (!alive()) return; setBg("talk_" + right.who); bubbleAt(right.who, esc(f.itIs.replace("{w}", it.w).replace("{tr}", it.tr[L])), "say") }, 1500);
+      }
+    }, 600);
+    const tvT = ok ? 2300 : 3600;
+    setTimeout(() => {                               // включается телевизор с цитатой
+      if (!alive()) return; clearB(); setBg("tv", true);
+      if (it.kn) { bubbleAt("tv", `<small>${knCap(it.kn)}</small><div class="de">${it.kn.de}</div><div class="tr">${esc(it.kn[L])}</div>`, "tvb"); setTimeout(() => say(it.kn.de), 500) }
+      setTimeout(talk, it.kn ? 3200 : 800);
+    }, tvT);
+    const talk = () => {                             // семья обсуждает слово
+      if (!alive()) return;
+      const a = g && FAM6.includes(g.who) ? g.who : pick(ADULT6), b = pick(ADULT6.filter(w => w !== a));
+      clearB(); setBg("talk_" + a);
+      bubbleAt(a, `<div class="de">${gformG(it.ex.de, FG[a])}</div><div class="tr">${esc(gformG(it.ex[L], FG[a]))}</div>`, "say"); say(it.ex.de.replace(/<[^>]+>/g, ""));
+      setTimeout(() => {
+        if (!alive()) return; clearB(); setBg("talk_" + b);
+        const me = gformG(it.me.de, FG[b]);
+        bubbleAt(b, `<div class="de">${me}</div><div class="tr">${esc(gformG(it.me[L], FG[b]))}</div>`, "say"); say(me.replace(/<[^>]+>/g, ""));
+        const fb = Q("#fb"); if (!fb) return;
+        fb.innerHTML = `<div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${it.dv ? `<button id="sofaB">🛋 ${f.sofa}</button>` : ""}<button class="ghost" id="rp"><small>↻ ${esc(it.w)}</small></button></div><div id="sofa"></div>`;
+        Q("#nx").onclick = () => res({ ok });
+        Q("#rp").onclick = () => say(it.w);
+        if (Q("#sofaB")) Q("#sofaB").onclick = () => { Q("#sofaB").remove(); sofa(Q("#sofa"), it) };
+      }, 3600);
+    };
+  };
+  const offer = () => {
+    if (!alive()) return;
+    setBg("talk_" + introWho);
+    const ib = bubbleAt(introWho, esc(f.intro.replace("{tr}", it.tr[L])), "say intro");
+    props.forEach((x, i) => setTimeout(() => {
+      if (!alive()) return;
+      if (i === 0) { ib.classList.add("gone"); setTimeout(() => ib.remove(), 350) }
+      if (!answered) setBg("talk_" + x.who);
+      const b = bubbleAt(x.who, `<span class="tw"></span>`, "prop"); b.dataset.i = i;
+      if (answered) { b.querySelector(".tw").textContent = x.o.label; b.classList.add(x.o.ok ? "ok" : "dim"); return }
+      typeText(b.querySelector(".tw"), x.o.label, 55); b.onclick = () => pickProp(i, b);
+      if (i === props.length - 1) setTimeout(() => { if (!answered && alive()) setBg("still") }, 1800);
+    }, 2200 + i*1500));
+  };
   const finished = () => {
-    if (!host.isConnected || host.dataset.sid !== sid) return;
-    const gc = Q("#gclip"), cu = Q("#draw");
-    if (cu && R) {   // лист «ложится» на стол, чуть крупнее стола
-      const tw = (R.quad[1][0] - R.quad[0][0])*1.9;
-      Object.assign(cu.style, { left: (cx - tw/2)/R.w*100 + "%", top: (cy - tw*0.62)/R.h*100 + "%", width: tw/R.w*100 + "%" }); cu.classList.add("ontable");
-      setTimeout(() => { if (gc) gc.classList.add("on") }, 700);
-    } else if (gc) gc.classList.add("on");
-    Q("#kidsays").innerHTML = bubbleRaw("malysh", esc(f.kidSays.replace("{tr}", it.tr[L])), famImg("malysh", "head"));
-    setTimeout(offer, reduced() ? 100 : 900);
+    if (!alive()) return;
+    setBg("done", true);
+    const cu = Q("#draw");
+    if (cu) {   // лист с рисунком ложится на стол
+      const q = E.sheet, cx = (q[0][0] + q[2][0])/2, cy = (q[0][1] + q[2][1])/2, tw = (q[1][0] - q[0][0])*1.5;
+      Object.assign(cu.style, { left: (cx - tw/2)/E.w*100 + "%", top: (cy - tw*0.6)/E.h*100 + "%", width: tw/E.w*100 + "%" }); cu.classList.add("ontable");
+    }
+    setTimeout(() => { const gc = Q("#gclip"); if (gc) gc.classList.add("on") }, 900);
+    setTimeout(offer, reduced() ? 100 : 1700);
   };
-  if (it.img) setTimeout(() => drawPic(Q("#draw"), it.img, Q("#crayon")).then(finished), reduced() ? 0 : 500);
-  else setTimeout(finished, 600);
+  if (reduced() || !it.img) { setBg("still"); if (it.img) drawPic(Q("#draw"), it.img).then(finished); else finished(); return }
+  setBg("draw", true);
+  setTimeout(() => drawPic(Q("#draw"), it.img, Q("#crayon")).then(finished), 300);
 }
 function zoomSheet(sheet) {      // клик по столу — рисунок крупно
   if (!sheet) return; const pic = sheet.querySelector("svg,img"); if (!pic) return;

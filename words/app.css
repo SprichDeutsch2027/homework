@@ -218,3 +218,35 @@ header.top .brand b{color:var(--acc)}
 .show .closeup .crayon{width:12px;height:52px;margin:-52px 0 0 -6px}
 .show .closeup.ontable{transform:perspective(500px) rotateX(48deg) rotate(-2deg);box-shadow:0 8px 10px rgba(0,0,0,.35)}
 .show .closeup:not(.ontable)::before{content:"✏️";position:absolute;left:-10px;top:-12px;font-size:20px}
+
+/* семейный вечер: всё в одном кадре, реплики — комиксовые пузыри */
+.show .eve{position:relative;width:100%;border-radius:20px;overflow:hidden;margin:0 0 6px;box-shadow:var(--shadow);background:#3c2d23;cursor:zoom-in}
+.show .eve .bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.show .eve .closeup{right:2%;bottom:3%;width:38%}
+.show .eve .gclip{position:absolute;left:2%;bottom:3%;width:24%;opacity:0;transform:scale(.6);transition:all .5s cubic-bezier(.3,1.5,.5,1)}
+.show .eve .gclip.on{opacity:1;transform:none}
+.show .eve .gclip img{width:100%;aspect-ratio:1;border-radius:16px;border:2px solid #fff;box-shadow:var(--shadow);display:block}
+.bubbles{position:absolute;inset:0;pointer-events:none}
+.cb{position:absolute;transform:translateX(-50%);width:max-content;max-width:46%;min-width:18%;background:#fff;color:#2a211b;border:2.5px solid #2a211b;border-radius:20px;
+  padding:6px 12px 7px;font-family:Caveat,cursive;font-weight:700;font-size:clamp(15px,4.2vw,22px);line-height:1.15;text-align:center;
+  box-shadow:3px 4px 0 rgba(0,0,0,.25);pointer-events:auto;animation:cbIn .35s cubic-bezier(.3,1.6,.5,1) both;z-index:3}
+.cb::after{content:"";position:absolute;left:calc(50% + var(--tx,0px));bottom:-13px;width:18px;height:14px;margin-left:-9px;background:#fff;
+  clip-path:polygon(0 0,100% 0,35% 100%);border:0}
+.cb::before{content:"";position:absolute;left:calc(50% + var(--tx,0px));bottom:-17px;width:24px;height:17px;margin-left:-12px;background:#2a211b;clip-path:polygon(0 0,100% 0,33% 100%)}
+.cb .de{font-size:1em}.cb .tr{font-size:.72em;font-weight:400;color:#6b5e50;margin-top:2px}
+.cb small{display:block;font-size:.6em;font-weight:400;color:#7a6a5a}
+.cb.intro{background:#fff8e6}
+.cb.prop{cursor:pointer;background:#fffef8;font-size:clamp(17px,4.8vw,25px)}
+.cb.prop:hover{transform:translateX(-50%) scale(1.06)}
+.cb.prop .tw.typing::after{content:"▍";color:var(--acc);animation:blink .6s steps(2) infinite}
+.cb.ok{background:#e3f6ea;border-color:#2e8b57}.cb.ok::before{background:#2e8b57}.cb.ok::after{background:#e3f6ea}
+.cb.bad{background:#fde8e8;border-color:#c0392b}.cb.bad::before{background:#c0392b}.cb.bad::after{background:#fde8e8}
+.cb.dim{opacity:.45}
+.cb.gone{animation:cbOut .3s ease forwards}
+.cb.tvb{max-width:62%;background:#eef6fb}
+@keyframes cbIn{from{opacity:0;transform:translateX(-50%) scale(.5) translateY(14px)}to{opacity:1;transform:translateX(-50%)}}
+@keyframes cbOut{to{opacity:0;transform:translateX(-50%) scale(.85)}}
+@media (prefers-reduced-motion:reduce){.cb,.cb.gone{animation:none}}
+.cb.long{font-size:clamp(13px,3.6vw,19px)}
+.cb.below::before{bottom:auto;top:-17px;clip-path:polygon(33% 0,0 100%,100% 100%)}
+.cb.below::after{bottom:auto;top:-13px;clip-path:polygon(35% 0,0 100%,100% 100%)}

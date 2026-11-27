@@ -45,3 +45,5 @@
 Малыш (7-й член семьи) рисует за столом: `cd tools/art3d && python3 malysh3d.py ../../words/img/fam` → malysh_draw / malysh_joy / malysh_head.
 Комната (вся семья у стола, Малыш рисует; петля 12 кадров): `cd tools/art3d && python3 room.py ../../words/img/fam` (≈ 14 мин)
 → `<lang>/room.webp`, `room_still.webp`, `words/data/room.json` (положение листа на столе).
+Семейный вечер (сценарий по состояниям, без табличек, с котёнком и щенком): `cd tools/art3d && python3 evening.py ../../words/img/fam/ev`
+(≈ 55 мин; можно перерисовать одно состояние: `… ev talk_igor`) → `ev/<состояние>.webp`, `words/data/evening.json` (головы для пузырей, лист, телевизор).

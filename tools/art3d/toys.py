@@ -9,6 +9,7 @@ NICK = {"ru": dict(danya="Тиктокер", nika="Тиктокерша", irina=
         "uk": dict(danya="Тіктокер", nika="Тіктокерка", irina="Душнила", igor="Душнила", lyuda="Динозавр", vitya="Динозавр", malysh="Малюк")}
 SKIN, CHEEK, EYE, DARK = (244, 200, 170), (236, 130, 150), (35, 28, 24), (58, 42, 32)
 WHITE = (250, 247, 240)
+PLATES = True
 
 def text_img(t, w=320, h=80):
     im = Image.new("L", (w, h), 0); d = ImageDraw.Draw(im); size = 72
@@ -40,6 +41,7 @@ class Toy:
     def cyl(self, m, c, r, h, rr): self.sc.cyly(m, self.v(*c), self.r(r), self.r(h), self.r(rr))
     def above(self, y): self.sc.above(0, self.r(y))
     def patch(self, key, text, c, hw, hh, bg=WHITE, ink=DARK):
+        if not PLATES: return            # таблички с никами можно выключить
         k = self.sc.text_tex(text_img(text)); x, y, z = self.v(*c)
         m = self.sc.mat(key, bg, tex=3, tp=(x - self.r(hw), y - self.r(hh), self.r(2*hw), self.r(2*hh), k, 0), col2=ink)
         self.box(m, c, (hw, hh, 0.008), 0.012)
@@ -82,8 +84,8 @@ def body(T, k, sleeve, pants, shoes, pose, face="smile", eyes="open", top=None, 
     T.sphere(sk, (0, 1.385, zf(0, 1.385, -0.005)), 0.036)                      # нос
     for sx in (-1, 1): T.ell(ck, (sx*0.19, 1.355, zf(sx*0.19, 1.355, -0.035)), (0.065, 0.042, 0.03))
     for sx in (-1, 1):
-        ex = sx*0.12 + (0.05 if eyes == "side" else 0)
-        if eyes in ("open", "side"): T.sphere(ey, (ex, 1.465, zf(ex, 1.465, -0.02)), 0.046)
+        ex = sx*0.12 + (0.05 if eyes == "side" else -0.05 if eyes == "sideL" else 0)
+        if eyes in ("open", "side", "sideL"): T.sphere(ey, (ex, 1.465, zf(ex, 1.465, -0.02)), 0.046)
         elif eyes == "happy":
             T.cap(dk, (ex - 0.05, 1.45, zf(ex - .05, 1.45)), (ex, 1.49, zf(ex, 1.49)), 0.017)
             T.cap(dk, (ex, 1.49, zf(ex, 1.49)), (ex + 0.05, 1.45, zf(ex + .05, 1.45)), 0.017)
@@ -189,7 +191,8 @@ def igor(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
         T.sphere(T.m("stub", (120, 110, 100)), (x, y, zf(x, y, -0.006)), 0.009)
     T.inhead = False
     blue = T.m("blue", (30, 136, 229))
-    for sx in (-1, 1): T.cap(blue, (sx*0.13, 1.13, 0.22), (sx*0.03, 0.99, 0.265), 0.013)
+    if PLATES:
+        for sx in (-1, 1): T.cap(blue, (sx*0.13, 1.13, 0.22), (sx*0.03, 0.99, 0.265), 0.013)
     T.patch("gpatch", nick, (0, 0.91, 0.27), 0.17, 0.075)
     if prop:
         h = hands[1]; c = (h[0] + 0.02, h[1] + 0.03, h[2] + 0.05)
