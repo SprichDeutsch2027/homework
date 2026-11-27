@@ -208,7 +208,7 @@ function pickType(it, p, want, ep) {
   // want: "rec" — узнавание; "hard" — самый трудный разрешённый; "prod" — L1→DE; "me" — реплика
   const ok = t => p.types.includes(t) && canType(t, it, p);
   const hi = p.l1 === "def" || p.l1 === "dict";
-  if (want === "rec") { if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
+  if (want === "rec") { if (gestOf(it)) return Math.random() < .8 ? "show" : (canType("tv", it, p) ? "tv" : "show"); if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
   if (want === "prod") { if (hi) return ok("cloze") ? "cloze" : "me"; return ok("audio") && Math.random() < .3 ? "audio" : "l12de" }
   if (want === "me") { if (ok("mecloze") && Math.random() < .6) return "mecloze"; if (ok("me")) return "me"; return "l12de" }
   let c = p.types.filter(t => ok(t) && t !== "de2l1" && t !== "odd");
@@ -229,6 +229,10 @@ function makeCard(type, it, p) {
     if (type === "def2de") c.q = `<span class="sent">${esc(it.def)}</span>`;
     const ds = distractors(it, n, "de", p.i); c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: type === "audio" ? "" : x.tr[L], ok: x.k === it.k, say: x.w }));
     c.subAfter = true;
+  }
+  else if (type === "show") {
+    const ds = distractors(it, n, "l1", p.i);
+    c.opts = shuffle([it, ...ds]).map(x => ({ label: x.tr[L], sub: x.w, ok: x.k === it.k, x }));
   }
   else if (type === "tv") {
     const ds = shuffle(knPool(it)).slice(0, Math.max(2, Math.min(3, n)));
@@ -272,7 +276,7 @@ function cardHTML(c, p, meta) {
   let h = `<div class="card"><div class="kind">${nm ? nm[L] : c.kind || ""}${nw ? ` <span class="new">${U.newType}</span>` : ""}<span style="flex:1"></span>${meta || ""}</div>`;
   const gs = c.it && !["odd", "scene", "article"].includes(c.type) && gestOf(c.it);
   h += `<div class="q ${c.type === "me" || c.type === "cloze" || c.type === "mecloze" || c.type === "def2de" ? "sent" : ""}">${c.q} ${c.say ? sayBtn(c.say) : ""}</div>`;
-  if (gs) h += `<div id="gestBox"><button class="ghost hintg" id="hintg">🎭 ${F().hint}</button></div>`;
+  if (gs) h += `<div id="gestBox">${gestHTML(c.it)}</div>`;
   if (c.hint) h += `<div style="margin:-6px 0 10px">${c.hint}</div>`;
   if (c.opts) h += `<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o.label)}${o.sub && !c.subAfter ? `<small>${esc(o.sub)}</small>` : ""}</button>`).join("")}</div>`;
   if (c.input != null) h += `<div class="row"><input type="text" id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${U.type}"><button class="main" id="chk">${U.check}</button></div>`;
@@ -293,6 +297,7 @@ function feedback(c, ok, p) {
 /* Показ карточки; resolve({ok}) по первой попытке */
 function runCard(host, c, p, meta) {
   return new Promise(res => {
+    if (c.type === "show") return runShow(host, c, p, meta, res);
     host.innerHTML = cardHTML(c, p, meta); try { if (localStorage.getItem('wr_debug')) window.__card = c } catch (e) { }
     if (c.auto) setTimeout(() => say(c.auto), 250);
     if ($("#hintg")) $("#hintg").onclick = () => { c.hinted = true; $("#gestBox").innerHTML = gestHTML(c.it) };
@@ -403,11 +408,12 @@ const FAM6 = ["vitya", "danya", "irina", "igor", "nika", "lyuda"];
 const famOn = () => !!(D.fam && P && !P.famOff);
 const pick = a => a[Math.floor(Math.random()*a.length)];
 let streakN = 0;
-function famAnswer(ok) {      // маленькая реакция семьи на каждый ответ + серии 3/5/10
+function famAnswer(ok, quiet) {      // маленькая реакция семьи на каждый ответ + серии 3/5/10
   if (!famOn() || !D.fam.mini) return;
   streakN = ok ? streakN + 1 : 0;
   const M = D.fam.mini, s = { 3: "s3", 5: "s5", 10: "s10" }[streakN] || (streakN > 10 && streakN % 5 === 0 ? "s10" : null);
   if (s) { confetti(streakN >= 10 ? 70 : 40); return famPop(pick(M[s]), "joy") }
+  if (quiet) return;
   if (ok && Math.random() < 0.55) famPop(pick(M.ok), Math.random() < 0.5 ? "joy" : "wow");
   if (!ok) famPop(pick(M.bad), Math.random() < 0.5 ? "facepalm" : "told");
 }
@@ -423,6 +429,79 @@ function confetti(n) {
   const cols = ["#f5a623", "#e2669a", "#46a58f", "#6c9bd2", "#fdd835", "#e8604c"];
   box.innerHTML = Array.from({ length: n }, () => `<i style="left:${Math.random()*100}%;background:${pick(cols)};--dx:${(Math.random()*2 - 1)*80}px;--r:${Math.random()*720 - 360}deg;animation-delay:${Math.random()*0.4}s;animation-duration:${1.6 + Math.random()*1.2}s"></i>`).join("");
   document.body.appendChild(box); setTimeout(() => box.remove(), 3400);
+}
+/* ---------- Сценка: семья показывает слово, рисунок рисуется мелками, варианты — от членов семьи ---------- */
+const FG = { danya: "m", nika: "f", irina: "f", igor: "m", lyuda: "f", vitya: "m" };
+const gformG = (s, g) => String(s || "").replace(/\{([^}|]*)\|([^}]*)\}/g, (m, a, b) => g === "f" ? b : a);
+const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function bubbleRaw(who, html, src, big, delay) {
+  return `<div class="bub ${big ? "big" : ""}"${delay ? ` style="--d:${delay}s"` : ""}><img class="${big ? "emo" : "ava"}" src="${src || famImg(who, "head")}" alt=""><div class="btx"><b>${esc(nick(who))}</b><div>${html}</div></div></div>`;
+}
+function typeText(el, s, cps) {
+  if (reduced()) { el.textContent = s; return }
+  let i = 0; el.classList.add("typing");
+  const tick = () => { if (!el.isConnected) return; el.textContent = s.slice(0, ++i); if (i < s.length) setTimeout(tick, cps || 38); else el.classList.remove("typing") };
+  tick();
+}
+async function drawPic(el, src) {       // рисунок мелками появляется штрих за штрихом
+  if (!el) return;
+  try { const r = await fetch(src.replace(/\.webp$/, ".svg")); if (!r.ok) throw 0; el.innerHTML = await r.text() }
+  catch (e) { el.innerHTML = `<img src="${src}" alt="">`; return }
+  const svg = el.querySelector("svg"); if (!svg) return; svg.removeAttribute("width"); svg.removeAttribute("height");
+  if (reduced() || !svg.animate) return;
+  const items = [...svg.querySelectorAll("path,circle,rect,ellipse,text")].filter(x => !x.closest("defs") && !x.closest("clipPath")).slice(2);
+  const lens = items.map(e => { try { return e.getTotalLength ? e.getTotalLength() : 0 } catch (x) { return 0 } });
+  const total = lens.reduce((a, b) => a + Math.min(b, 300) + 20, 0) || 1, T = 2600; let t = 150;
+  items.forEach((e, i) => {
+    const Ln = lens[i], fl = e.getAttribute("fill"), st = e.getAttribute("stroke"), dur = Math.max(50, (Math.min(Ln, 300) + 20)/total*T);
+    if (st && st !== "none" && Ln > 0) {
+      e.style.strokeDasharray = Ln; e.style.strokeDashoffset = Ln;
+      e.animate([{ strokeDashoffset: Ln }, { strokeDashoffset: 0 }], { duration: dur, delay: t, fill: "forwards" });
+      if (fl && fl !== "none") { e.style.fillOpacity = 0; e.animate([{ fillOpacity: 0 }, { fillOpacity: 1 }], { duration: 250, delay: t + dur*0.6, fill: "forwards" }) }
+    } else { e.style.opacity = 0; e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: t, fill: "forwards" }) }
+    t += dur*0.9;
+  });
+}
+function runShow(host, c, p, meta, res) {
+  const it = c.it, f = F(), g = gestOf(it), order = shuffle(FAM6), M = D.fam.mini;
+  const props = c.opts.map((o, i) => ({ o, who: order[i] }));
+  P.nt.show = (P.nt.show || 0) + 1;
+  host.innerHTML = `<div class="card show"><div class="kind">${esc(f.showT)}<span style="flex:1"></span>${meta || ""}</div>
+    <div class="stage">${g ? `<div class="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}${it.img ? `<div class="draw" id="draw"></div>` : ""}</div>
+    <div class="q"><span class="de">${esc(it.w)}</span> ${sayBtn(it.w)}</div>
+    <div class="props" id="props"></div><div id="react"></div><div id="tvon"></div><div id="talk"></div><div id="fb"></div></div>`;
+  setTimeout(() => say(it.w), 300); if (it.img) drawPic($("#draw"), it.img);
+  let answered = false; const box = $("#props"), T0 = reduced() ? 200 : 1500, step = reduced() ? 150 : 1150;
+  const line = (arr, who) => (arr.find(x => x.who === who) || pick(arr))[L];
+  const pickProp = i => {
+    if (answered) return; answered = true; const x = props[i], ok = x.o.ok, right = props.find(y => y.o.ok);
+    box.querySelectorAll(".prop").forEach(b => { b.disabled = true; const pj = props[+b.dataset.i]; b.querySelector(".tw").textContent = pj.o.label; if (pj.o.ok) b.classList.add("ok") });
+    if (!ok) box.querySelector(`[data-i="${i}"]`).classList.add("bad");
+    famAnswer(ok, true);
+    let r = bubbleRaw(x.who, esc(line(ok ? M.ok : M.bad, x.who)), famImg(x.who, ok ? "joy" : "facepalm"), true);
+    if (!ok) r += bubbleRaw(right.who, esc(f.itIs.replace("{w}", it.w).replace("{tr}", it.tr[L])), famImg(right.who, "told"), true, 0.8);
+    $("#react").innerHTML = r; say(it.w);
+    const talk = () => {
+      const a = g ? g.who : pick(FAM6), b = pick(FAM6.filter(w => w !== a && w !== x.who)) || "lyuda";
+      $("#talk").innerHTML = bubbleRaw(a, `${gformG(it.ex.de, FG[a])} ${sayBtn(it.ex.de)}<div class="tr">${esc(gformG(it.ex[L], FG[a]))}</div>`, g ? `img/fam/${L}/g_${g.g}.webp?v=1` : famImg(a, "act"), true)
+        + bubbleRaw(b, `${gformG(it.me.de, FG[b])} ${sayBtn(gformG(it.me.de, FG[b]))}<div class="tr">${esc(gformG(it.me[L], FG[b]))}</div>`, famImg(b, "act"), true, 0.9);
+      $("#fb").innerHTML = `<div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${it.dv ? `<button id="sofaB">🛋 ${f.sofa}</button>` : ""}</div><div id="sofa"></div>`;
+      $("#nx").onclick = () => res({ ok });
+      if ($("#sofaB")) $("#sofaB").onclick = () => { $("#sofaB").remove(); sofa($("#sofa"), it) };
+    };
+    if (it.kn) setTimeout(() => {
+      if (!host.isConnected) return;
+      $("#tvon").innerHTML = tvScreen(it.kn, false); const tb = $("#tvon .tvbox"); tb.classList.add("poweron", ok ? "cheer" : "groan");
+      setTimeout(() => say(it.kn.de), 900); setTimeout(talk, reduced() ? 300 : 2600);
+    }, reduced() ? 200 : 1400);
+    else setTimeout(talk, 1200);
+  };
+  props.forEach((x, i) => setTimeout(() => {
+    if (!box.isConnected || answered) { if (answered && box.isConnected) { const b = document.createElement("button"); b.className = "prop"; b.dataset.i = i; b.disabled = true; b.innerHTML = `<img src="${famImg(x.who, "head")}" alt=""><span class="pt"><b>${esc(nick(x.who))}</b><span class="tw">${esc(x.o.label)}</span></span>`; if (x.o.ok) b.classList.add("ok"); box.appendChild(b) } return }
+    const b = document.createElement("button"); b.className = "prop"; b.dataset.i = i;
+    b.innerHTML = `<img src="${famImg(x.who, "head")}" alt=""><span class="pt"><b>${esc(nick(x.who))}</b><span class="tw"></span></span>`;
+    box.appendChild(b); typeText(b.querySelector(".tw"), x.o.label); b.onclick = () => pickProp(i);
+  }, T0 + i*step));
 }
 function gestOf(it) { return famOn() && D.gest && it && D.gest.map[it.k] ? { g: D.gest.map[it.k], who: D.gest.who[D.gest.map[it.k]] } : null }
 function gestHTML(it, intro) {
@@ -578,7 +657,7 @@ async function showStep(E) {
     const it = word(list[i]), back = E.plan.back.includes(list[i]) ? `<small class="badge">${U.returned(it.t)}</small>` : "";
     app().innerHTML = head() + stepsBar(1) + `<div class="card"><div class="kind">${U.intro} · ${i + 1}/${list.length} ${back}<span style="flex:1"></span><small class="mute">${it.lvl}</small></div>
     ${it.img ? `<img class="pic" src="${it.img}" alt="">` : ""}
-    <div class="q">${esc(it.w)} ${sayBtn(it.w)}</div>${gestOf(it) ? `<div id="gestBox"><button class="ghost hintg" id="hintg">🎭 ${F().showMe}</button></div>` : ""}
+    <div class="q">${esc(it.w)} ${sayBtn(it.w)}</div>${gestOf(it) ? `<div id="gestBox">${gestHTML(it, true)}</div>` : ""}
     ${p.l1 === "def" || p.l1 === "dict" ? (it.def ? `<p>${esc(it.def)}</p>` : "") + `<details><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : p.l1 === "tap" ? `<details open><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : `<p class="tr" style="font-size:20px;margin-top:-6px">${esc(it.tr[L])}</p>`}
     <div class="fb">${exampleHTML(it, p, "ex")}<div style="margin-top:8px">${exampleHTML(it, p, "me")}</div>${it.kn && D.fam ? `<div style="margin-top:8px">${knLine(it.kn)}</div>` : ""}</div>
     <div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${i > 0 ? `<button id="pv">${U.back}</button>` : ""}<span style="flex:1"></span><button class="ghost" id="sk"><small>${U.skipShow}</small></button></div></div>`;
