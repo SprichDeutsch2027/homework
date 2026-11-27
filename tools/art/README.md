@@ -28,3 +28,10 @@
 Тексты: `words/src_en/s*.txt` (тот же формат, что `words/src`, + NAME и уровень слова) → `python3 tools/build_en.py` → `words/data_en/`.
 Каналы и диван: `words/src_en/{kanal,divan}` → `python3 tools/build_kanal.py en`. Реакции семьи — `words/data_en/family.json`.
 Рисунки к словам берутся из немецкой темы (`img/T001/a_*.webp`) по таблице IMG в build_en.py.
+
+## 3D-фигурки семьи (сейчас на сайте)
+`tools/art3d/` — свой маленький 3D-рендер (ray marching, numba): фигурки из шаров, капсул и скруглённых блоков,
+мягкие тени, пластилиновая фактура, ники на одежде — текстурой (шрифт Caveat). Нужны numpy, numba, Pillow.
+
+    cd tools/art3d && python3 export3d.py ../../words/img/fam      # ≈ 6 мин на оба языка
+Рисунки мелками семьи (tools/art/family.py) остаются в истории и могут быть возвращены export_family.py.

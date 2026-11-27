@@ -339,7 +339,7 @@ async function runDeck(host, cards, p, onEach) {
 
 /* ---------- Семья на диване: каналы Lindenbrück, диалоги, свободный ответ ---------- */
 const F = () => (D.fam && D.fam.ui[L]) || {};
-const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp`;
+const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp?v=3d`;
 const nick = who => ((D.fam.chars[who] || {}).nick || {})[L] || who;
 function knPool(it) { return Object.values(D.lex).filter(x => x.kn && x.k !== it.k && !similar(x.tr[L], it.tr[L]) && cmp(x.w) !== cmp(it.w)).sort((a, b) => (a.t === it.t ? 0 : 1) - (b.t === it.t ? 0 : 1)).slice(0, 12) }
 function knCap(kn) { const radio = kn.ch === "radio"; return `${(D.fam.channels || {})[kn.ch] || "📺"} ${esc(kn.cap)}` }
@@ -752,7 +752,7 @@ function langBtns(l1) {
   return `<div class="seg">${[["uk", "Українська"], ["ru", "Русский"]].map(([k, n]) => `<button type="button" data-l="${k}" class="${k === l1 ? "on" : ""}">${n}</button>`).join("")}</div>`;
 }
 function bindLang(cb) { $$("[data-l]").forEach(b => b.onclick = () => { $$("[data-l]").forEach(x => x.classList.toggle("on", x === b)); cb(b.dataset.l) }) }
-function welcome(l1) { return `<div class="welcome"><div class="logo">${TLS.de.brand} · ${TLS.en.brand}</div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p>${D.fam ? `<img class="famscene" src="img/fam/${l1 === "ru" ? "ru" : "uk"}/scene.webp" alt="">` : ""}</div>` }
+function welcome(l1) { return `<div class="welcome"><div class="logo">${TLS.de.brand} · ${TLS.en.brand}</div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p>${D.fam ? `<img class="famscene" src="img/fam/${l1 === "ru" ? "ru" : "uk"}/scene.webp?v=3d" alt="">` : ""}</div>` }
 
 /* ---------- Вход по имени или нику; прогресс — на устройстве и в облаке (скрипт Google v7) ---------- */
 const nickNorm = s => String(s || "").trim().replace(/\s+/g, " ").slice(0, 40);
