@@ -17,7 +17,7 @@ const cmp = s => String(s).toLowerCase().replace(/ß/g, "ss").replace(/[.,!?;:�
 /* ---------- Тексты интерфейса ---------- */
 const UI = {
   uk: {
-    hello: "Привіт! Це Wortreise — подорож словами курсу «10 Stufen».", who: "Як тебе звати?", lang: "Рідна мова", create: "Почати",
+    hello: "Привіт! Це словниковий тренажер: німецька або англійська — тема за темою.", tlang: "Що вчимо?", learnEn: "Вчити англійську", learnDe: "Вчити німецьку", who: "Як тебе звати?", lang: "Рідна мова", create: "Почати",
     profiles: "Хто вчиться?", newp: "Новий учень", choose: "Обери свого героя", chooseSub: "Ти проходиш теми курсу як цей герой: його друзі, його місто, його історія.",
     start: "З чого почати?", fromStart: "З теми 1", fromN: "З теми №", go: "Далі", map: "Карта", review: "Повторити", diary: "Щоденник", me: "Профіль",
     soon: "скоро", lock: "закрито", topic: "Тема", stufe: "Ступінь", startEp: "Почати епізод", cont: "Далі", check: "Перевірити", next: "Далі",
@@ -55,7 +55,7 @@ const UI = {
     found2: (n, d, x) => `Знайдено прогрес «${esc(n)}»: ${d} тем, ⭐ ${x}. Це ви?`
   },
   ru: {
-    hello: "Привет! Это Wortreise — путешествие по словам курса «10 Stufen».", who: "Как тебя зовут?", lang: "Родной язык", create: "Начать",
+    hello: "Привет! Это словарный тренажёр: немецкий или английский — тема за темой.", tlang: "Что учим?", learnEn: "Учить английский", learnDe: "Учить немецкий", who: "Как тебя зовут?", lang: "Родной язык", create: "Начать",
     profiles: "Кто учится?", newp: "Новый ученик", choose: "Выбери своего героя", chooseSub: "Ты проходишь темы курса как этот герой: его друзья, его город, его история.",
     start: "С чего начать?", fromStart: "С темы 1", fromN: "С темы №", go: "Дальше", map: "Карта", review: "Повторить", diary: "Дневник", me: "Профиль",
     soon: "скоро", lock: "закрыто", topic: "Тема", stufe: "Ступень", startEp: "Начать эпизод", cont: "Дальше", check: "Проверить", next: "Дальше",
@@ -94,21 +94,32 @@ const UI = {
   }
 };
 let L = "uk", U = UI.uk;
+let TL = "de", DR = "data/";              // изучаемый язык и папка его данных (data/ — немецкий, data_en/ — английский)
+const TLS = { de: { flag: "🇩🇪", name: "Deutsch", brand: "Wort<b>reise</b>", voice: "de-DE" }, en: { flag: "🇬🇧", name: "English", brand: "Word<b>trip</b>", voice: "en-US" } };
 
 /* ---------- Данные ---------- */
 const D = { meta: null, heroes: null, st: null, topics: {}, lex: {}, index: null, fam: null, extra: { kanal: [], divan: [] } };
 async function getJSON(p) { const r = await fetch(p, { cache: "no-cache" }); if (!r.ok) throw new Error(p + " " + r.status); return r.json() }
+async function useLang(tl) {   // загрузить данные изучаемого языка
+  if (D.tl === tl) return;
+  const dr = tl === "en" ? "data_en/" : "data/";
+  const [meta, st] = await Promise.all([dr + "meta.json", dr + "stufen.json"].map(getJSON));
+  let fam = null, extra = { kanal: [], divan: [] };
+  try { [fam, extra] = await Promise.all([dr + "family.json", dr + "extra.json"].map(getJSON)) } catch (e) { fam = null }
+  TL = tl; DR = dr; CFG.lang = TLS[tl].voice;
+  Object.assign(D, { meta, st, fam, extra, topics: {}, lex: {}, index: null, byId: {}, tl });
+  meta.topics.forEach(t => D.byId[t.id] = t);
+}
 async function boot() {
-  [D.meta, D.heroes, D.st] = await Promise.all(["data/meta.json", "data/heroes.json", "data/stufen.json"].map(getJSON));
-  try { [D.fam, D.extra] = await Promise.all(["data/family.json", "data/extra.json"].map(getJSON)) } catch (e) { D.fam = null }
-  D.byId = {}; D.meta.topics.forEach(t => D.byId[t.id] = t);
+  D.heroes = await getJSON("data/heroes.json");
+  await useLang("de");
   window.addEventListener("hashchange", route); route(); cloudPull();
 }
 async function topic(id) {
   if (D.topics[id]) return D.topics[id];
-  const t = await getJSON(`data/topics/T${pad(id)}.json`); D.topics[id] = t;
+  const t = await getJSON(`${DR}topics/T${pad(id)}.json`); D.topics[id] = t;
   t.words.forEach(w => { if (w.tr && w.first === id && !D.lex[w.k]) D.lex[w.k] = Object.assign({ t: id }, w) });
-  const add = async (kind, fld) => { if (!D.fam || !(D.extra[kind] || []).includes(id)) return; try { const x = await getJSON(`data/${kind}/T${pad(id)}.json`); Object.entries(x).forEach(([k, v]) => { if (D.lex[k]) D.lex[k][fld] = v }) } catch (e) { } };
+  const add = async (kind, fld) => { if (!D.fam || !(D.extra[kind] || []).includes(id)) return; try { const x = await getJSON(`${DR}${kind}/T${pad(id)}.json`); Object.entries(x).forEach(([k, v]) => { if (D.lex[k]) D.lex[k][fld] = v }) } catch (e) { } };
   await Promise.all([add("kanal", "kn"), add("divan", "dv")]);
   return t;
 }
@@ -123,13 +134,15 @@ const gform = s => String(s || "").replace(/\{([^}|]*)\|([^}]*)\}/g, (m, a, b) =
 
 /* ---------- Профиль ученика ---------- */
 let P = null;
-const PK = n => "wr_" + n;
-function profiles() { try { return JSON.parse(localStorage.getItem("wr_profiles") || "[]") } catch (e) { return [] } }
-function saveProfiles(a) { try { localStorage.setItem("wr_profiles", JSON.stringify(a)) } catch (e) { } }
-function load(name) { try { const p = JSON.parse(localStorage.getItem(PK(name)) || "null"); return p } catch (e) { return null } }
-function save() { if (!P) return; try { localStorage.setItem(PK(P.name), JSON.stringify(P)); localStorage.setItem("wr_cur", P.name) } catch (e) { toast("localStorage: " + e.message) } }
-function newProfile(name, l1) {
-  return { v: CFG.v, name, l1, hero: null, start: 1, cur: 1, shift: 0, t: {}, srs: {}, def: {}, xp: 0, ep: 0, diary: [], badges: [], fr: {}, nt: {}, hw: [],
+const PK = (n, tl) => ((tl || TL) === "en" ? "wr_en_" : "wr_") + n;      // прогресс отдельно по каждому изучаемому языку
+const PLK = tl => (tl || TL) === "en" ? "wr_profiles_en" : "wr_profiles";
+function profiles(tl) { try { return JSON.parse(localStorage.getItem(PLK(tl)) || "[]") } catch (e) { return [] } }
+function saveProfiles(a, tl) { try { localStorage.setItem(PLK(tl), JSON.stringify(a)) } catch (e) { } }
+function load(name, tl) { try { const p = JSON.parse(localStorage.getItem(PK(name, tl)) || "null"); if (p) p.tl = tl || TL; return p } catch (e) { return null } }
+function save() { if (!P) return; try { localStorage.setItem(PK(P.name, P.tl), JSON.stringify(P)); localStorage.setItem("wr_cur", P.name); localStorage.setItem("wr_cur_tl", P.tl || "de") } catch (e) { toast("localStorage: " + e.message) } }
+const cnick = (n, tl) => (tl || TL) === "en" ? "EN · " + n : n;           // ник в облаке: английский прогресс — отдельной строкой
+function newProfile(name, l1, tl) {
+  return { v: CFG.v, name, l1, tl: tl || "de", hero: null, start: 1, cur: 1, shift: 0, t: {}, srs: {}, def: {}, xp: 0, ep: 0, diary: [], badges: [], fr: {}, nt: {}, hw: [],
     days: [], streak: 0, scores: [], made: Date.now(), lastExport: Date.now(), sent: 0, log: [] };
 }
 function useProfile(p) { P = p; L = P.l1 || "uk"; U = UI[L]; document.documentElement.lang = L }
@@ -242,7 +255,7 @@ function makeOdd(t, p) {
 let canSay = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
 function say(t) {
   if (!canSay || !t) return;
-  try { const v = speechSynthesis.getVoices().find(x => x.lang.toLowerCase().startsWith("de")); speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(strip(t)); u.lang = CFG.lang; if (v) u.voice = v; u.rate = .9; speechSynthesis.speak(u) } catch (e) { }
+  try { const v = speechSynthesis.getVoices().find(x => x.lang.toLowerCase().startsWith(TL === "en" ? "en-us" : "de")) || speechSynthesis.getVoices().find(x => x.lang.toLowerCase().startsWith(TL)); speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(strip(t)); u.lang = CFG.lang; if (v) u.voice = v; u.rate = .9; speechSynthesis.speak(u) } catch (e) { }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-say]"); if (b) { e.preventDefault(); e.stopPropagation(); say(b.dataset.say) } }, true);
 const sayBtn = t => canSay ? `<button class="say" data-say="${esc(strip(t))}" title="🔊">🔊</button>` : "";
@@ -373,7 +386,7 @@ function sofa(box, it) {
   $("#sfs").onclick = () => { const g = D.fam.react.giveup[0]; $("#sfr").innerHTML = bubble(g.who, g[L], "joy") + sampleHTML(dv); say(dv.sample.de) };
   if (SR && $("#sfm")) $("#sfm").onclick = () => {
     try {
-      const r = new SR(); r.lang = "de-DE"; r.interimResults = false; r.maxAlternatives = 1;
+      const r = new SR(); r.lang = CFG.lang; r.interimResults = false; r.maxAlternatives = 1;
       $("#sfn").textContent = f.listening; $("#sfm").classList.add("on");
       r.onresult = e => { inp.value = e.results[0][0].transcript; voice = true; $("#sfn").textContent = f.heard };
       r.onerror = () => { $("#sfn").textContent = f.noMic }; r.onend = () => { const m = $("#sfm"); if (m) m.classList.remove("on") };
@@ -386,16 +399,17 @@ function sampleHTML(dv) { return `<div class="fb"><small class="mute">${F().samp
 /* ---------- Маршруты ---------- */
 function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200) }
 function head() {
-  if (!P) return `<header class="top"><a class="brand" href="#/">Wort<b>reise</b></a><span class="sp"></span><a class="chip" href="../">Sprich Deutsch</a></header>`;
-  return `<header class="top"><a class="brand" href="#/">Wort<b>reise</b></a><span class="sp"></span><span class="chip">⭐ ${P.xp}</span>${P.streak > 1 ? `<span class="chip">🔥 ${P.streak}</span>` : ""}<a class="chip home" href="#/" title="${U.home}">⌂</a></header>`;
+  if (!P) return `<header class="top"><a class="brand" href="#/">${TLS[TL].brand}</a><span class="sp"></span><a class="chip" href="../">Sprich Deutsch</a></header>`;
+  return `<header class="top"><a class="brand" href="#/">${TLS[TL].brand}</a><span class="sp"></span><a class="chip" href="#/me" title="${TLS[TL].name}">${TLS[TL].flag}</a><span class="chip">⭐ ${P.xp}</span>${P.streak > 1 ? `<span class="chip">🔥 ${P.streak}</span>` : ""}<a class="chip home" href="#/" title="${U.home}">⌂</a></header>`;
 }
 function route() {
   if (window.speechSynthesis) try { speechSynthesis.cancel() } catch (e) { }
   const hsh = location.hash.replace(/^#/, "") || "/", [path, qs] = hsh.split("?"), parts = path.split("/").filter(Boolean);
   const q = new URLSearchParams(qs || "");
-  if (!P) { const cur = localStorage.getItem("wr_cur"), p = cur && load(cur); if (p) useProfile(p) }
+  if (!P) { const cur = localStorage.getItem("wr_cur"), ctl = localStorage.getItem("wr_cur_tl") || "de", p = cur && load(cur, ctl); if (p) useProfile(p) }
   if (parts[0] === "users" || parts[0] === "new") { P = null; try { localStorage.removeItem("wr_cur") } catch (e) { } }
   if (!P) return viewStart();
+  if (D.tl !== (P.tl || "de")) { app().innerHTML = head() + `<p class="mute">…</p>`; return useLang(P.tl || "de").then(route) }
   if (q.get("review")) { importWords(q.get("review").split(",")); toast(U.hwLink); history.replaceState(null, "", "#/" + parts.join("/")) }
   if (!P.hero || parts[0] === "hero") return viewHero();
   if (parts[0] === "t") return viewTopic(+parts[1]);
@@ -695,17 +709,22 @@ function viewMe() {
   ${P.badges.length ? `<h2>${U.badges}</h2><div>${P.badges.map(b => `<span class="badge">🏅 ${esc(b.txt)}</span>`).join("")}</div>` : ""}
   <h2>${U.hw}</h2><p class="mute">${U.hwTxt}</p><textarea id="hwt"></textarea><div class="row" style="margin-top:6px"><button id="hwb">${U.hwBtn}</button></div>
   <h2>${U.backup}</h2><div class="row"><button id="exp">💾 ${U.exp}</button><label class="btn">📂 ${U.imp}<input type="file" id="imp" accept=".json" hidden></label></div>
-  <h2>⚙️</h2><div class="row"><a class="btn" href="#/hero">${U.switchHero}</a><button id="lang">${L === "uk" ? "Русский" : "Українська"}</button><button id="usr">${U.switchUser}</button><button id="del">${U.del}</button></div>
+  <h2>⚙️</h2><div class="row"><a class="btn" href="#/hero">${U.switchHero}</a><button id="lang">${L === "uk" ? "Русский" : "Українська"}</button><button id="tl">${TL === "en" ? "🇩🇪 " + U.learnDe : "🇬🇧 " + U.learnEn}</button><button id="usr">${U.switchUser}</button><button id="del">${U.del}</button></div>
   <p class="mute" style="margin-top:20px"><a href="../">Sprich Deutsch · домашні завдання</a></p>`;
   $("#hwb").onclick = async () => { const n = await importHW($("#hwt").value); toast(U.hwOk(n)) };
   $("#exp").onclick = () => { const b = new Blob([JSON.stringify(P)], { type: "application/json" }), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `wortreise_${P.name.replace(/[^\p{L}\p{N}]+/gu, "_")}_${new Date().toISOString().slice(0, 10)}.json`; a.click(); P.lastExport = Date.now(); save() };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const p = JSON.parse(r.result); if (!p.name || !p.srs) throw 0; const ps = profiles(); if (!ps.includes(p.name)) { ps.push(p.name); saveProfiles(ps) } useProfile(p); save(); toast("✓"); route() } catch (x) { toast("✗ JSON") } }; r.readAsText(f) };
   $("#lang").onclick = () => { P.l1 = L === "uk" ? "ru" : "uk"; useProfile(P); save(); viewMe() };
   $("#usr").onclick = () => { location.hash = "#/users" };
-  $("#del").onclick = () => { if (!confirm(U.delQ)) return; localStorage.removeItem(PK(P.name)); saveProfiles(profiles().filter(n => n !== P.name)); localStorage.removeItem("wr_cur"); P = null; location.hash = "#/"; route() };
+  $("#tl").onclick = () => {
+    const other = TL === "en" ? "de" : "en"; let p = load(P.name, other);
+    if (!p) { p = newProfile(P.name, P.l1, other); p.hero = P.hero; const ps = profiles(other); if (!ps.includes(P.name)) { ps.push(P.name); saveProfiles(ps, other) } }
+    useProfile(p); save(); cloudSave(true); location.hash = "#/"; route();
+  };
+  $("#del").onclick = () => { if (!confirm(U.delQ)) return; localStorage.removeItem(PK(P.name, P.tl)); saveProfiles(profiles(P.tl).filter(n => n !== P.name), P.tl); localStorage.removeItem("wr_cur"); P = null; location.hash = "#/"; route() };
 }
 async function importWords(ws) {
-  if (!D.index) D.index = await getJSON("data/index.json");
+  if (!D.index) D.index = await getJSON(DR + "index.json");
   let n = 0;
   for (const w of ws) { const k = normW(decodeURIComponent(w)); const tid = D.index[k]; if (!tid || !D.byId[tid] || !D.byId[tid].ready) continue; const s = P.srs[k] || (P.srs[k] = { t: tid, b: 1, d: 0, e: -99, n: 0, f: 0 }); s.b = 1; s.d = 0; s.e = -99; if (!P.hw.includes(k)) P.hw.push(k); n++ }
   save(); return n;
@@ -733,46 +752,50 @@ function langBtns(l1) {
   return `<div class="seg">${[["uk", "Українська"], ["ru", "Русский"]].map(([k, n]) => `<button type="button" data-l="${k}" class="${k === l1 ? "on" : ""}">${n}</button>`).join("")}</div>`;
 }
 function bindLang(cb) { $$("[data-l]").forEach(b => b.onclick = () => { $$("[data-l]").forEach(x => x.classList.toggle("on", x === b)); cb(b.dataset.l) }) }
-function welcome(l1) { return `<div class="welcome"><div class="logo">Wort<b>reise</b></div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p>${D.fam ? `<img class="famscene" src="img/fam/${l1 === "ru" ? "ru" : "uk"}/scene.webp" alt="">` : ""}</div>` }
+function welcome(l1) { return `<div class="welcome"><div class="logo">${TLS.de.brand} · ${TLS.en.brand}</div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p>${D.fam ? `<img class="famscene" src="img/fam/${l1 === "ru" ? "ru" : "uk"}/scene.webp" alt="">` : ""}</div>` }
 
 /* ---------- Вход по имени или нику; прогресс — на устройстве и в облаке (скрипт Google v7) ---------- */
 const nickNorm = s => String(s || "").trim().replace(/\s+/g, " ").slice(0, 40);
 function viewStart() {
-  let l1 = L || "uk"; const T = () => UI[l1];
-  const ps = profiles();
+  let l1 = L || "uk", tl = localStorage.getItem("wr_cur_tl") || "de"; const T = () => UI[l1];
+  const ps = [...profiles("de").map(n => [n, "de"]), ...profiles("en").map(n => [n, "en"])];
+  const open = async (p) => { await useLang(p.tl); useProfile(p); save(); location.hash = "#/"; route(); cloudPull() };
   const draw = () => {
-    app().innerHTML = welcome(l1) + (ps.length ? `<div class="box form"><p class="lbl">${T().contAs}</p><div class="plist">${ps.map(n => `<button class="main" data-p="${esc(n)}">▶ ${esc(n)}</button>`).join("")}</div></div>` : "") +
+    app().innerHTML = welcome(l1) + (ps.length ? `<div class="box form"><p class="lbl">${T().contAs}</p><div class="plist">${ps.map(([n, t]) => `<button class="main" data-p="${esc(n)}" data-ptl="${t}">▶ ${TLS[t].flag} ${esc(n)}</button>`).join("")}</div></div>` : "") +
      `<div class="box form"><h1>${ps.length ? T().newp : T().startT}</h1><p class="mute">${T().startSub}</p>
      <label>${T().nick}<input type="text" id="nm" maxlength="40" autocomplete="nickname" autocapitalize="words"></label>
      <p class="lbl">${T().lang}</p>${langBtns(l1)}
+     <p class="lbl">${T().tlang}</p><div class="seg">${["de", "en"].map(k => `<button type="button" data-tl="${k}" class="${k === tl ? "on" : ""}">${TLS[k].flag} ${TLS[k].name}</button>`).join("")}</div>
      <p id="msg" class="msg"></p><button class="main big" id="go">${T().create}</button></div>`;
     bindLang(k => { const v = $("#nm").value; l1 = k; draw(); $("#nm").value = v });
-    $$("[data-p]").forEach(b => b.onclick = () => { const p = load(b.dataset.p); if (p) { useProfile(p); save(); location.hash = "#/"; route(); cloudPull() } });
+    $$("[data-tl]").forEach(b => b.onclick = () => { tl = b.dataset.tl; $$("[data-tl]").forEach(x => x.classList.toggle("on", x === b)) });
+    $$("[data-p]").forEach(b => b.onclick = () => { const p = load(b.dataset.p, b.dataset.ptl); if (p) open(p) });
     $("#nm").onkeydown = e => { if (e.key === "Enter") $("#go").click() };
     $("#go").onclick = async () => {
       const n = nickNorm($("#nm").value), msg = $("#msg");
       if (!n) { msg.textContent = T().nameNeed; return }
-      const local = load(n);
-      if (local) { useProfile(local); save(); location.hash = "#/"; route(); return cloudPull() }
+      const local = load(n, tl);
+      if (local) return open(local);
       $("#go").disabled = true; msg.textContent = "…";
-      let srv = null; try { srv = await api("load=" + encodeURIComponent(n)) } catch (e) { }
+      let srv = null; try { srv = await api("load=" + encodeURIComponent(cnick(n, tl))) } catch (e) { }
       $("#go").disabled = false; msg.textContent = "";
       if (srv && srv.v === 7 && srv.found) {
         let p = null; try { p = JSON.parse(srv.data) } catch (e) { }
         if (p && p.srs) {
           const done = Object.values(p.t || {}).filter(r => r.st === "done").length;
           msg.innerHTML = `<span class="found">${T().found2(n, done, p.xp || 0)}</span><span class="row" style="margin-top:8px;justify-content:center"><button class="main" id="yes">${T().itsMe}</button><button id="no">${T().otherNick}</button></span>`;
-          $("#yes").onclick = () => { p.name = n; addProfile(n); useProfile(p); save(); location.hash = "#/"; route() };
+          $("#yes").onclick = async () => { p.name = n; p.tl = tl; addProfile(n, tl); await useLang(tl); useProfile(p); save(); location.hash = "#/"; route() };
           $("#no").onclick = () => { msg.textContent = ""; $("#nm").value = ""; $("#nm").focus() };
           return;
         }
       }
-      const p = newProfile(n, l1); addProfile(n); useProfile(p); save(); cloudSave(true); location.hash = "#/hero"; route();
+      await useLang(tl);
+      const p = newProfile(n, l1, tl); addProfile(n, tl); useProfile(p); save(); cloudSave(true); location.hash = "#/hero"; route();
     };
   };
   draw();
 }
-function addProfile(n) { const ps = profiles(); if (!ps.includes(n)) { ps.push(n); saveProfiles(ps) } }
+function addProfile(n, tl) { const ps = profiles(tl); if (!ps.includes(n)) { ps.push(n); saveProfiles(ps, tl) } }
 
 let saveTimer = null, pulled = false;
 function cloudSave(now) {   // после эпизода, повторения, выбора героя; без ожидания ответа
@@ -780,7 +803,7 @@ function cloudSave(now) {   // после эпизода, повторения, 
   const go = () => {
     P.upd = Date.now(); save();
     const done = Object.values(P.t).filter(r => r.st === "done").length, learned = Object.values(P.srs).filter(x => x.b >= 3).length;
-    const body = JSON.stringify({ token: CFG.token, type: "save", nick: P.name, data: JSON.stringify(P), stat: { cur: P.cur, done, learned, xp: P.xp, hero: P.hero || "", l1: P.l1 } });
+    const body = JSON.stringify({ token: CFG.token, type: "save", nick: cnick(P.name, P.tl), data: JSON.stringify(P), stat: { cur: P.cur, done, learned, xp: P.xp, hero: P.hero || "", l1: P.l1 } });
     try { fetch(CFG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body }).catch(() => { }) } catch (e) { }
   };
   now ? go() : (saveTimer = setTimeout(go, 1500));
@@ -788,7 +811,7 @@ function cloudSave(now) {   // после эпизода, повторения, 
 async function cloudPull() {   // раз за сеанс: если в облаке прогресс новее (с другого устройства) — берём его
   if (pulled || !P) return; pulled = true;
   try {
-    const x = await api("load=" + encodeURIComponent(P.name));
+    const x = await api("load=" + encodeURIComponent(cnick(P.name, P.tl)));
     if (!x || x.v !== 7 || !x.found) return;
     const p = JSON.parse(x.data);
     if (p && p.srs && (p.upd || 0) > (P.upd || 0) + 1000) { p.name = P.name; useProfile(p); save(); toast(U.synced); route() }

@@ -1,0 +1,106 @@
+{
+  "how are you?": {
+    "lines": [
+      {"who": "danya", "uk": "Коротше, „How are you?“ — це не допит лікаря. Відповів „I'm fine, thanks“ — і вільний.", "ru": "Короче, „How are you?“ — это не допрос врача. Ответил „I'm fine, thanks“ — и свободен."},
+      {"who": "irina", "uk": "Тільки не „I fine“! Без am фраза кульгає: I'm = I am. І ввічливо спитати у відповідь: „And you?“", "ru": "Только не „I fine“! Без am фраза хромает: I'm = I am. И вежливо спросить в ответ: „And you?“"}
+    ],
+    "ask": {"who": "nika", "uk": "How are you? Відповідай і спитай у відповідь — як у серіалі 😉", "ru": "How are you? Ответь и спроси в ответ — как в сериале 😉"},
+    "frame": "I'm … , thanks. And you?",
+    "sample": {"de": "I'm fine, thanks. And you?", "uk": "У мене все добре, дякую. А в тебе?", "ru": "У меня всё хорошо, спасибо. А у тебя?"},
+    "rules": [
+      {"t": "short"},
+      {"t": "aux", "not": "\\bi (fine|good|ok|okay|great|well|tired)\\b", "fix": "am (I'm)"},
+      {"t": "miss", "need": "\\b(im|i am)\\b", "fix": "I'm …"},
+      {"t": "miss", "need": "\\band you\\b", "fix": "And you?",
+       "say": {"who": "nika", "uk": "Відповідь є, а питання у відповідь загубилося! Англійці чекають „And you?“ — інакше ніби ти не хочеш спілкуватися.", "ru": "Ответ есть, а вопрос в ответ потерялся! Англичане ждут „And you?“ — иначе как будто ты не хочешь общаться."}},
+      {"cap": ["I"]}
+    ],
+    "tests": {
+      "ok": ["I'm fine, thanks. And you?", "I am good, thank you. And you?", "I'm OK and you"],
+      "bad": [["I fine, thanks. And you?", "aux"], ["I'm fine, thanks.", "miss"], ["Fine", "short"], ["i'm fine. and you?", "cap"]]
+    }
+  },
+  "good evening": {
+    "lines": [
+      {"who": "lyuda", "uk": "Англійці вітаються за годинником: зранку — Good morning, удень — Good afternoon, увечері — Good evening. А Good night — тільки на прощання перед сном!", "ru": "Англичане здороваются по часам: утром — Good morning, днём — Good afternoon, вечером — Good evening. А Good night — только на прощание перед сном!"},
+      {"who": "vitya", "uk": "Good evening — це ж наше німецьке Guten Abend! Германська рідня, зріть у корінь.", "ru": "Good evening — это ж немецкое Guten Abend! Германская родня, зрите в корень."}
+    ],
+    "ask": {"who": "lyuda", "uk": "Восьма вечора, ти заходиш до сусідки, місіс Сміт. Як привітаєшся?", "ru": "Восемь вечера, ты заходишь к соседке, миссис Смит. Как поздороваешься?"},
+    "frame": "Good …, Mrs. Smith!",
+    "sample": {"de": "Good evening, Mrs. Smith!", "uk": "Добрий вечір, пані Сміт!", "ru": "Добрый вечер, миссис Смит!"},
+    "rules": [
+      {"t": "sense", "not": "\\bgood night\\b", "fix": "Good evening",
+       "say": {"who": "lyuda", "uk": "Good night кажуть, коли йдуть спати, а ти тільки заходиш у гості! Під час зустрічі — Good evening.", "ru": "Good night говорят, когда уходят спать, а ты только заходишь в гости! При встрече — Good evening."}},
+      {"t": "sense", "not": "\\bgood (morning|afternoon)\\b", "fix": "Good evening",
+       "say": {"who": "nika", "uk": "Граматика ок, але ж вечір! О восьмій — Good evening. Morning і afternoon — це ще до вечері.", "ru": "Грамматика ок, но ведь вечер! В восемь — Good evening. Morning и afternoon — это ещё до ужина."}},
+      {"t": "dusie", "not": "\\b(hey|yo|whats up|sup)\\b", "fix": "Good evening"},
+      {"t": "miss", "need": "\\bgood evening\\b", "fix": "Good evening"},
+      {"cap": ["Mrs", "Smith"]}
+    ],
+    "tests": {
+      "ok": ["Good evening, Mrs. Smith!", "Good evening!"],
+      "bad": [["Good morning, Mrs. Smith!", "sense"], ["Good night, Mrs. Smith!", "sense"], ["Hey Mrs. Smith", "dusie"], ["Good evening, mrs. smith", "cap"], ["Evening", "miss"]]
+    }
+  },
+  "see you tomorrow": {
+    "lines": [
+      {"who": "nika", "uk": "See you later, see you soon, see you tomorrow — у мене в сторіз усі три, і всі різні!", "ru": "See you later, see you soon, see you tomorrow — у меня в сторис все три, и все разные!"},
+      {"who": "irina", "uk": "See you tomorrow — тільки якщо справді побачитеся завтра. Скажеш later — людина чекатиме ввечері.", "ru": "See you tomorrow — только если правда увидитесь завтра. Скажешь later — человек будет ждать вечером."}
+    ],
+    "ask": {"who": "irina", "uk": "Ти йдеш з роботи, колегу побачиш завтра вранці. Як попрощаєшся?", "ru": "Ты уходишь с работы, коллегу увидишь завтра утром. Как попрощаешься?"},
+    "frame": "Bye, see you …!",
+    "sample": {"de": "Bye, see you tomorrow!", "uk": "Бувай, до завтра!", "ru": "Пока, до завтра!"},
+    "rules": [
+      {"t": "sense", "not": "\\bsee you (later|soon)\\b", "fix": "see you tomorrow",
+       "say": {"who": "irina", "uk": "See you later — це „побачимося сьогодні ж“. А колегу ти побачиш завтра: see you tomorrow.", "ru": "See you later — это „увидимся сегодня же“. А коллегу ты увидишь завтра: see you tomorrow."}},
+      {"t": "typo", "not": "\\bsee you tomorow\\b|\\bsee you tommorow\\b|\\bsee you tommorrow\\b", "fix": "tomorrow"},
+      {"t": "miss", "need": "\\bsee you tomorrow\\b", "fix": "see you tomorrow"}
+    ],
+    "tests": {
+      "ok": ["Bye, see you tomorrow!", "see you tomorrow", "Goodbye! See you tomorrow."],
+      "bad": [["Bye, see you later!", "sense"], ["Bye, see you tomorow!", "typo"], ["Bye!", "miss"]]
+    }
+  },
+  "nice to meet you": {
+    "lines": [
+      {"who": "vitya", "uk": "Meet — це коли вперше. Nice to meet you — „приємно познайомитися“. А nice to see you — коли вже знайомі.", "ru": "Meet — это когда впервые. Nice to meet you — „приятно познакомиться“. А nice to see you — когда уже знакомы."},
+      {"who": "danya", "uk": "Схема ізі: Hi, I'm Даня. Nice to meet you. Усе, ти в тусовці.", "ru": "Схема изи: Hi, I'm Даня. Nice to meet you. Всё, ты в тусовке."}
+    ],
+    "ask": {"who": "danya", "uk": "До нас прийшла нова сусідка Мая. Привітайся, назви себе й скажи, що приємно познайомитися.", "ru": "К нам пришла новая соседка Мая. Поздоровайся, назови себя и скажи, что приятно познакомиться."},
+    "frame": "Hi, I'm … . Nice to meet you!",
+    "sample": {"de": "Hi, I'm Anna. Nice to meet you!", "uk": "Привіт, я Анна. Приємно познайомитися!", "ru": "Привет, я Анна. Приятно познакомиться!"},
+    "rules": [
+      {"t": "short"},
+      {"t": "sense", "not": "\\bnice to see you\\b", "fix": "Nice to meet you",
+       "say": {"who": "vitya", "uk": "See — коли ви вже знайомі. Із Маєю ви бачитеся вперше, тож — Nice to meet you.", "ru": "See — когда вы уже знакомы. С Маей вы видитесь впервые, так что — Nice to meet you."}},
+      {"t": "miss", "need": "\\b(im|i am|my name is|this is)\\b", "fix": "I'm …",
+       "say": {"who": "danya", "uk": "А як тебе звати? Додай I'm … — інакше Мая знайомиться з невідомістю.", "ru": "А как тебя зовут? Добавь I'm … — иначе Мая знакомится с неизвестностью."}},
+      {"t": "miss", "need": "\\bnice to meet you\\b", "fix": "Nice to meet you"},
+      {"cap": ["I"]}
+    ],
+    "tests": {
+      "ok": ["Hi, I'm Anna. Nice to meet you!", "Hello! My name is Olga. Nice to meet you.", "Hi Maya, I am Petro, nice to meet you"],
+      "bad": [["Hi, I'm Anna. Nice to see you!", "sense"], ["Hi! Nice to meet you!", "miss"], ["Hi, I'm Anna.", "miss"], ["Hi, i'm Anna. Nice to meet you!", "cap"]]
+    }
+  },
+  "to greet": {
+    "lines": [
+      {"who": "irina", "uk": "Пастка дня: he, she, it — і в дієслова з'являється -s. I greet, але Amir greets.", "ru": "Ловушка дня: he, she, it — и у глагола появляется -s. I greet, но Amir greets."},
+      {"who": "igor", "uk": "Алгоритм: одна людина, не я й не ти → додай -s. Як галочка в чек-листі.", "ru": "Алгоритм: один человек, не я и не ты → добавь -s. Как галочка в чек-листе."}
+    ],
+    "ask": {"who": "igor", "uk": "Щоранку Амір вітається із сусідами. Напиши це англійською, почни з Every morning.", "ru": "Каждое утро Амир здоровается с соседями. Напиши это по-английски, начни с Every morning."},
+    "frame": "Every morning Amir … his neighbors.",
+    "sample": {"de": "Every morning Amir greets his neighbors.", "uk": "Щоранку Амір вітається із сусідами.", "ru": "Каждое утро Амир здоровается с соседями."},
+    "rules": [
+      {"t": "short"},
+      {"t": "miss", "need": "\\bgreet", "fix": "greets"},
+      {"t": "verb", "need": "\\bgreets\\b", "fix": "Amir greets"},
+      {"t": "miss", "need": "\\bneighbo(u)?rs?\\b", "fix": "his neighbors"},
+      {"cap": ["Amir"]}
+    ],
+    "tests": {
+      "ok": ["Every morning Amir greets his neighbors.", "Every morning Amir greets his neighbours", "Amir greets his neighbors every morning."],
+      "bad": [["Every morning Amir greet his neighbors.", "verb"], ["Every morning Amir says hi to his neighbors.", "miss"], ["Every morning amir greets his neighbors.", "cap"]]
+    }
+  }
+}

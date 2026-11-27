@@ -9,22 +9,24 @@
 import glob, json, os, re, subprocess, sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "words")
-FAM = json.load(open(os.path.join(ROOT, "data", "family.json")))
+EN = len(sys.argv) > 1 and sys.argv[1] == "en"          # python3 tools/build_kanal.py en — английский вариант
+DATA, SRCD = ("data_en", "src_en") if EN else ("data", "src")
+FAM = json.load(open(os.path.join(ROOT, DATA, "family.json")))
 CH, WHO = set(FAM["channels"]), set(FAM["chars"])
 errs, extra = [], {"kanal": [], "divan": []}
 
 def topic_words(tid):
-    t = json.load(open(os.path.join(ROOT, "data", "topics", f"T{tid:03d}.json")))
+    t = json.load(open(os.path.join(ROOT, DATA, "topics", f"T{tid:03d}.json")))
     return {w["w"]: w["k"] for w in t["words"] if w.get("first") == tid and w.get("tr")}
 
 def say_ok(x, where):
     if not isinstance(x, dict) or x.get("who") not in WHO or not x.get("uk") or not x.get("ru"):
         errs.append(f"{where}: реплика без who/uk/ru или неизвестный персонаж ({x.get('who') if isinstance(x, dict) else x})")
 
-os.makedirs(os.path.join(ROOT, "data", "kanal"), exist_ok=True)
-os.makedirs(os.path.join(ROOT, "data", "divan"), exist_ok=True)
+os.makedirs(os.path.join(ROOT, DATA, "kanal"), exist_ok=True)
+os.makedirs(os.path.join(ROOT, DATA, "divan"), exist_ok=True)
 
-for f in sorted(glob.glob(os.path.join(ROOT, "src", "kanal", "T*.txt"))):
+for f in sorted(glob.glob(os.path.join(ROOT, SRCD, "kanal", "T*.txt"))):
     tid = int(re.search(r"T(\d+)", f).group(1)); W = topic_words(tid); out = {}
     for no, line in enumerate(open(f, encoding="utf-8"), 1):
         line = line.rstrip("\n")
@@ -38,11 +40,11 @@ for f in sorted(glob.glob(os.path.join(ROOT, "src", "kanal", "T*.txt"))):
         if "<u>" in uk + ru: errs.append(f"{where}: <u> в переводе")
         if W[w] in out: errs.append(f"{where}: слово '{w}' уже было")
         out[W[w]] = {"ch": ch, "cap": cap, "de": de, "uk": uk, "ru": ru}
-    json.dump(out, open(os.path.join(ROOT, "data", "kanal", f"T{tid:03d}.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+    json.dump(out, open(os.path.join(ROOT, DATA, "kanal", f"T{tid:03d}.json"), "w"), ensure_ascii=False, separators=(",", ":"))
     extra["kanal"].append(tid); print(f"kanal T{tid:03d}: {len(out)} из {len(W)} слов")
 
 tests = []
-for f in sorted(glob.glob(os.path.join(ROOT, "src", "divan", "T*.json"))):
+for f in sorted(glob.glob(os.path.join(ROOT, SRCD, "divan", "T*.json"))):
     tid = int(re.search(r"T(\d+)", f).group(1)); W = topic_words(tid); keys = set(W.values())
     src = json.load(open(f, encoding="utf-8"))
     for k, d in src.items():
@@ -65,7 +67,7 @@ for f in sorted(glob.glob(os.path.join(ROOT, "src", "divan", "T*.json"))):
         tests += [[where, x, "ok", d.get("rules", [])] for x in t.get("ok", [])]
         tests += [[where, x, typ, d.get("rules", [])] for x, typ in t.get("bad", [])]
     json.dump({k: {kk: v for kk, v in d.items() if kk != "tests"} for k, d in src.items()},
-              open(os.path.join(ROOT, "data", "divan", f"T{tid:03d}.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+              open(os.path.join(ROOT, DATA, "divan", f"T{tid:03d}.json"), "w"), ensure_ascii=False, separators=(",", ":"))
     extra["divan"].append(tid); print(f"divan T{tid:03d}: {len(src)} слов")
 
 # образцы ответов — через тот же проверяльщик, что в браузере
@@ -78,7 +80,7 @@ try:
 except FileNotFoundError:
     errs.append("нет node — образцы ответов не проверены")
 
-json.dump(extra, open(os.path.join(ROOT, "data", "extra.json"), "w"))
+json.dump(extra, open(os.path.join(ROOT, DATA, "extra.json"), "w"))
 for e in errs: print("ОШИБКА", e)
 print(f"ошибок: {len(errs)}")
 sys.exit(1 if errs else 0)

@@ -1,0 +1,51 @@
+# Каналы Maple Bay (ТВ и радио на английском) · тема 1 «Hello & Goodbye». Строки свои (не цитаты), классика — свободная от прав.
+# K <слово> | <канал> | <подпись> | <EN с <u>…</u>> | <UK> | <RU>
+# Шоу: Detective Sunday, Roommates on Oak Street, Good Morning, Maple Bay!, Cooking with Grandma Rose, Maple Bay Tonight, Quiz Night with Bob,
+# Ask the Expert, Story Time Radio; радио Maple FM 101.5 — The Maple Kids, Lily Lane, MC Hello.
+@ 1
+K hello | radio | The Maple Kids — “Hello, Hello” | <u>Hello</u>, hello, how do you do? | Привіт, привіт, як справи? | Привет, привет, как поживаешь?
+K hi | wg | Roommates on Oak Street · Episode 1 | “<u>Hi</u>! I'm your new roommate!” | «Привіт! Я твій новий сусід по квартирі!» | «Привет! Я твой новый сосед по квартире!»
+K goodbye | quiz | Quiz Night with Bob | “That's all for tonight. <u>Goodbye</u>!” | «На сьогодні все. До побачення!» | «На сегодня всё. До свидания!»
+K bye | wg | Roommates on Oak Street · Episode 3 | “<u>Bye</u>! And don't forget your keys!” | «Бувай! І не забудь ключі!» | «Пока! И не забудь ключи!»
+K good morning | morgen | Good Morning, Maple Bay! | “<u>Good morning</u>, Maple Bay! The coffee is ready!” | «Доброго ранку, Мейпл-Бей! Кава готова!» | «Доброе утро, Мейпл-Бей! Кофе готов!»
+K good afternoon | krimi | Detective Sunday · Episode 7 | “<u>Good afternoon</u>. Police. Do you have a minute?” | «Добрий день. Поліція. Маєте хвилинку?» | «Добрый день. Полиция. У вас есть минутка?»
+K good evening | news | Maple Bay Tonight | “<u>Good evening</u>, ladies and gentlemen.” | «Добрий вечір, пані та панове.» | «Добрый вечер, дамы и господа.»
+K good night | radio | Lily Lane — “Good Night, Little Town” | <u>Good night</u>, little town, good night! | На добраніч, маленьке місто, на добраніч! | Спокойной ночи, маленький город, спокойной ночи!
+K How are you? | radio | MC Hello — “What's Up” | Hey, my friend, <u>how are you</u>? | Гей, друже, як ти? | Эй, друг, как ты?
+K I'm fine | wg | Roommates on Oak Street · Episode 2 | “Are you OK?” – “Yes, <u>I'm fine</u>. Really.” | «Ти в порядку?» – «Так, у мене все добре. Справді.» | «Ты в порядке?» – «Да, у меня всё хорошо. Правда.»
+K And you? | kochen | Cooking with Grandma Rose | “I'm great, thank you. <u>And you</u>?” | «У мене все чудово, дякую. А у Вас?» | «У меня всё отлично, спасибо. А у Вас?»
+K thank you | kochen | Cooking with Grandma Rose | “And now the sugar. <u>Thank you</u>, sweetie!” | «А тепер цукор. Дякую, сонечко!» | «А теперь сахар. Спасибо, солнышко!»
+K please | werbung | Commercial | “Maple Lemonade – one, <u>please</u>!” | «Кленовий лимонад – один, будь ласка!» | «Кленовый лимонад – один, пожалуйста!»
+K See you tomorrow | wg | Roommates on Oak Street · Episode 5 | “I'm so tired. <u>See you tomorrow</u>!” | «Я так утомилася. До завтра!» | «Я так устала. До завтра!»
+K See you later | radio | The Maple Kids — “See You Later” | No problem, <u>see you later</u>, see you later! | Без проблем, до зустрічі, до зустрічі! | Без проблем, увидимся, увидимся!
+K Nice to meet you | quiz | Quiz Night with Bob | “Our first player is Anna. <u>Nice to meet you</u>, Anna!” | «Наша перша гравчиня — Анна. Приємно познайомитися, Анно!» | «Наш первый игрок — Анна. Приятно познакомиться, Анна!»
+K See you soon | krimi | Detective Sunday · Episode 2 | “We'll meet again. <u>See you soon</u>.” | «Ми ще зустрінемося. До скорої зустрічі.» | «Мы ещё встретимся. До скорой встречи.»
+K Have a nice day | morgen | Good Morning, Maple Bay! | “That's it for today! <u>Have a nice day</u>!” | «На сьогодні все! Гарного дня!» | «На сегодня всё! Хорошего дня!»
+K Have a nice weekend | radio | Lily Lane — “Friday” | It's Friday night – <u>have a nice weekend</u>! | П'ятниця ввечері – гарних вихідних! | Пятница вечером – хороших выходных!
+K neighbor | krimi | Detective Sunday · Episode 3 | “The <u>neighbor</u> saw everything.” | «Сусід усе бачив.» | «Сосед всё видел.»
+K to greet | hoerspiel | Story Time Radio · The Little King | “The king <u>greets</u> his people.” | «Король вітає свій народ.» | «Король приветствует свой народ.»
+K to wave | hoerspiel | Story Time Radio · The House by the Lake | “A little girl <u>waves</u> at the window.” | «У вікні махає рукою маленька дівчинка.» | «В окне машет рукой маленькая девочка.»
+K to hug | wg | Roommates on Oak Street · Episode 6 | “Come here, I want to <u>hug</u> you!” | «Іди сюди, я хочу тебе обійняти!» | «Иди сюда, я хочу тебя обнять!»
+K to shake hands | news | Maple Bay Tonight | “The two mayors <u>shake hands</u>.” | «Двоє мерів тиснуть руки.» | «Два мэра пожимают руки.»
+K polite | kochen | Cooking with Grandma Rose | “Kids, be <u>polite</u> and say ‘thank you’!” | «Діти, будьте ввічливі й скажіть „дякую“!» | «Дети, будьте вежливы и скажите „спасибо“!»
+K friendly | werbung | Commercial | “Maple Bay buses: fast, clean, <u>friendly</u>!” | «Автобуси Мейпл-Бей: швидкі, чисті, привітні!» | «Автобусы Мейпл-Бей: быстрые, чистые, приветливые!»
+K Not bad | wg | Roommates on Oak Street · Episode 1 | “How was the party?” – “<u>Not bad</u>.” | «Як вечірка?» – «Непогано.» | «Как вечеринка?» – «Неплохо.»
+K Long time no see | wg | Roommates on Oak Street · Episode 6 | “Mia! <u>Long time no see</u>!” | «Міє! Давно не бачилися!» | «Мия! Давно не виделись!»
+K Take care | radio | MC Hello — “Take Care” | <u>Take care</u>, my friend, and come back soon! | Бережи себе, друже, і повертайся скоро! | Береги себя, друг, и возвращайся скорее!
+K to introduce | quiz | Quiz Night with Bob | “Let me <u>introduce</u> tonight's players!” | «Дозвольте представити сьогоднішніх гравців!» | «Позвольте представить сегодняшних игроков!»
+K Mrs. | krimi | Detective Sunday · Episode 4 | “Good evening, <u>Mrs.</u> Brown. Where were you last night?” | «Добрий вечір, пані Браун. Де Ви були вчора ввечері?» | «Добрый вечер, миссис Браун. Где Вы были вчера вечером?»
+K formal | ratgeber | Ask the Expert | “In an email to the office, be <u>formal</u>: ‘Dear Mr. Smith’.” | «У листі до установи будьте офіційні: „Dear Mr. Smith“.» | «В письме в учреждение будьте официальны: „Dear Mr. Smith“.»
+K informal | ratgeber | Ask the Expert | “With friends you can be <u>informal</u>: ‘Hey, what's up?’” | «З друзями можна неофіційно: „Hey, what's up?“» | «С друзьями можно неофициально: „Hey, what's up?“»
+K rude | krimi | Detective Sunday · Episode 8 | “You are very <u>rude</u>, Mr. Brown.” | «Ви дуже грубий, пане Браун.» | «Вы очень грубы, мистер Браун.»
+K small talk | ratgeber | Ask the Expert | “For <u>small talk</u>, the weather is always a safe topic.” | «Для світської бесіди погода — завжди безпечна тема.» | «Для светской беседы погода — всегда безопасная тема.»
+K to say goodbye | hoerspiel | Story Time Radio · The Little King | “The prince <u>says goodbye</u> to the princess.” | «Принц прощається з принцесою.» | «Принц прощается с принцессой.»
+K to thank | quiz | Quiz Night with Bob | “I want to <u>thank</u> all my fans!” | «Я хочу подякувати всім своїм фанатам!» | «Я хочу поблагодарить всех своих фанатов!»
+K farewell | klassik | Shakespeare · Romeo and Juliet | <u>Farewell</u>! God knows when we shall meet again. | Прощавай! Бог знає, коли ми знову зустрінемося. | Прощай! Бог знает, когда мы встретимся снова.
+K to nod | krimi | Detective Sunday · Episode 4 | “He <u>nods</u> at me and walks away.” | «Він киває мені й іде геть.» | «Он кивает мне и уходит.»
+K to get in touch | krimi | Detective Sunday · Episode 7 | “<u>Get in touch</u> if you remember anything.” | «Зв'яжіться з нами, якщо щось згадаєте.» | «Свяжитесь с нами, если что-то вспомните.»
+K to strike up a conversation | ratgeber | Ask the Expert | “At a sports club it's easy to <u>strike up a conversation</u>.” | «У спортклубі легко зав'язати розмову.» | «В спортклубе легко завязать разговор.»
+K a set phrase | wg | Roommates on Oak Street · Episode 2 | “‘How are you?’ is just <u>a set phrase</u> here.” | «„How are you?“ тут — лише дежурна фраза.» | «„How are you?“ здесь — просто дежурная фраза.»
+K etiquette | hoerspiel | Story Time Radio · The Little King | “At the palace, <u>etiquette</u> is very strict.” | «У палаці дуже суворий етикет.» | «Во дворце очень строгий этикет.»
+K distant | krimi | Detective Sunday · Episode 3 | “The witness seems very <u>distant</u>.” | «Свідка здається дуже відстороненою.» | «Свидетельница кажется очень отстранённой.»
+K to drop by | wg | Roommates on Oak Street · Episode 7 | “You never <u>drop by</u> anymore!” | «Ти більше ніколи не заглядаєш!» | «Ты больше никогда не заглядываешь!»
+K curt | krimi | Detective Sunday · Episode 8 | “The caretaker is very <u>curt</u> today.” | «Двірник сьогодні дуже небагатослівний.» | «Дворник сегодня очень немногословен.»
