@@ -38,3 +38,5 @@
 Короткие 3D-ролики эмоций (анимированный webp, 240 px): `cd tools/art3d && python3 anim3d.py ../../words/img/fam` (≈ 9 мин на оба языка);
 они заменяют статичные <кто>_<эмоция>.webp. Анимация реплик на диване — CSS в words/app.css («фигурки оживают»).
 Фирменные движения с предметами (`<кто>_act.webp`, главная страница): `cd tools/art3d && python3 act3d.py ../../words/img/fam`.
+Жесты-подсказки («Крокодил»: член семьи показывает слово): `cd tools/art3d && python3 gestures.py ../../words/img/fam`
+(≈ 25 мин) → `<lang>/g_<жест>.webp` и `words/data{,_en}/gesture.json` (слово → жест). Новые слова — добавить в MAP, новый жест — в G() и GEST.

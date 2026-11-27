@@ -161,3 +161,11 @@ header.top .brand b{color:var(--acc)}
 .famrow img{width:calc((100% - 20px)/6);max-width:96px;aspect-ratio:1;border-radius:14px;border:2px solid #f0dcc0;animation:pop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--i)*.12s)}
 @media (prefers-reduced-motion:reduce){.viewers img,.fpop,.famcorner img,.famrow img{animation:none!important}}
 @media (max-width:480px){.fpop img{width:72px;height:72px}.fpop .fbt{font-size:15px;max-width:170px;margin-bottom:22px}}
+
+/* подсказка-жест: член семьи показывает слово */
+.hintg{font-size:15px;padding:6px 12px;border-style:dashed;color:var(--mute);margin:0 0 10px}
+.gest{display:flex;gap:10px;align-items:center;margin:0 0 12px;animation:pop .5s cubic-bezier(.3,1.5,.5,1) both}
+.gest img{width:150px;height:150px;border-radius:20px;border:2px solid #f0dcc0;flex:none;box-shadow:var(--shadow)}
+.gest .btx{background:#fff;border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:8px 12px;font-size:16px}
+.gest .btx b{display:block;font-size:13px;color:var(--acc)}
+@media (max-width:480px){.gest img{width:128px;height:128px}}

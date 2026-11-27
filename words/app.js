@@ -106,8 +106,9 @@ async function useLang(tl) {   // загрузить данные изучаем
   const [meta, st] = await Promise.all([dr + "meta.json", dr + "stufen.json"].map(getJSON));
   let fam = null, extra = { kanal: [], divan: [] };
   try { [fam, extra] = await Promise.all([dr + "family.json", dr + "extra.json"].map(getJSON)) } catch (e) { fam = null }
+  let gest = null; try { gest = await getJSON(dr + "gesture.json") } catch (e) { }
   TL = tl; DR = dr; CFG.lang = TLS[tl].voice;
-  Object.assign(D, { meta, st, fam, extra, topics: {}, lex: {}, index: null, byId: {}, tl });
+  Object.assign(D, { meta, st, fam, extra, gest, topics: {}, lex: {}, index: null, byId: {}, tl });
   meta.topics.forEach(t => D.byId[t.id] = t);
 }
 async function boot() {
@@ -269,7 +270,9 @@ function exampleHTML(it, p, which) {
 function cardHTML(c, p, meta) {
   const nm = D.st.names[c.type], nw = !!nm && (P.nt[c.type] || 0) < 5 && c.type !== "de2l1" && c.type !== "l12de";
   let h = `<div class="card"><div class="kind">${nm ? nm[L] : c.kind || ""}${nw ? ` <span class="new">${U.newType}</span>` : ""}<span style="flex:1"></span>${meta || ""}</div>`;
+  const gs = c.it && !["odd", "scene", "article"].includes(c.type) && gestOf(c.it);
   h += `<div class="q ${c.type === "me" || c.type === "cloze" || c.type === "mecloze" || c.type === "def2de" ? "sent" : ""}">${c.q} ${c.say ? sayBtn(c.say) : ""}</div>`;
+  if (gs) h += `<div id="gestBox"><button class="ghost hintg" id="hintg">🎭 ${F().hint}</button></div>`;
   if (c.hint) h += `<div style="margin:-6px 0 10px">${c.hint}</div>`;
   if (c.opts) h += `<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o.label)}${o.sub && !c.subAfter ? `<small>${esc(o.sub)}</small>` : ""}</button>`).join("")}</div>`;
   if (c.input != null) h += `<div class="row"><input type="text" id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${U.type}"><button class="main" id="chk">${U.check}</button></div>`;
@@ -292,6 +295,7 @@ function runCard(host, c, p, meta) {
   return new Promise(res => {
     host.innerHTML = cardHTML(c, p, meta); try { if (localStorage.getItem('wr_debug')) window.__card = c } catch (e) { }
     if (c.auto) setTimeout(() => say(c.auto), 250);
+    if ($("#hintg")) $("#hintg").onclick = () => { c.hinted = true; $("#gestBox").innerHTML = gestHTML(c.it) };
     if (P.nt[c.type] == null) P.nt[c.type] = 0;
     const done = ok => {
       P.nt[c.type] = (P.nt[c.type] || 0) + 1; famAnswer(ok);
@@ -419,6 +423,11 @@ function confetti(n) {
   const cols = ["#f5a623", "#e2669a", "#46a58f", "#6c9bd2", "#fdd835", "#e8604c"];
   box.innerHTML = Array.from({ length: n }, () => `<i style="left:${Math.random()*100}%;background:${pick(cols)};--dx:${(Math.random()*2 - 1)*80}px;--r:${Math.random()*720 - 360}deg;animation-delay:${Math.random()*0.4}s;animation-duration:${1.6 + Math.random()*1.2}s"></i>`).join("");
   document.body.appendChild(box); setTimeout(() => box.remove(), 3400);
+}
+function gestOf(it) { return famOn() && D.gest && it && D.gest.map[it.k] ? { g: D.gest.map[it.k], who: D.gest.who[D.gest.map[it.k]] } : null }
+function gestHTML(it, intro) {
+  const x = gestOf(it); if (!x) return "";
+  return `<div class="gest"><img src="img/fam/${L}/g_${x.g}.webp?v=1" alt=""><div class="btx"><b>${esc(nick(x.who))}</b>${intro ? `<span class="de">${esc(it.w)}</span>` : esc(F().shows)}</div></div>`;
 }
 function famCorner() {
   if (!famOn() || !D.fam.mini) return "";
@@ -569,11 +578,12 @@ async function showStep(E) {
     const it = word(list[i]), back = E.plan.back.includes(list[i]) ? `<small class="badge">${U.returned(it.t)}</small>` : "";
     app().innerHTML = head() + stepsBar(1) + `<div class="card"><div class="kind">${U.intro} · ${i + 1}/${list.length} ${back}<span style="flex:1"></span><small class="mute">${it.lvl}</small></div>
     ${it.img ? `<img class="pic" src="${it.img}" alt="">` : ""}
-    <div class="q">${esc(it.w)} ${sayBtn(it.w)}</div>
+    <div class="q">${esc(it.w)} ${sayBtn(it.w)}</div>${gestOf(it) ? `<div id="gestBox"><button class="ghost hintg" id="hintg">🎭 ${F().showMe}</button></div>` : ""}
     ${p.l1 === "def" || p.l1 === "dict" ? (it.def ? `<p>${esc(it.def)}</p>` : "") + `<details><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : p.l1 === "tap" ? `<details open><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : `<p class="tr" style="font-size:20px;margin-top:-6px">${esc(it.tr[L])}</p>`}
     <div class="fb">${exampleHTML(it, p, "ex")}<div style="margin-top:8px">${exampleHTML(it, p, "me")}</div>${it.kn && D.fam ? `<div style="margin-top:8px">${knLine(it.kn)}</div>` : ""}</div>
     <div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${i > 0 ? `<button id="pv">${U.back}</button>` : ""}<span style="flex:1"></span><button class="ghost" id="sk"><small>${U.skipShow}</small></button></div></div>`;
     setTimeout(() => say(it.w), 200);
+    if ($("#hintg")) $("#hintg").onclick = () => { $("#gestBox").innerHTML = gestHTML(it, true) };
     $("#nx").onclick = () => { i++; i < list.length ? draw() : trainStep(E) };
     if ($("#pv")) $("#pv").onclick = () => { i--; draw() };
     $("#sk").onclick = () => trainStep(E);
