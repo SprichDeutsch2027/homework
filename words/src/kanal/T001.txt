@@ -1,0 +1,82 @@
+# Каналы Lindenbrück · тема 1 «Hallo & Tschüss» — сцены «как из фильма / как из песни»
+# Строки свои (не цитаты), уровень — как у слова. Формат:
+# K <слово> | <канал> | <подпись: шоу · серия / исполнитель — «песня»> | <DE с <u>…</u>> | <UK> | <RU>
+# Каналы: krimi, wg, morgen, kochen, news, werbung, quiz, radio, ratgeber, hoerspiel, klassik
+# Вымышленные исполнители Radio Brezel 104,2: Die Brezelboys, Lena Linde, MC Moin.
+@ 1
+K hallo | radio | Die Brezelboys — „Hallo, hallo“ | <u>Hallo</u>, hallo, wie geht's dir so? | Привіт, привіт, як ти там? | Привет, привет, как ты там?
+K tschüss | wg | WG Kastanienweg 7 · Folge 3 | „<u>Tschüss</u>! Und vergiss den Schlüssel nicht!“ | «Бувай! І не забудь ключ!» | «Пока! И не забудь ключ!»
+K Guten Morgen | morgen | Guten Morgen, Lindenbrück! | „<u>Guten Morgen</u>, Lindenbrück! Der Kaffee ist fertig!“ | «Доброго ранку, Лінденбрюку! Кава готова!» | «Доброе утро, Линденбрюк! Кофе готов!»
+K Guten Tag | krimi | Krimi am Sonntag · Folge 7 | „<u>Guten Tag</u>. Polizei. Haben Sie kurz Zeit?“ | «Добрий день. Поліція. Маєте хвилинку?» | «Добрый день. Полиция. У вас есть минутка?»
+K Guten Abend | news | Lindenbrück aktuell | „<u>Guten Abend</u>, meine Damen und Herren.“ | «Добрий вечір, пані та панове.» | «Добрый вечер, дамы и господа.»
+K Auf Wiedersehen | quiz | Quiz-Abend mit Uwe | „Das war's für heute. <u>Auf Wiedersehen</u>!“ | «На сьогодні все. До побачення!» | «На сегодня всё. До свидания!»
+K Mir geht's gut | radio | Lena Linde — „Sonntag“ | Die Sonne scheint, <u>mir geht's gut</u>! | Світить сонце, у мене все добре! | Светит солнце, у меня всё хорошо!
+K grüßen | hoerspiel | Hörspiel am Abend · Der kleine König | „Der König <u>grüßt</u> das Volk.“ | «Король вітає народ.» | «Король приветствует народ.»
+K Bis morgen | wg | WG Kastanienweg 7 · Folge 5 | „Ich bin so müde. <u>Bis morgen</u>!“ | «Я так утомилася. До завтра!» | «Я так устала. До завтра!»
+K bis später | radio | Die Brezelboys — „Bis später“ | Kein Problem, <u>bis später</u>, bis später! | Без проблем, до зустрічі, до зустрічі! | Без проблем, до скорого, до скорого!
+K Bis bald | krimi | Krimi am Sonntag · Folge 2 | „Wir sehen uns wieder. <u>Bis bald</u>.“ | «Ми ще побачимося. До скорої зустрічі.» | «Мы ещё увидимся. До скорой встречи.»
+K Gute Nacht | radio | Lena Linde — „Gute Nacht, Stadt“ | <u>Gute Nacht</u>, kleine Stadt, gute Nacht! | На добраніч, маленьке місто, на добраніч! | Спокойной ночи, маленький город, спокойной ночи!
+K Schönes Wochenende | morgen | Guten Morgen, Lindenbrück! | „Es ist Freitag! <u>Schönes Wochenende</u>!“ | «Сьогодні п'ятниця! Гарних вихідних!» | «Сегодня пятница! Хороших выходных!»
+K die Anrede | ratgeber | Ratgeber am Telefon | „Die <u>Anrede</u> im Brief? ‚Sehr geehrte Frau Weber‘.“ | «Звертання в листі? „Шановна пані Вебер“.» | «Обращение в письме? „Уважаемая госпожа Вебер“.»
+K die Hand geben | krimi | Krimi am Sonntag · Folge 4 | „Er will mir nicht <u>die Hand geben</u>. Komisch.“ | «Він не хоче подати мені руку. Дивно.» | «Он не хочет подать мне руку. Странно.»
+K Es geht so | wg | WG Kastanienweg 7 · Folge 1 | „Wie war die Party?“ – „<u>Es geht so</u>.“ | «Як вечірка?» – «Так собі.» | «Как вечеринка?» – «Так себе.»
+K Hallo zusammen | quiz | Quiz-Abend mit Uwe | „<u>Hallo zusammen</u> und willkommen zum Quiz-Abend!“ | «Всім привіт і ласкаво просимо на вечір вікторини!» | «Всем привет и добро пожаловать на вечер викторины!»
+K Bis dann | radio | MC Moin — „Bis dann“ | Ich ruf dich an – <u>bis dann</u>, bis dann! | Я тобі подзвоню – тоді до зустрічі! | Я тебе позвоню – тогда до встречи!
+K der Morgen | radio | Lena Linde — „Neuer Tag“ | Ein neuer <u>Morgen</u>, ein neuer Tag. | Новий ранок, новий день. | Новое утро, новый день.
+K der Tag | klassik | Sprichwort | Man soll den <u>Tag</u> nicht vor dem Abend loben. | Не хвали день до вечора. | Не хвали день до вечера.
+K der Abend | kochen | Kochen mit Oma Gerda | „Ein guter <u>Abend</u> braucht eine gute Suppe!“ | «Гарному вечору потрібен гарний суп!» | «Хорошему вечеру нужен хороший суп!»
+K die Nacht | krimi | Krimi am Sonntag · Folge 1 | „Es war <u>Nacht</u>. Und es war still.“ | «Була ніч. І було тихо.» | «Была ночь. И было тихо.»
+K danke | kochen | Kochen mit Oma Gerda | „Und jetzt Zucker. <u>Danke</u>, mein Schatz!“ | «А тепер цукор. Дякую, сонечко!» | «А теперь сахар. Спасибо, солнышко!»
+K bitte | werbung | Werbung | „Brezel-Limo – einmal, <u>bitte</u>!“ | «Брецель-лимонад – один, будь ласка!» | «Брецель-лимонад – один, пожалуйста!»
+K die Hand | krimi | Krimi am Sonntag · Folge 9 | „Polizei! <u>Hände</u> hoch!“ | «Поліція! Руки вгору!» | «Полиция! Руки вверх!»
+K herzlich | morgen | Guten Morgen, Lindenbrück! | „<u>Herzlich</u> willkommen zur Show!“ | «Щиро вітаємо на шоу!» | «Сердечно приветствуем на шоу!»
+K Mach's gut | radio | Die Brezelboys — „Mach's gut“ | <u>Mach's gut</u>, mein Freund, und komm bald wieder! | Бувай, друже, і повертайся скоро! | Всего хорошего, друг, и возвращайся скорее!
+K freundlich | werbung | Werbung | „Der Bus in Lindenbrück: schnell, sauber, <u>freundlich</u>!“ | «Автобус у Лінденбрюку: швидкий, чистий, привітний!» | «Автобус в Линденбрюке: быстрый, чистый, приветливый!»
+K nett | wg | WG Kastanienweg 7 · Folge 2 | „Der neue Mitbewohner? Total <u>nett</u>!“ | «Новий сусід по квартирі? Дуже милий!» | «Новый сосед по квартире? Очень милый!»
+K sich bedanken | quiz | Quiz-Abend mit Uwe | „Ich <u>bedanke mich</u> bei allen Fans!“ | «Я дякую всім фанатам!» | «Я благодарю всех фанатов!»
+K auf Wiederhören | ratgeber | Ratgeber am Telefon | „Danke für Ihren Anruf. <u>Auf Wiederhören</u>!“ | «Дякуємо за дзвінок. До побачення!» | «Спасибо за звонок. До свидания!»
+K lange nicht gesehen | wg | WG Kastanienweg 7 · Folge 6 | „Mia! <u>Lange nicht gesehen</u>!“ | «Міє! Давно не бачились!» | «Мия! Давно не виделись!»
+K sympathisch | quiz | Quiz-Abend mit Uwe | „Unser Kandidat ist sehr <u>sympathisch</u>!“ | «Наш учасник дуже симпатичний!» | «Наш участник очень симпатичный!»
+K der Besuch | krimi | Krimi am Sonntag · Folge 5 | „Wir haben <u>Besuch</u>. Wer ist das?“ | «У нас гості. Хто це?» | «У нас гости. Кто это?»
+K der Nachbar | krimi | Krimi am Sonntag · Folge 3 | „Der <u>Nachbar</u> hat alles gesehen.“ | «Сусід усе бачив.» | «Сосед всё видел.»
+K formell | ratgeber | Ratgeber am Telefon | „Im Amt sprechen wir <u>formell</u>: mit ‚Sie‘.“ | «В установі говоримо офіційно: на „Ви“.» | «В учреждении говорим официально: на „Вы“.»
+K Moin | radio | MC Moin — „Moin, moin“ | <u>Moin</u>, moin, die Sonne ist da! | Привіт-привіт, сонце вже тут! | Привет-привет, солнце уже здесь!
+K Servus | werbung | Werbung | „<u>Servus</u>! Hier ist die Brezel aus Bayern!“ | «Сервус! Ось брецель із Баварії!» | «Сервус! Вот брецель из Баварии!»
+K duzen | wg | WG Kastanienweg 7 · Folge 1 | „Wir <u>duzen</u> uns hier alle.“ | «Ми тут усі на „ти“.» | «Мы тут все на „ты“.»
+K siezen | krimi | Krimi am Sonntag · Folge 6 | „Bitte <u>siezen</u> Sie mich. Ich bin Kommissarin.“ | «Будь ласка, звертайтеся до мене на „Ви“. Я комісарка.» | «Пожалуйста, обращайтесь ко мне на „Вы“. Я комиссар.»
+K Schönen Tag noch | morgen | Guten Morgen, Lindenbrück! | „Das war's! <u>Schönen Tag noch</u>!“ | «На цьому все! Гарного дня!» | «На этом всё! Хорошего дня!»
+K Schönen Feierabend | radio | Die Brezelboys — „Feierabend“ | Die Arbeit ist vorbei – <u>schönen Feierabend</u>! | Роботу скінчено – гарного вечора! | Работа закончена – хорошего вечера!
+K sich verabschieden | hoerspiel | Hörspiel am Abend · Der kleine König | „Der Prinz <u>verabschiedet sich</u> von der Prinzessin.“ | «Принц прощається з принцесою.» | «Принц прощается с принцессой.»
+K ansprechen | wg | WG Kastanienweg 7 · Folge 4 | „<u>Sprich</u> sie doch einfach <u>an</u>!“ | «Та просто заговори з нею!» | «Да просто заговори с ней!»
+K höflich | kochen | Kochen mit Oma Gerda | „Kinder, sagt <u>höflich</u> ‚danke‘!“ | «Діти, ввічливо скажіть „дякую“!» | «Дети, вежливо скажите „спасибо“!»
+K unhöflich | krimi | Krimi am Sonntag · Folge 8 | „Sie sind sehr <u>unhöflich</u>, Herr Braun.“ | «Ви дуже неввічливі, пане Браун.» | «Вы очень невежливы, господин Браун.»
+K locker | radio | MC Moin — „Locker bleiben“ | Bleib <u>locker</u>, Mann, bleib locker! | Розслабся, друже, будь простіше! | Расслабься, чувак, будь проще!
+K winken | hoerspiel | Hörspiel am Abend · Das Haus am See | „Am Fenster <u>winkt</u> ein kleines Mädchen.“ | «У вікні махає рукою маленька дівчинка.» | «В окне машет рукой маленькая девочка.»
+K der Abschied | radio | Lena Linde — „Abschied“ | Kein <u>Abschied</u> ist für immer. | Жодне прощання не назавжди. | Никакое прощание не навсегда.
+K umarmen | wg | WG Kastanienweg 7 · Folge 6 | „Komm her, ich will dich <u>umarmen</u>!“ | «Іди сюди, я хочу тебе обійняти!» | «Иди сюда, я хочу тебя обнять!»
+K sich melden | krimi | Krimi am Sonntag · Folge 7 | „<u>Melden</u> Sie <u>sich</u>, wenn Sie etwas wissen.“ | «Дайте знати, якщо щось знаєте.» | «Дайте знать, если что-то знаете.»
+K der Händedruck | news | Lindenbrück aktuell | „Ein <u>Händedruck</u> zwischen den Bürgermeistern.“ | «Рукостискання між мерами.» | «Рукопожатие между мэрами.»
+K begrüßen | news | Lindenbrück aktuell | „Die Stadt <u>begrüßt</u> die neuen Bürger.“ | «Місто вітає нових мешканців.» | «Город приветствует новых жителей.»
+K die Begrüßung | quiz | Quiz-Abend mit Uwe | „Zur <u>Begrüßung</u> gibt es Applaus!“ | «На привітання – оплески!» | «В знак приветствия – аплодисменты!»
+K jemanden herzlich begrüßen | morgen | Guten Morgen, Lindenbrück! | „Wir <u>begrüßen</u> unseren Gast ganz <u>herzlich</u>!“ | «Щиро вітаємо нашого гостя!» | «Сердечно приветствуем нашего гостя!»
+K vertraut | radio | Lena Linde — „Zuhause“ | Deine Stimme klingt so <u>vertraut</u>. | Твій голос звучить так знайомо. | Твой голос звучит так знакомо.
+K Grüß Gott | werbung | Werbung | „<u>Grüß Gott</u> aus den Bergen! Probieren Sie unseren Käse!“ | «Вітаємо з гір! Скуштуйте наш сир!» | «Здравствуйте из гор! Попробуйте наш сыр!»
+K zunicken | krimi | Krimi am Sonntag · Folge 4 | „Er <u>nickt</u> mir kurz <u>zu</u> und geht.“ | «Він коротко киває мені й іде.» | «Он коротко кивает мне и уходит.»
+K der Smalltalk | ratgeber | Ratgeber am Telefon | „Beim <u>Smalltalk</u> sprechen wir über das Wetter.“ | «У світській бесіді говоримо про погоду.» | «В светской беседе говорим о погоде.»
+K das Du anbieten | quiz | Quiz-Abend mit Uwe | „Darf ich Ihnen <u>das Du anbieten</u>? Ich bin Uwe!“ | «Можна запропонувати Вам перейти на „ти“? Я Уве!» | «Можно предложить Вам перейти на „ты“? Я Уве!»
+K Tschau | wg | WG Kastanienweg 7 · Folge 3 | „<u>Tschau</u>, Leute, ich bin weg!“ | «Чао, народ, я пішла!» | «Чао, народ, я ушла!»
+K per Du sein | wg | WG Kastanienweg 7 · Folge 8 | „Mit dem Chef bin ich <u>per Du</u>.“ | «З шефом я на „ти“.» | «С шефом я на „ты“.»
+K distanziert | krimi | Krimi am Sonntag · Folge 3 | „Die Zeugin wirkt sehr <u>distanziert</u>.“ | «Свідка тримається дуже відсторонено.» | «Свидетельница держится очень отстранённо.»
+K förmlich | hoerspiel | Hörspiel am Abend · Der kleine König | „‚Sehr erfreut‘, sagt der Graf ganz <u>förmlich</u>.“ | «„Дуже радий“, – каже граф дуже церемонно.» | «„Очень рад“, – говорит граф очень церемонно.»
+K sich flüchtig kennen | krimi | Krimi am Sonntag · Folge 5 | „Wir <u>kennen uns</u> nur <u>flüchtig</u>, Frau Kommissarin.“ | «Ми знайомі лише побіжно, пані комісарко.» | «Мы знакомы лишь шапочно, госпожа комиссар.»
+K ins Gespräch kommen | ratgeber | Ratgeber am Telefon | „Im Sportverein <u>kommen</u> Sie schnell <u>ins Gespräch</u>.“ | «У спортклубі Ви швидко розговоритеся.» | «В спортклубе Вы быстро разговоритесь.»
+K sich blicken lassen | wg | WG Kastanienweg 7 · Folge 7 | „Du <u>lässt dich</u> nie <u>blicken</u>!“ | «Ти ніколи не показуєшся!» | «Ты никогда не показываешься!»
+K kurz angebunden | krimi | Krimi am Sonntag · Folge 8 | „Der Hausmeister ist heute sehr <u>kurz angebunden</u>.“ | «Двірник сьогодні дуже небагатослівний.» | «Дворник сегодня очень немногословен.»
+K zuwinken | radio | Lena Linde — „Am Bahnhof“ | Du <u>winkst</u> mir vom Zug aus <u>zu</u>. | Ти махаєш мені з поїзда. | Ты машешь мне из поезда.
+K die Umgangsform | ratgeber | Ratgeber am Telefon | „Gute <u>Umgangsformen</u> helfen im Job.“ | «Гарні манери допомагають на роботі.» | «Хорошие манеры помогают на работе.»
+K die Floskel | wg | WG Kastanienweg 7 · Folge 2 | „‚Wie geht's?‘ ist hier nur eine <u>Floskel</u>.“ | «„Як справи?“ тут – лише дежурна фраза.» | «„Как дела?“ здесь – просто дежурная фраза.»
+K die Etikette | hoerspiel | Hörspiel am Abend · Der kleine König | „Am Hof gilt eine strenge <u>Etikette</u>.“ | «При дворі діє суворий етикет.» | «При дворе действует строгий этикет.»
+K überschwänglich | quiz | Quiz-Abend mit Uwe | „Die Gewinnerin jubelt <u>überschwänglich</u>!“ | «Переможниця бурхливо радіє!» | «Победительница бурно ликует!»
+K Wie geht's? | radio | Die Brezelboys — „Hallo, hallo“ | Sag mal, <u>wie geht's</u>? Alles klar? | Скажи-но, як справи? Усе гаразд? | Скажи-ка, как дела? Всё в порядке?
+K Und dir? | wg | WG Kastanienweg 7 · Folge 1 | „Mir geht's super. <u>Und dir</u>?“ | «У мене все супер. А в тебе?» | «У меня всё супер. А у тебя?»
+K Und Ihnen? | kochen | Kochen mit Oma Gerda | „Mir geht's prima, danke. <u>Und Ihnen</u>?“ | «У мене все чудово, дякую. А у Вас?» | «У меня всё прекрасно, спасибо. А у Вас?»

@@ -17,7 +17,7 @@ const cmp = s => String(s).toLowerCase().replace(/ß/g, "ss").replace(/[.,!?;:�
 /* ---------- Тексты интерфейса ---------- */
 const UI = {
   uk: {
-    hello: "Привіт! Це Wortreise — подорож словами курсу «10 Stufen».", who: "Як тебе звати?", lang: "Мова підказок", create: "Почати",
+    hello: "Привіт! Це Wortreise — подорож словами курсу «10 Stufen».", who: "Як тебе звати?", lang: "Рідна мова", create: "Почати",
     profiles: "Хто вчиться?", newp: "Новий учень", choose: "Обери свого героя", chooseSub: "Ти проходиш теми курсу як цей герой: його друзі, його місто, його історія.",
     start: "З чого почати?", fromStart: "З теми 1", fromN: "З теми №", go: "Далі", map: "Карта", review: "Повторити", diary: "Щоденник", me: "Профіль",
     soon: "скоро", lock: "закрито", topic: "Тема", stufe: "Ступінь", startEp: "Почати епізод", cont: "Далі", check: "Перевірити", next: "Далі",
@@ -55,7 +55,7 @@ const UI = {
     found2: (n, d, x) => `Знайдено прогрес «${esc(n)}»: ${d} тем, ⭐ ${x}. Це ви?`
   },
   ru: {
-    hello: "Привет! Это Wortreise — путешествие по словам курса «10 Stufen».", who: "Как тебя зовут?", lang: "Язык подсказок", create: "Начать",
+    hello: "Привет! Это Wortreise — путешествие по словам курса «10 Stufen».", who: "Как тебя зовут?", lang: "Родной язык", create: "Начать",
     profiles: "Кто учится?", newp: "Новый ученик", choose: "Выбери своего героя", chooseSub: "Ты проходишь темы курса как этот герой: его друзья, его город, его история.",
     start: "С чего начать?", fromStart: "С темы 1", fromN: "С темы №", go: "Дальше", map: "Карта", review: "Повторить", diary: "Дневник", me: "Профиль",
     soon: "скоро", lock: "закрыто", topic: "Тема", stufe: "Ступень", startEp: "Начать эпизод", cont: "Дальше", check: "Проверить", next: "Дальше",
@@ -96,10 +96,11 @@ const UI = {
 let L = "uk", U = UI.uk;
 
 /* ---------- Данные ---------- */
-const D = { meta: null, heroes: null, st: null, topics: {}, lex: {}, index: null };
+const D = { meta: null, heroes: null, st: null, topics: {}, lex: {}, index: null, fam: null, extra: { kanal: [], divan: [] } };
 async function getJSON(p) { const r = await fetch(p, { cache: "no-cache" }); if (!r.ok) throw new Error(p + " " + r.status); return r.json() }
 async function boot() {
   [D.meta, D.heroes, D.st] = await Promise.all(["data/meta.json", "data/heroes.json", "data/stufen.json"].map(getJSON));
+  try { [D.fam, D.extra] = await Promise.all(["data/family.json", "data/extra.json"].map(getJSON)) } catch (e) { D.fam = null }
   D.byId = {}; D.meta.topics.forEach(t => D.byId[t.id] = t);
   window.addEventListener("hashchange", route); route(); cloudPull();
 }
@@ -107,6 +108,8 @@ async function topic(id) {
   if (D.topics[id]) return D.topics[id];
   const t = await getJSON(`data/topics/T${pad(id)}.json`); D.topics[id] = t;
   t.words.forEach(w => { if (w.tr && w.first === id && !D.lex[w.k]) D.lex[w.k] = Object.assign({ t: id }, w) });
+  const add = async (kind, fld) => { if (!D.fam || !(D.extra[kind] || []).includes(id)) return; try { const x = await getJSON(`data/${kind}/T${pad(id)}.json`); Object.entries(x).forEach(([k, v]) => { if (D.lex[k]) D.lex[k][fld] = v }) } catch (e) { } };
+  await Promise.all([add("kanal", "kn"), add("divan", "dv")]);
   return t;
 }
 async function lexOf(t) { // загрузить темы, где у слов этой темы есть тексты
@@ -183,6 +186,7 @@ function canType(type, it, p) {
     case "def2de": return !!it.def;
     case "me": return !!it.me;
     case "audio": return canSay;
+    case "tv": return !!(it.kn && D.fam) && knPool(it).length >= 2;
     default: return true;
   }
 }
@@ -190,7 +194,7 @@ function pickType(it, p, want, ep) {
   // want: "rec" — узнавание; "hard" — самый трудный разрешённый; "prod" — L1→DE; "me" — реплика
   const ok = t => p.types.includes(t) && canType(t, it, p);
   const hi = p.l1 === "def" || p.l1 === "dict";
-  if (want === "rec") { if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
+  if (want === "rec") { if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
   if (want === "prod") { if (hi) return ok("cloze") ? "cloze" : "me"; return ok("audio") && Math.random() < .3 ? "audio" : "l12de" }
   if (want === "me") { if (ok("mecloze") && Math.random() < .6) return "mecloze"; if (ok("me")) return "me"; return "l12de" }
   let c = p.types.filter(t => ok(t) && t !== "de2l1" && t !== "odd");
@@ -211,6 +215,11 @@ function makeCard(type, it, p) {
     if (type === "def2de") c.q = `<span class="sent">${esc(it.def)}</span>`;
     const ds = distractors(it, n, "de", p.i); c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: type === "audio" ? "" : x.tr[L], ok: x.k === it.k, say: x.w }));
     c.subAfter = true;
+  }
+  else if (type === "tv") {
+    const ds = shuffle(knPool(it)).slice(0, Math.max(2, Math.min(3, n)));
+    c.q = tvScreen(it.kn, true); c.kind = F().tv; c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: x.tr[L], ok: x.k === it.k, x }));
+    c.onPick = (o, host) => { const scr = host.querySelector(".tvbox"); if (scr) { scr.outerHTML = tvScreen(o.x.kn, false, !o.ok); const nb = host.querySelector(".tvbox"); nb.classList.add("flick") } };
   }
   else if (type === "article") { const a = artOf(it.w); c.q = `<span class="de">${esc(bare(it.w))}</span>`; c.opts = ["der", "die", "das"].map(x => ({ label: x, ok: x === a })); c.say = bare(it.w) }
   else if (type === "me") { c.q = `<span class="sent">${U.you}: ${gform(blank(it.me.de))}</span>`; c.ctx = "me"; const ds = distractors(it, n, "de", p.i); c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: x.tr[L], ok: x.k === it.k })); c.subAfter = true }
@@ -246,7 +255,7 @@ function exampleHTML(it, p, which) {
 }
 function cardHTML(c, p, meta) {
   const nm = D.st.names[c.type], nw = !!nm && (P.nt[c.type] || 0) < 5 && c.type !== "de2l1" && c.type !== "l12de";
-  let h = `<div class="card"><div class="kind">${nm ? nm[L] : ""}${nw ? ` <span class="new">${U.newType}</span>` : ""}<span style="flex:1"></span>${meta || ""}</div>`;
+  let h = `<div class="card"><div class="kind">${nm ? nm[L] : c.kind || ""}${nw ? ` <span class="new">${U.newType}</span>` : ""}<span style="flex:1"></span>${meta || ""}</div>`;
   h += `<div class="q ${c.type === "me" || c.type === "cloze" || c.type === "mecloze" || c.type === "def2de" ? "sent" : ""}">${c.q} ${c.say ? sayBtn(c.say) : ""}</div>`;
   if (c.hint) h += `<div style="margin:-6px 0 10px">${c.hint}</div>`;
   if (c.opts) h += `<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o.label)}${o.sub && !c.subAfter ? `<small>${esc(o.sub)}</small>` : ""}</button>`).join("")}</div>`;
@@ -261,8 +270,9 @@ function feedback(c, ok, p) {
   if (!ok) h += `<div>${U.correct} <b>${esc(c.input != null ? c.input : c.spell ? c.spell : it.w)}</b>${c.input != null && c.input !== it.w ? ` <small class="mute">(${esc(it.w)})</small>` : ""}</div>`;
   h += `<div style="margin:4px 0"><span class="de">${esc(it.w)}</span> ${sayBtn(it.w)} — <span class="tr">${esc(it.tr[L])}</span></div>`;
   if (it.def && p.i >= 8) h += `<div class="mute"><small>${U.def}:</small> ${esc(it.def)}</div>`;
-  h += `<div style="margin-top:6px">${exampleHTML(it, Object.assign({}, p, { l1: p.l1 === "always" || p.l1 === "after" ? "always" : p.l1 }), c.ctx === "me" ? "me" : "ex")}</div>`;
-  return h + `</div>`;
+  if (c.type === "tv" && it.kn) h += `<div style="margin-top:6px">${knLine(it.kn)}</div>`;
+  else h += `<div style="margin-top:6px">${exampleHTML(it, Object.assign({}, p, { l1: p.l1 === "always" || p.l1 === "after" ? "always" : p.l1 }), c.ctx === "me" ? "me" : "ex")}</div>`;
+  return h + `</div>` + (it.dv && D.fam ? `<div id="sofa"></div>` : "");
 }
 /* Показ карточки; resolve({ok}) по первой попытке */
 function runCard(host, c, p, meta) {
@@ -272,8 +282,9 @@ function runCard(host, c, p, meta) {
     if (P.nt[c.type] == null) P.nt[c.type] = 0;
     const done = ok => {
       P.nt[c.type] = (P.nt[c.type] || 0) + 1;
-      $("#fb").innerHTML = feedback(c, ok, p) + `<div class="row" style="margin-top:10px"><button class="main" id="nx">${U.next}</button></div>`;
+      $("#fb").innerHTML = feedback(c, ok, p) + `<div class="row" style="margin-top:10px"><button class="main" id="nx">${U.next}</button>${c.it && c.it.dv && D.fam ? `<button id="sofaB">🛋 ${F().sofa}</button>` : ""}</div>`;
       if (c.it) say(c.it.w);
+      if ($("#sofaB")) $("#sofaB").onclick = () => { $("#sofaB").remove(); sofa($("#sofa"), c.it) };
       const nx = $("#nx"); nx.focus(); nx.onclick = () => res({ ok });
     };
     if (c.opts) $$(".opt").forEach(b => b.onclick = () => {
@@ -281,6 +292,7 @@ function runCard(host, c, p, meta) {
       const o = c.opts[+b.dataset.i];
       $$(".opt").forEach((x, i) => { x.disabled = true; const oo = c.opts[i]; if (oo.ok) x.classList.add("ok"); if (c.subAfter && oo.sub) x.insertAdjacentHTML("beforeend", `<small>${esc(oo.sub)}</small>`) });
       if (!o.ok) b.classList.add("bad");
+      if (c.onPick) c.onPick(o, host);
       done(o.ok);
     });
     if (c.input != null) {
@@ -311,6 +323,65 @@ async function runDeck(host, cards, p, onEach) {
   const res = cards.map(c => first.get(c));
   return { ok: res.filter(Boolean).length, all: cards.length, bad: cards.filter(c => first.get(c) === false).map(c => c.it && c.it.w).filter(Boolean) };
 }
+
+/* ---------- Семья на диване: каналы Lindenbrück, диалоги, свободный ответ ---------- */
+const F = () => (D.fam && D.fam.ui[L]) || {};
+const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp`;
+const nick = who => ((D.fam.chars[who] || {}).nick || {})[L] || who;
+function knPool(it) { return Object.values(D.lex).filter(x => x.kn && x.k !== it.k && !similar(x.tr[L], it.tr[L]) && cmp(x.w) !== cmp(it.w)).sort((a, b) => (a.t === it.t ? 0 : 1) - (b.t === it.t ? 0 : 1)).slice(0, 12) }
+function knCap(kn) { const radio = kn.ch === "radio"; return `${(D.fam.channels || {})[kn.ch] || "📺"} ${esc(kn.cap)}` }
+function tvScreen(kn, gap, wrong) {
+  const radio = kn.ch === "radio" || kn.ch === "ratgeber" || kn.ch === "hoerspiel";
+  return `<div class="tvbox ${radio ? "radio" : "tv"}"><div class="tvscr"><div class="tvch">${knCap(kn)}</div>
+    <div class="tvsub">${gap ? blank(kn.de) : kn.de}</div><div class="tvtr">${esc(kn[L])}</div>${wrong ? `<div class="tvwrong">${F().wrongCh}</div>` : ""}</div>${radio ? `<div class="dial"><i></i></div>` : `<div class="knobs"><i></i><i></i></div>`}</div>`;
+}
+function knLine(kn) { return `<div class="knline"><small class="mute">${knCap(kn)}</small><div>${kn.de} ${sayBtn(kn.de)}</div><div class="tr">${esc(kn[L])}</div></div>` }
+function bubble(who, txt, emo, extra) {
+  return `<div class="bub ${emo ? "big" : ""}"><img class="${emo ? "emo" : "ava"}" src="${famImg(who, emo || "head")}" alt=""><div class="btx"><b>${esc(nick(who))}</b><div>${esc(gform(txt))}</div>${extra || ""}</div></div>`;
+}
+const fill = (s, fix) => String(s).replace(/\{fix\}/g, fix || "");
+let sofaN = 0;
+function reaction(res, dv, tries) {
+  const R = D.fam.react, rule = res.r || {}, fix = res.fix || rule.fix || "";
+  let item;
+  if (res.t !== "ok" && tries >= 2) item = R.again[sofaN % R.again.length];
+  else if (rule.say) item = rule.say;
+  else { const a = R[res.t] || R.miss; item = a[sofaN % a.length] }
+  sofaN++;
+  const okk = res.t === "ok", emo = okk ? "joy" : "told";
+  let h = bubble(item.who, fill(item[L], fix), emo);
+  if (item.then && sofaN % 3 === 1) h += bubble(item.then.who, fill(item.then[L], fix), okk ? "wow" : "facepalm");
+  return h;
+}
+function sofa(box, it) {
+  const dv = it.dv, f = F(); if (!box || !dv) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  box.innerHTML = `<div class="sofa"><div class="kind">🛋 ${f.sofaT} · <span class="de">${esc(it.w)}</span></div>
+    ${dv.lines.map(x => bubble(x.who, x[L])).join("")}${bubble(dv.ask.who, dv.ask[L], null, `<div class="frame"><small class="mute">${f.frame}:</small> <span class="de">${esc(dv.frame)}</span></div>`)}
+    <div class="row ans"><input type="text" id="sfi" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${f.answer}">
+    ${SR ? `<button id="sfm" title="${f.mic}">🎤</button>` : ""}<button class="main" id="sfc">${f.check}</button></div>
+    <p class="mute" id="sfn"></p><div id="sfr"></div><div class="row"><button class="ghost" id="sfs"><small>${f.sample}</small></button></div></div>`;
+  const inp = $("#sfi"); let voice = false, tries = 0, solved = false;
+  inp.oninput = () => { voice = false }; inp.focus();
+  const go = () => {
+    if (solved) return;
+    const res = WRCheck.check(inp.value, dv.rules, { voice }); tries++;
+    $("#sfr").innerHTML = reaction(res, dv, tries) + (res.t === "ok" ? sampleHTML(dv) : `<p class="mute">${f.tryAgain}</p>`);
+    if (res.t === "ok") { solved = true; P.xp += 2; save(); say(inp.value) }
+  };
+  $("#sfc").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go() };
+  $("#sfs").onclick = () => { const g = D.fam.react.giveup[0]; $("#sfr").innerHTML = bubble(g.who, g[L], "joy") + sampleHTML(dv); say(dv.sample.de) };
+  if (SR && $("#sfm")) $("#sfm").onclick = () => {
+    try {
+      const r = new SR(); r.lang = "de-DE"; r.interimResults = false; r.maxAlternatives = 1;
+      $("#sfn").textContent = f.listening; $("#sfm").classList.add("on");
+      r.onresult = e => { inp.value = e.results[0][0].transcript; voice = true; $("#sfn").textContent = f.heard };
+      r.onerror = () => { $("#sfn").textContent = f.noMic }; r.onend = () => { const m = $("#sfm"); if (m) m.classList.remove("on") };
+      r.start();
+    } catch (e) { $("#sfn").textContent = f.noMic }
+  };
+}
+function sampleHTML(dv) { return `<div class="fb"><small class="mute">${F().sampleT}:</small><div class="de">${esc(dv.sample.de)} ${sayBtn(dv.sample.de)}</div><div class="tr">${esc(dv.sample[L])}</div></div>` }
 
 /* ---------- Маршруты ---------- */
 function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200) }
@@ -455,7 +526,7 @@ async function showStep(E) {
     ${it.img ? `<img class="pic" src="${it.img}" alt="">` : ""}
     <div class="q">${esc(it.w)} ${sayBtn(it.w)}</div>
     ${p.l1 === "def" || p.l1 === "dict" ? (it.def ? `<p>${esc(it.def)}</p>` : "") + `<details><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : p.l1 === "tap" ? `<details open><summary class="mute">${U.tap}</summary><p class="tr">${esc(it.tr[L])}</p></details>` : `<p class="tr" style="font-size:20px;margin-top:-6px">${esc(it.tr[L])}</p>`}
-    <div class="fb">${exampleHTML(it, p, "ex")}<div style="margin-top:8px">${exampleHTML(it, p, "me")}</div></div>
+    <div class="fb">${exampleHTML(it, p, "ex")}<div style="margin-top:8px">${exampleHTML(it, p, "me")}</div>${it.kn && D.fam ? `<div style="margin-top:8px">${knLine(it.kn)}</div>` : ""}</div>
     <div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${i > 0 ? `<button id="pv">${U.back}</button>` : ""}<span style="flex:1"></span><button class="ghost" id="sk"><small>${U.skipShow}</small></button></div></div>`;
     setTimeout(() => say(it.w), 200);
     $("#nx").onclick = () => { i++; i < list.length ? draw() : trainStep(E) };
@@ -662,7 +733,7 @@ function langBtns(l1) {
   return `<div class="seg">${[["uk", "Українська"], ["ru", "Русский"]].map(([k, n]) => `<button type="button" data-l="${k}" class="${k === l1 ? "on" : ""}">${n}</button>`).join("")}</div>`;
 }
 function bindLang(cb) { $$("[data-l]").forEach(b => b.onclick = () => { $$("[data-l]").forEach(x => x.classList.toggle("on", x === b)); cb(b.dataset.l) }) }
-function welcome() { return `<div class="welcome"><div class="logo">Wort<b>reise</b></div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p></div>` }
+function welcome(l1) { return `<div class="welcome"><div class="logo">Wort<b>reise</b></div><p class="mute">${UI.uk.hello}<br>${UI.ru.hello}</p>${D.fam ? `<img class="famscene" src="img/fam/${l1 === "ru" ? "ru" : "uk"}/scene.webp" alt="">` : ""}</div>` }
 
 /* ---------- Вход по имени или нику; прогресс — на устройстве и в облаке (скрипт Google v7) ---------- */
 const nickNorm = s => String(s || "").trim().replace(/\s+/g, " ").slice(0, 40);
@@ -670,7 +741,7 @@ function viewStart() {
   let l1 = L || "uk"; const T = () => UI[l1];
   const ps = profiles();
   const draw = () => {
-    app().innerHTML = welcome() + (ps.length ? `<div class="box form"><p class="lbl">${T().contAs}</p><div class="plist">${ps.map(n => `<button class="main" data-p="${esc(n)}">▶ ${esc(n)}</button>`).join("")}</div></div>` : "") +
+    app().innerHTML = welcome(l1) + (ps.length ? `<div class="box form"><p class="lbl">${T().contAs}</p><div class="plist">${ps.map(n => `<button class="main" data-p="${esc(n)}">▶ ${esc(n)}</button>`).join("")}</div></div>` : "") +
      `<div class="box form"><h1>${ps.length ? T().newp : T().startT}</h1><p class="mute">${T().startSub}</p>
      <label>${T().nick}<input type="text" id="nm" maxlength="40" autocomplete="nickname" autocapitalize="words"></label>
      <p class="lbl">${T().lang}</p>${langBtns(l1)}

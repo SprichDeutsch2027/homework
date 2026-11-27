@@ -14,3 +14,12 @@
     cd ../.. && python3 tools/build_words.py           # слова получают img (рисунок a_* имеет приоритет)
 
 Нужны: rsvg-convert (librsvg2-bin), Pillow. out*/ не коммитить.
+
+## Семья на диване (комментаторы тренажёра)
+`family.py` — шесть персонажей (Даня, Ника, Ирина, Игорь, Людмила Ивановна, Виктор Петрович), ники на одежде (RU/UK — `FAMLANG`),
+4 эмоции (joy, facepalm, wow, told) и сцена у телевизора. Экспорт в тренажёр:
+
+    python3 export_family.py ../../words/img/fam     # → words/img/fam/{ru,uk}/<кто>[_<эмоция>|_head].webp, scene.webp
+
+Для подписей нужен шрифт Caveat в ~/.fonts (ttf из words/fonts/*.woff2 через fontTools).
+Каналы Lindenbrück и диван: `words/src/kanal/T###.txt`, `words/src/divan/T###.json` → `python3 tools/build_kanal.py`.
