@@ -107,6 +107,7 @@ async function useLang(tl) {   // загрузить данные изучаем
   let fam = null, extra = { kanal: [], divan: [] };
   try { [fam, extra] = await Promise.all([dr + "family.json", dr + "extra.json"].map(getJSON)) } catch (e) { fam = null }
   let gest = null; try { gest = await getJSON(dr + "gesture.json") } catch (e) { }
+  if (!D.room) try { D.room = await getJSON("data/room.json") } catch (e) { }
   TL = tl; DR = dr; CFG.lang = TLS[tl].voice;
   Object.assign(D, { meta, st, fam, extra, gest, topics: {}, lex: {}, index: null, byId: {}, tl });
   meta.topics.forEach(t => D.byId[t.id] = t);
@@ -485,15 +486,17 @@ function runShow(host, c, p, meta, res) {
   const it = c.it, f = F(), g = gestOf(it), order = shuffle(FAM6), M = D.fam.mini;
   const props = c.opts.map((o, i) => ({ o, who: order[i] }));
   P.nt.show = (P.nt.show || 0) + 1;
+  const R = D.room, cx = R ? (R.quad[0][0] + R.quad[2][0])/2 : 0, cy = R ? (R.quad[0][1] + R.quad[2][1])/2 : 0;
   host.innerHTML = `<div class="card show"><div class="kind">${esc(f.tableT)}<span style="flex:1"></span>${meta || ""}</div>
-    <div class="around">${FAM6.map((w, i) => `<img data-who="${w}" src="${famImg(w, "head")}" style="--i:${i}" alt="">`).join("")}</div>
-    <div class="table"><div class="sheet" id="draw">${it.img ? `<i class="crayon" id="crayon"></i>` : ""}</div>
-      <img class="kid" id="kid" src="${famImg("malysh", "draw")}" alt="">
-      ${g ? `<div class="gclip" id="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}</div>
+    ${R ? `<div class="room" id="room" style="aspect-ratio:${R.w}/${R.h}"><img class="bg" src="img/fam/${L}/room.webp?v=1" alt="">
+      ${it.img ? `<div class="closeup" id="draw"><i class="crayon" id="crayon"></i></div>` : ""}
+      ${g ? `<div class="gclip" id="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}
+      <span class="zoomhint">🔍</span></div>` : ""}
     <div id="kidsays"></div><div class="props" id="props"></div><div id="react"></div><div id="tvon"></div><div id="talk"></div><div id="fb"></div></div>`;
   let answered = false; const box = Q("#props"), step = reduced() ? 150 : 1150;
   const line = (arr, who) => (arr.find(x => x.who === who) || pick(arr))[L];
-  const head = who => { const h = host.querySelector(`.around [data-who="${who}"]`); if (h) { h.classList.remove("talk"); void h.offsetWidth; h.classList.add("talk") } };
+  const head = () => { };
+  if (Q("#room")) Q("#room").onclick = () => zoomSheet(Q("#draw"));
   const pickProp = i => {
     if (answered) return; answered = true; const x = props[i], ok = x.o.ok, right = props.find(y => y.o.ok);
     box.querySelectorAll(".prop").forEach(b => { b.disabled = true; const pj = props[+b.dataset.i]; b.querySelector(".tw").textContent = pj.o.label; if (pj.o.ok) b.classList.add("ok") });
@@ -528,12 +531,23 @@ function runShow(host, c, p, meta, res) {
   }, i*step));
   const finished = () => {
     if (!host.isConnected || host.dataset.sid !== sid) return;
-    Q("#kid").src = famImg("malysh", "joy"); const gc = Q("#gclip"); if (gc) gc.classList.add("on");
+    const gc = Q("#gclip"), cu = Q("#draw");
+    if (cu && R) {   // лист «ложится» на стол, чуть крупнее стола
+      const tw = (R.quad[1][0] - R.quad[0][0])*1.9;
+      Object.assign(cu.style, { left: (cx - tw/2)/R.w*100 + "%", top: (cy - tw*0.62)/R.h*100 + "%", width: tw/R.w*100 + "%" }); cu.classList.add("ontable");
+      setTimeout(() => { if (gc) gc.classList.add("on") }, 700);
+    } else if (gc) gc.classList.add("on");
     Q("#kidsays").innerHTML = bubbleRaw("malysh", esc(f.kidSays.replace("{tr}", it.tr[L])), famImg("malysh", "head"));
     setTimeout(offer, reduced() ? 100 : 900);
   };
   if (it.img) setTimeout(() => drawPic(Q("#draw"), it.img, Q("#crayon")).then(finished), reduced() ? 0 : 500);
   else setTimeout(finished, 600);
+}
+function zoomSheet(sheet) {      // клик по столу — рисунок крупно
+  if (!sheet) return; const pic = sheet.querySelector("svg,img"); if (!pic) return;
+  const d = document.createElement("div"); d.className = "zoombox"; d.innerHTML = `<div class="zp">${pic.outerHTML}</div>`;
+  d.querySelectorAll("[style]").forEach(x => { x.style.strokeDashoffset = 0; x.style.opacity = ""; x.style.fillOpacity = "" });
+  d.onclick = () => d.remove(); document.body.appendChild(d);
 }
 function gestOf(it) { return famOn() && D.gest && it && D.gest.map[it.k] ? { g: D.gest.map[it.k], who: D.gest.who[D.gest.map[it.k]] } : null }
 function gestHTML(it, intro) {

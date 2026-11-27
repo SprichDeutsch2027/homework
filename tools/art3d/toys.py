@@ -21,11 +21,13 @@ def text_img(t, w=320, h=80):
 
 class Toy:
     """Помощник: координаты фигурки в её собственных единицах (рост ≈ 2), масштаб s, сдвиг ox/oz."""
-    def __init__(self, sc, ox=0.0, oz=0.0, s=1.0, oy=0.0, head=(0.0, 0.0)):
+    def __init__(self, sc, ox=0.0, oz=0.0, s=1.0, oy=0.0, head=(0.0, 0.0), yaw=0.0, sit=False):
         self.sc, self.ox, self.oz, self.s, self.oy, self.hx, self.hy, self.inhead = sc, ox, oz, s, oy, head[0], head[1], False
-    def v(self, x, y, z):   # oy — прыжок всей фигурки; hx/hy — смещение головы (пока inhead)
-        h = self.inhead
-        return (self.ox + x*self.s + (self.hx if h else 0), self.oy + y*self.s + (self.hy if h else 0), self.oz + z*self.s)
+        self.yaw, self.sit = yaw, sit
+    def v(self, x, y, z):   # oy — прыжок всей фигурки; hx/hy — смещение головы (пока inhead); yaw — поворот к столу
+        h = self.inhead; X = x*self.s + (self.hx if h else 0); Z = z*self.s
+        c, sn = math.cos(self.yaw), math.sin(self.yaw)
+        return (self.ox + X*c + Z*sn, self.oy + y*self.s + (self.hy if h else 0), self.oz - X*sn + Z*c)
     def r(self, a): return a*self.s
     def m(self, name, rgb, **kw): return self.sc.mat(name, rgb, **kw)
     def sphere(self, m, c, r, op=0): self.sc.sphere(m, self.v(*c), self.r(r), op)
@@ -53,7 +55,12 @@ def body(T, k, sleeve, pants, shoes, pose, face="smile", eyes="open", top=None, 
     """Общее тело: ноги, туловище, руки, голова и лицо. Возвращает координаты кистей."""
     ms = T.m(k + "sl", sleeve); mp = T.m(k + "pa", pants); msh = T.m(k + "sh", shoes)
     sk = T.m("skin", SKIN); ey = T.m("eye", EYE, spec=1.0); dk = T.m("dark", DARK); ck = T.m("cheek", CHEEK)
-    if legs:
+    if legs and getattr(T, "sit", False):          # сидит: бедро вперёд, голень вниз
+        for sx in (-1, 1):
+            T.cap(mp, (sx*0.12, 0.6, 0.02), (sx*0.12, 0.6, 0.4), 0.088)
+            T.cap(mp, (sx*0.12, 0.6, 0.4), (sx*0.12, 0.14, 0.44), 0.08)
+            T.ell(msh, (sx*0.12, 0.06, 0.5), (0.1, 0.065, 0.15))
+    elif legs:
         for sx in (-1, 1):
             T.cap(mp, (sx*0.11, 0.14, 0), (sx*0.11, 0.6, 0), 0.085)
             T.ell(msh, (sx*0.12, 0.06, 0.05), (0.1, 0.065, 0.15))
@@ -115,8 +122,9 @@ def danya(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
     T.box(T.m("dpock", (118, 170, 60)), (0, 0.69, 0.25), (0.15, 0.05, 0.01), 0.01)
     T.patch("dpatch", nick, (0, 0.94, 0.256), 0.18, 0.065)
     for sx in (-1, 1):
-        T.cap(T.m("white", WHITE), (sx*0.11, 0.07, 0.0), (sx*0.11, 0.2, 0), 0.092)   # носки
-        T.box(T.m("slide", (13, 71, 161)), (sx*0.12, 0.018, 0.05), (0.1, 0.018, 0.15), 0.02)
+        zz = 0.44 if T.sit else 0.0
+        T.cap(T.m("white", WHITE), (sx*0.11, 0.07, zz), (sx*0.11, 0.2, zz), 0.092)   # носки
+        T.box(T.m("slide", (13, 71, 161)), (sx*0.12, 0.018, zz + 0.05), (0.1, 0.018, 0.15), 0.02)
     if prop:
         h = hands[1]; T.box(T.m("chips", (245, 166, 35)), (h[0] + 0.02, h[1] + 0.12, h[2] + 0.04), (0.1, 0.13, 0.03), 0.025)
         T.sphere(T.m("red", (229, 57, 53)), (h[0] + 0.02, h[1] + 0.12, h[2] + 0.085), 0.045)
@@ -133,7 +141,7 @@ def nika(T, nick, pose=("down", "wave"), face="smile", eyes="open", prop=True):
     for dx, dy, dz in ((-0.2, -0.06, 0), (-0.12, 0.08, 0.03), (0, 0.12, 0.05), (0.12, 0.08, 0.03), (0.2, -0.06, 0), (0, 0.05, -0.12)):
         T.cap(hb, (0, 1.97, -0.02), (dx, 1.97 + dy, dz - 0.02), 0.04)
     T.inhead = False
-    for sx in (-1, 1): T.ell(T.m("white", WHITE), (sx*0.12, 0.06, 0.06), (0.12, 0.075, 0.17))
+    for sx in (-1, 1): T.ell(T.m("white", WHITE), (sx*0.12, 0.06, 0.5 if T.sit else 0.06), (0.12, 0.075, 0.17))
     T.box(T.m("nrib", (30, 140, 130)), (0, 0.56, 0), (0.3, 0.03, 0.2), 0.03)
     T.patch("npatch", nick, (0, 0.95, 0.296), 0.22, 0.065)
     if prop:

@@ -43,3 +43,5 @@
 Векторные копии рисунков (анимация «рисуется мелками» в сценке): `python3 export_svg.py t001 ../../words/img/T001` → `a_<slug>.svg` рядом с webp.
 Для новой темы N — то же с `tNNN` после export.py.
 Малыш (7-й член семьи) рисует за столом: `cd tools/art3d && python3 malysh3d.py ../../words/img/fam` → malysh_draw / malysh_joy / malysh_head.
+Комната (вся семья у стола, Малыш рисует; петля 12 кадров): `cd tools/art3d && python3 room.py ../../words/img/fam` (≈ 14 мин)
+→ `<lang>/room.webp`, `room_still.webp`, `words/data/room.json` (положение листа на столе).
