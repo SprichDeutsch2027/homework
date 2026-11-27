@@ -133,3 +133,31 @@ header.top .brand b{color:var(--acc)}
 @keyframes pop{from{opacity:0;transform:scale(.6) rotate(-6deg)}to{opacity:1;transform:none}}
 .famscene{animation:pop .6s cubic-bezier(.3,1.4,.5,1) both}
 @media (prefers-reduced-motion:reduce){.bub,.bub img.ava,.bub img.emo,.famscene{animation:none}}
+
+/* анимация по всей тренировке: зрители у ТВ, мини-реакции, конфетти, семья на главной и в финале */
+.viewers{position:absolute;left:14px;bottom:-16px;display:flex;gap:2px;pointer-events:none}
+.viewers img{width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);animation:bob 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.2s)}
+.tvbox.cheer .viewers img{animation:cheer .5s ease 3;animation-delay:calc(var(--i)*.06s)}
+.tvbox.groan .viewers img{animation:groan .45s ease 2;animation-delay:calc(var(--i)*.05s)}
+.tvbox{margin-bottom:26px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px) rotate(-6deg)}}
+@keyframes groan{0%,100%{transform:none}25%{transform:translateX(-4px) rotate(-8deg)}75%{transform:translateX(4px) rotate(8deg)}}
+.fpop{position:fixed;right:10px;bottom:12px;z-index:20;display:flex;align-items:flex-end;gap:6px;pointer-events:none;animation:fpIn .45s cubic-bezier(.3,1.5,.5,1) both}
+.fpop img{width:92px;height:92px;border-radius:18px;border:2px solid #f0dcc0;background:#fff;box-shadow:var(--shadow)}
+.fpop .fbt{background:#fff;border:1px solid var(--line);border-radius:16px 16px 4px 16px;padding:7px 11px;font-size:16px;max-width:200px;box-shadow:var(--shadow);margin-bottom:30px}
+.fpop .fbt b{display:block;font-size:12px;color:var(--acc)}
+.fpop.out{animation:fpOut .45s ease forwards}
+@keyframes fpIn{from{opacity:0;transform:translateY(40px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes fpOut{to{opacity:0;transform:translateY(30px) scale(.9)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.confetti i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;animation:fall 2s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--r));opacity:.9}}
+.famcorner{display:flex;gap:10px;align-items:center;margin:0 0 16px}
+.famcorner img{width:96px;height:96px;border-radius:18px;border:2px solid #f0dcc0;flex:none;animation:pop .6s cubic-bezier(.3,1.5,.5,1) both}
+.famcorner .btx{background:#fff;border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:8px 12px;font-size:16px}
+.famcorner .btx b{display:block;font-size:13px;color:var(--acc)}
+.famrow{display:flex;justify-content:center;gap:4px;margin:4px 0 10px}
+.famrow img{width:calc((100% - 20px)/6);max-width:96px;aspect-ratio:1;border-radius:14px;border:2px solid #f0dcc0;animation:pop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--i)*.12s)}
+@media (prefers-reduced-motion:reduce){.viewers img,.fpop,.famcorner img,.famrow img{animation:none!important}}
+@media (max-width:480px){.fpop img{width:72px;height:72px}.fpop .fbt{font-size:15px;max-width:170px;margin-bottom:22px}}

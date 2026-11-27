@@ -187,7 +187,8 @@ def igor(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
         h = hands[1]; c = (h[0] + 0.02, h[1] + 0.03, h[2] + 0.05)
         T.box(T.m("yellow", (253, 216, 53)), c, (0.08, 0.08, 0.05), 0.02)
         T.sphere(T.m("dark", DARK), (c[0], c[1], c[2] + 0.06), 0.025)
-        T.box(T.m("amber", (245, 166, 35)), (c[0] + 0.2, c[1] - 0.06, c[2]), (0.14, 0.012, 0.03), 0.006)
+        L = getattr(T, "tape", 0.14)
+        T.box(T.m("amber", (245, 166, 35)), (c[0] + 0.06 + L, c[1] - 0.06, c[2]), (L, 0.012, 0.03), 0.006)
     return hands
 
 def lyuda(T, nick, pose=((0.24, 0.98, 0.36), (0.24, 0.98, 0.36)), face="smile", eyes="open", prop=True):
@@ -212,8 +213,9 @@ def lyuda(T, nick, pose=((0.24, 0.98, 0.36), (0.24, 0.98, 0.36)), face="smile", 
     T.box(apr, (0, 0.6, 0.27), (0.21, 0.13, 0.01), 0.02)
     T.patch("lpatch", nick, (0, 0.8, 0.275), 0.19, 0.07)
     if prop:
-        T.cyl(T.m("plate", WHITE, spec=1.0), (0, 1.03, 0.4), 0.24, 0.016, 0.01)
-        for dx in (-0.1, 0.0, 0.1): T.ell(T.m("pie", (224, 168, 58)), (dx, 1.08, 0.4 + (0.05 if dx == 0 else 0)), (0.07, 0.04, 0.05))
+        py, pz = (hands[-1][1] + hands[1][1])/2 - 0.01, (hands[-1][2] + hands[1][2])/2 + 0.04
+        T.cyl(T.m("plate", WHITE, spec=1.0), (0, py, pz), 0.24, 0.016, 0.01)
+        for dx in (-0.1, 0.0, 0.1): T.ell(T.m("pie", (224, 168, 58)), (dx, py + 0.05, pz + (0.05 if dx == 0 else 0)), (0.07, 0.04, 0.05))
     return hands
 
 def vitya(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
@@ -330,3 +332,32 @@ def anim(who, lang, emo, path, size=240, n=NF):
     frames = [anim_frame(who, lang, emo, i, size*3//2, n).resize((size, size), Image.LANCZOS) for i in range(n)]
     dur = [90]*(n - 1) + [1400]
     frames[0].save(path, save_all=True, append_images=frames[1:], duration=dur, loop=0, quality=78, method=4)
+
+
+# ---------- фирменные движения с предметами (ролик <кто>_act.webp) ----------
+def act_kw(who, t):
+    w = math.sin(2*math.pi*t); w2 = 0.5 - 0.5*math.cos(2*math.pi*t)      # туда-обратно
+    if who == "danya":   # подносит чипсы ко рту и жуёт
+        return dict(pose=("down", lerp((0.58, 0.98, 0.26), (0.2, 1.2, 0.42), w2)), face="big" if w2 > 0.6 else "smile", eyes="happy" if w2 > 0.6 else "open", head=(0, -0.02*w2))
+    if who == "nika":    # снимает всех, ведёт телефоном
+        return dict(pose=("down", (0.58 - 0.22*w2, 1.55 + 0.05*w, 0.18 + 0.1*w2)), eyes="happy", head=(0.02*w, 0))
+    if who == "irina":   # выделяет маркером в воздухе
+        return dict(pose=((0.36, 0.8, 0.2), (0.5 - 0.55*w2, 1.0 + 0.04*w, 0.34)), eyes="side" if w2 > 0.5 else "open", head=(-0.03*w2, 0))
+    if who == "igor":    # вытягивает рулетку
+        return dict(pose=("down", "hold"), tape=0.04 + 0.32*w2, eyes="side" if w2 > 0.4 else "open", head=(0.02*w2, 0))
+    if who == "lyuda":   # протягивает пирожки
+        return dict(pose=((0.24, 0.96 + 0.06*w2, 0.36 + 0.18*w2), (0.24, 0.96 + 0.06*w2, 0.36 + 0.18*w2)), eyes="happy" if w2 > 0.5 else "open", head=(0, 0.02*w2))
+    if who == "vitya":   # поднимает словарь, как гирю
+        return dict(pose=("down", (0.56, 0.98 + 0.4*w2, 0.24)), face="o" if w2 > 0.7 else "smile", head=(0, 0.015*w2))
+
+def act_frame(who, lang, i, size=360, n=NF):
+    kw = act_kw(who, i/n); sc = Scene(); s = SCALE[who]
+    base = Toy(sc, 0, 0, s); base.cyl(base.m("base", BASE[who]), (0, -0.07, 0), 0.66, 0.07, 0.035)
+    T = Toy(sc, 0, 0, s, head=kw.pop("head", (0, 0))); T.tape = kw.pop("tape", 0.14)
+    WHO[who](T, NICK[lang][who], **kw)
+    img = draw(sc, size, size, (0, 0.96*s, 0), 1.26, yaw=0.32, pitch=0.2, bg=PAPER[who])
+    return Image.fromarray((img*255).clip(0, 255).astype(np.uint8))
+
+def act(who, lang, path, size=240, n=NF):
+    frames = [act_frame(who, lang, i, size*3//2, n).resize((size, size), Image.LANCZOS) for i in range(n)]
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=[110]*n, loop=0, quality=78, method=4)

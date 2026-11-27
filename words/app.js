@@ -232,7 +232,7 @@ function makeCard(type, it, p) {
   else if (type === "tv") {
     const ds = shuffle(knPool(it)).slice(0, Math.max(2, Math.min(3, n)));
     c.q = tvScreen(it.kn, true); c.kind = F().tv; c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: x.tr[L], ok: x.k === it.k, x }));
-    c.onPick = (o, host) => { const scr = host.querySelector(".tvbox"); if (scr) { scr.outerHTML = tvScreen(o.x.kn, false, !o.ok); const nb = host.querySelector(".tvbox"); nb.classList.add("flick") } };
+    c.onPick = (o, host) => { const scr = host.querySelector(".tvbox"); if (scr) { scr.outerHTML = tvScreen(o.x.kn, false, !o.ok); const nb = host.querySelector(".tvbox"); nb.classList.add("flick", o.ok ? "cheer" : "groan") } };
   }
   else if (type === "article") { const a = artOf(it.w); c.q = `<span class="de">${esc(bare(it.w))}</span>`; c.opts = ["der", "die", "das"].map(x => ({ label: x, ok: x === a })); c.say = bare(it.w) }
   else if (type === "me") { c.q = `<span class="sent">${U.you}: ${gform(blank(it.me.de))}</span>`; c.ctx = "me"; const ds = distractors(it, n, "de", p.i); c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: x.tr[L], ok: x.k === it.k })); c.subAfter = true }
@@ -294,7 +294,7 @@ function runCard(host, c, p, meta) {
     if (c.auto) setTimeout(() => say(c.auto), 250);
     if (P.nt[c.type] == null) P.nt[c.type] = 0;
     const done = ok => {
-      P.nt[c.type] = (P.nt[c.type] || 0) + 1;
+      P.nt[c.type] = (P.nt[c.type] || 0) + 1; famAnswer(ok);
       $("#fb").innerHTML = feedback(c, ok, p) + `<div class="row" style="margin-top:10px"><button class="main" id="nx">${U.next}</button>${c.it && c.it.dv && D.fam ? `<button id="sofaB">🛋 ${F().sofa}</button>` : ""}</div>`;
       if (c.it) say(c.it.w);
       if ($("#sofaB")) $("#sofaB").onclick = () => { $("#sofaB").remove(); sofa($("#sofa"), c.it) };
@@ -339,14 +339,14 @@ async function runDeck(host, cards, p, onEach) {
 
 /* ---------- Семья на диване: каналы Lindenbrück, диалоги, свободный ответ ---------- */
 const F = () => (D.fam && D.fam.ui[L]) || {};
-const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp?v=3d2`;
+const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp?v=3d3`;
 const nick = who => ((D.fam.chars[who] || {}).nick || {})[L] || who;
 function knPool(it) { return Object.values(D.lex).filter(x => x.kn && x.k !== it.k && !similar(x.tr[L], it.tr[L]) && cmp(x.w) !== cmp(it.w)).sort((a, b) => (a.t === it.t ? 0 : 1) - (b.t === it.t ? 0 : 1)).slice(0, 12) }
 function knCap(kn) { const radio = kn.ch === "radio"; return `${(D.fam.channels || {})[kn.ch] || "📺"} ${esc(kn.cap)}` }
 function tvScreen(kn, gap, wrong) {
   const radio = kn.ch === "radio" || kn.ch === "ratgeber" || kn.ch === "hoerspiel";
   return `<div class="tvbox ${radio ? "radio" : "tv"}"><div class="tvscr"><div class="tvch">${knCap(kn)}</div>
-    <div class="tvsub">${gap ? blank(kn.de) : kn.de}</div><div class="tvtr">${esc(kn[L])}</div>${wrong ? `<div class="tvwrong">${F().wrongCh}</div>` : ""}</div>${radio ? `<div class="dial"><i></i></div>` : `<div class="knobs"><i></i><i></i></div>`}</div>`;
+    <div class="tvsub">${gap ? blank(kn.de) : kn.de}</div><div class="tvtr">${esc(kn[L])}</div>${wrong ? `<div class="tvwrong">${F().wrongCh}</div>` : ""}</div>${radio ? `<div class="dial"><i></i></div>` : `<div class="knobs"><i></i><i></i></div>`}${famOn() ? `<div class="viewers">${FAM6.map((w, i) => `<img src="${famImg(w, "head")}" style="--i:${i}" alt="">`).join("")}</div>` : ""}</div>`;
 }
 function knLine(kn) { return `<div class="knline"><small class="mute">${knCap(kn)}</small><div>${kn.de} ${sayBtn(kn.de)}</div><div class="tr">${esc(kn[L])}</div></div>` }
 function bubble(who, txt, emo, extra, delay) {
@@ -394,6 +394,36 @@ function sofa(box, it) {
       r.start();
     } catch (e) { $("#sfn").textContent = f.noMic }
   };
+}
+const FAM6 = ["vitya", "danya", "irina", "igor", "nika", "lyuda"];
+const famOn = () => !!(D.fam && P && !P.famOff);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+let streakN = 0;
+function famAnswer(ok) {      // маленькая реакция семьи на каждый ответ + серии 3/5/10
+  if (!famOn() || !D.fam.mini) return;
+  streakN = ok ? streakN + 1 : 0;
+  const M = D.fam.mini, s = { 3: "s3", 5: "s5", 10: "s10" }[streakN] || (streakN > 10 && streakN % 5 === 0 ? "s10" : null);
+  if (s) { confetti(streakN >= 10 ? 70 : 40); return famPop(pick(M[s]), "joy") }
+  if (ok && Math.random() < 0.55) famPop(pick(M.ok), Math.random() < 0.5 ? "joy" : "wow");
+  if (!ok) famPop(pick(M.bad), Math.random() < 0.5 ? "facepalm" : "told");
+}
+function famPop(item, emo) {
+  document.querySelectorAll(".fpop").forEach(x => x.remove());
+  const d = document.createElement("div"); d.className = "fpop";
+  d.innerHTML = `<div class="fbt"><b>${esc(nick(item.who))}</b>${esc(gform(item[L]))}</div><img src="${famImg(item.who, emo)}" alt="">`;
+  document.body.appendChild(d); setTimeout(() => d.classList.add("out"), 2300); setTimeout(() => d.remove(), 2800);
+}
+function confetti(n) {
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = document.createElement("div"); box.className = "confetti";
+  const cols = ["#f5a623", "#e2669a", "#46a58f", "#6c9bd2", "#fdd835", "#e8604c"];
+  box.innerHTML = Array.from({ length: n }, () => `<i style="left:${Math.random()*100}%;background:${pick(cols)};--dx:${(Math.random()*2 - 1)*80}px;--r:${Math.random()*720 - 360}deg;animation-delay:${Math.random()*0.4}s;animation-duration:${1.6 + Math.random()*1.2}s"></i>`).join("");
+  document.body.appendChild(box); setTimeout(() => box.remove(), 3400);
+}
+function famCorner() {
+  if (!famOn() || !D.fam.mini) return "";
+  const it = D.fam.mini.home[today() % D.fam.mini.home.length];
+  return `<div class="famcorner"><img src="${famImg(it.who, "act")}" alt=""><div class="btx"><b>${esc(nick(it.who))}</b><div>${esc(gform(it[L]))}</div></div></div>`;
 }
 function sampleHTML(dv) { return `<div class="fb"><small class="mute">${F().sampleT}:</small><div class="de">${esc(dv.sample.de)} ${sayBtn(dv.sample.de)}</div><div class="tr">${esc(dv.sample[L])}</div></div>` }
 
@@ -650,7 +680,8 @@ function finish(E) {
   checkBadges(); save(); cloudSave();
   const s2 = P.scores.slice(-2), sug = s2.length === 2 && s2.every(x => x < 60) && E.dk !== "easy" ? "easy" : s2.length === 2 && s2.every(x => x > 95) && E.dk !== "harder" ? "up" : null;
   const nextId = t.id + 1, nx = D.byId[nextId];
-  app().innerHTML = head() + stepsBar(5) + `<div class="box"><h1>🎉 ${U.done}</h1><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div><div><b>${E.plan.nw.length + E.plan.back.length}</b>${U.newWords}</div></div>
+  setTimeout(() => confetti(60), 200);
+  app().innerHTML = head() + stepsBar(5) + `${famOn() ? `<div class="famrow">${FAM6.map((w, i) => `<img src="${famImg(w, "joy")}" style="--i:${i}" alt="">`).join("")}</div>` : ""}<div class="box"><h1>🎉 ${U.done}</h1><div class="stat"><div><b>${pc}%</b>${U.score}</div><div><b>+${xp}</b>${U.xp}</div><div><b>${E.plan.nw.length + E.plan.back.length}</b>${U.newWords}</div></div>
    ${ent ? `<p style="margin-top:12px">📔 ${esc(gform(ent))}</p>` : ""}${bad.length ? `<p class="mute">${U.wrong} ${bad.map(esc).join(", ")}</p>` : ""}</div>
    ${sug ? `<div class="box hint">${sug === "easy" ? U.suggestEasy : U.suggestHard} <button id="sgY">${U.yes}</button> <button id="sgN">${U.no}</button></div>` : ""}
    <a class="btn main big" href="${nextAction().href}">${U.next} ▶</a>
@@ -710,13 +741,14 @@ function viewMe() {
   ${P.badges.length ? `<h2>${U.badges}</h2><div>${P.badges.map(b => `<span class="badge">🏅 ${esc(b.txt)}</span>`).join("")}</div>` : ""}
   <h2>${U.hw}</h2><p class="mute">${U.hwTxt}</p><textarea id="hwt"></textarea><div class="row" style="margin-top:6px"><button id="hwb">${U.hwBtn}</button></div>
   <h2>${U.backup}</h2><div class="row"><button id="exp">💾 ${U.exp}</button><label class="btn">📂 ${U.imp}<input type="file" id="imp" accept=".json" hidden></label></div>
-  <h2>⚙️</h2><div class="row"><a class="btn" href="#/hero">${U.switchHero}</a><button id="lang">${L === "uk" ? "Русский" : "Українська"}</button><button id="tl">${TL === "en" ? "🇩🇪 " + U.learnDe : "🇬🇧 " + U.learnEn}</button><button id="usr">${U.switchUser}</button><button id="del">${U.del}</button></div>
+  <h2>⚙️</h2><div class="row"><a class="btn" href="#/hero">${U.switchHero}</a><button id="lang">${L === "uk" ? "Русский" : "Українська"}</button><button id="fam">🛋 ${F().famOn || ""}: ${famOn() ? F().on : F().off}</button><button id="tl">${TL === "en" ? "🇩🇪 " + U.learnDe : "🇬🇧 " + U.learnEn}</button><button id="usr">${U.switchUser}</button><button id="del">${U.del}</button></div>
   <p class="mute" style="margin-top:20px"><a href="../">Sprich Deutsch · домашні завдання</a></p>`;
   $("#hwb").onclick = async () => { const n = await importHW($("#hwt").value); toast(U.hwOk(n)) };
   $("#exp").onclick = () => { const b = new Blob([JSON.stringify(P)], { type: "application/json" }), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `wortreise_${P.name.replace(/[^\p{L}\p{N}]+/gu, "_")}_${new Date().toISOString().slice(0, 10)}.json`; a.click(); P.lastExport = Date.now(); save() };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const p = JSON.parse(r.result); if (!p.name || !p.srs) throw 0; const ps = profiles(); if (!ps.includes(p.name)) { ps.push(p.name); saveProfiles(ps) } useProfile(p); save(); toast("✓"); route() } catch (x) { toast("✗ JSON") } }; r.readAsText(f) };
   $("#lang").onclick = () => { P.l1 = L === "uk" ? "ru" : "uk"; useProfile(P); save(); viewMe() };
   $("#usr").onclick = () => { location.hash = "#/users" };
+  if ($("#fam")) $("#fam").onclick = () => { P.famOff = !P.famOff; save(); viewMe() };
   $("#tl").onclick = () => {
     const other = TL === "en" ? "de" : "en"; let p = load(P.name, other);
     if (!p) { p = newProfile(P.name, P.l1, other); p.hero = P.hero; const ps = profiles(other); if (!ps.includes(P.name)) { ps.push(P.name); saveProfiles(ps, other) } }
@@ -833,7 +865,7 @@ function viewHome() {
   app().innerHTML = head() + `<div class="homecard"><div class="avatar">${h.emoji}</div><div><div class="hname">${esc(c[L])}</div><small class="mute">${esc(h.lineName[L])} · ${esc(h.place[L])}</small></div></div>
    <a class="btn main huge ${a.off ? "off" : ""}" href="${a.href}"><span class="ico">${a.ico}</span><span><b>${a.label}</b>${a.sub ? `<small>${esc(a.sub)}</small>` : ""}</span></a>
    <div class="progress"><div class="bar"><i style="width:${Math.max(2, pc)}%"></i></div><small class="mute">${done} ${U.ofAll} · ${learned} ${U.lvlWords}</small></div>
-   <nav class="quick"><a href="#/map">🗺️<span>${U.map}</span></a><a href="#/review">🔁<span>${U.review}${due ? ` (${due})` : ""}</span></a><a href="#/diary">📔<span>${U.diary}</span></a><a href="#/me">👤<span>${U.me}</span></a></nav>`;
+   ${famCorner()}<nav class="quick"><a href="#/map">🗺️<span>${U.map}</span></a><a href="#/review">🔁<span>${U.review}${due ? ` (${due})` : ""}</span></a><a href="#/diary">📔<span>${U.diary}</span></a><a href="#/me">👤<span>${U.me}</span></a></nav>`;
   if (Date.now() - (P.lastExport || 0) > 7 * 864e5 && Object.keys(P.srs).length > 30) { P.lastExport = Date.now() - 5 * 864e5; save(); toast(U.remind) }
 }
 
