@@ -21,8 +21,11 @@ def text_img(t, w=320, h=80):
 
 class Toy:
     """Помощник: координаты фигурки в её собственных единицах (рост ≈ 2), масштаб s, сдвиг ox/oz."""
-    def __init__(self, sc, ox=0.0, oz=0.0, s=1.0): self.sc, self.ox, self.oz, self.s = sc, ox, oz, s
-    def v(self, x, y, z): return (self.ox + x*self.s, y*self.s, self.oz + z*self.s)
+    def __init__(self, sc, ox=0.0, oz=0.0, s=1.0, oy=0.0, head=(0.0, 0.0)):
+        self.sc, self.ox, self.oz, self.s, self.oy, self.hx, self.hy, self.inhead = sc, ox, oz, s, oy, head[0], head[1], False
+    def v(self, x, y, z):   # oy — прыжок всей фигурки; hx/hy — смещение головы (пока inhead)
+        h = self.inhead
+        return (self.ox + x*self.s + (self.hx if h else 0), self.oy + y*self.s + (self.hy if h else 0), self.oz + z*self.s)
     def r(self, a): return a*self.s
     def m(self, name, rgb, **kw): return self.sc.mat(name, rgb, **kw)
     def sphere(self, m, c, r, op=0): self.sc.sphere(m, self.v(*c), self.r(r), op)
@@ -67,6 +70,7 @@ def body(T, k, sleeve, pants, shoes, pose, face="smile", eyes="open", top=None, 
         T.cap(ms, sh, hd, 0.07); T.sphere(sk, hd, 0.085); hands[sx] = hd
         if a == "point": T.cap(sk, hd, (hd[0], hd[1] + 0.14, hd[2]), 0.03)
     # голова
+    T.inhead = True
     T.sphere(sk, (0, HC, 0), HR)
     T.sphere(sk, (0, 1.385, zf(0, 1.385, -0.005)), 0.036)                      # нос
     for sx in (-1, 1): T.ell(ck, (sx*0.19, 1.355, zf(sx*0.19, 1.355, -0.035)), (0.065, 0.042, 0.03))
@@ -89,6 +93,7 @@ def body(T, k, sleeve, pants, shoes, pose, face="smile", eyes="open", top=None, 
     else:
         pts = [(math.sin(t)*0.095, 1.40 - math.cos(t)*0.095) for t in np.linspace(-0.95, 0.95, 6)]
         for a, b in zip(pts, pts[1:]): T.cap(dk, (*a, zf(*a)), (*b, zf(*b)), 0.017)
+    T.inhead = False
     return hands
 
 def hair_cap(T, m, cut=1.5, back=True, br=(0.345, 0.32, 0.26), by=1.4):
@@ -98,10 +103,12 @@ def hair_cap(T, m, cut=1.5, back=True, br=(0.345, 0.32, 0.26), by=1.4):
 # ---------- шестеро ----------
 def danya(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
     hood = T.m("dhood", (139, 195, 74)); hair = T.m("dhair", (93, 58, 26))
-    T.sphere(hood, (0, 1.42, -0.07), 0.41); T.sphere(hood, (0, 1.42, 0.34), 0.37, op=1)
+    T.inhead = True; T.sphere(hood, (0, 1.42, -0.07), 0.41); T.sphere(hood, (0, 1.42, 0.34), 0.37, op=1); T.inhead = False
     hands = body(T, "d", (139, 195, 74), (112, 107, 100), (250, 247, 240), pose, face, eyes)
+    T.inhead = True
     hair_cap(T, hair, 1.53, back=False)
     T.cap(hair, (-0.22, 1.66, 0.2), (0.12, 1.55, 0.29), 0.065)                 # чёлка на глаза
+    T.inhead = False
     T.cap(T.m("white", WHITE), (-0.06, 1.12, 0.24), (-0.06, 0.99, 0.26), 0.012); T.cap(T.m("white", WHITE), (0.06, 1.12, 0.24), (0.06, 0.99, 0.26), 0.012)
     T.tory(T.m("navy", (38, 55, 90)), (0, 1.13, 0), 0.21, 0.03)                 # наушники на шее
     for sx in (-1, 1): T.ell(T.m("red", (229, 57, 53)), (sx*0.22, 1.14, 0.05), (0.06, 0.075, 0.055))
@@ -119,11 +126,13 @@ def nika(T, nick, pose=("down", "wave"), face="smile", eyes="open", prop=True):
     hood = (38, 166, 154); hb = T.m("black", (35, 32, 30))
     T.box(T.m("nhood", hood), (0, 0.84, 0), (0.3, 0.31, 0.2), 0.09)
     hands = body(T, "n", hood, (40, 38, 36), (250, 247, 240), pose, face, eyes, top=False)
+    T.inhead = True
     hair_cap(T, hb, 1.5, br=(0.35, 0.33, 0.27))
     T.cap(hb, (0, 1.76, -0.02), (0, 1.97, -0.02), 0.055)                          # хвост-«пальма»
     T.tory(T.m("rasp", (226, 102, 154)), (0, 1.86, -0.02), 0.06, 0.035)
     for dx, dy, dz in ((-0.2, -0.06, 0), (-0.12, 0.08, 0.03), (0, 0.12, 0.05), (0.12, 0.08, 0.03), (0.2, -0.06, 0), (0, 0.05, -0.12)):
         T.cap(hb, (0, 1.97, -0.02), (dx, 1.97 + dy, dz - 0.02), 0.04)
+    T.inhead = False
     for sx in (-1, 1): T.ell(T.m("white", WHITE), (sx*0.12, 0.06, 0.06), (0.12, 0.075, 0.17))
     T.box(T.m("nrib", (30, 140, 130)), (0, 0.56, 0), (0.3, 0.03, 0.2), 0.03)
     T.patch("npatch", nick, (0, 0.95, 0.296), 0.22, 0.065)
@@ -136,12 +145,14 @@ def nika(T, nick, pose=("down", "wave"), face="smile", eyes="open", prop=True):
 def irina(T, nick, pose=((0.36, 0.8, 0.2), "hold"), face="smile", eyes="open", prop=True):
     hair = T.m("ihair", (62, 39, 35)); navy = (13, 71, 161)
     hands = body(T, "i", navy, (38, 55, 90), (109, 76, 65), pose, face, eyes)
+    T.inhead = True
     hair_cap(T, hair, 1.5)
     T.ell(hair, (0, 1.63, 0.2), (0.27, 0.075, 0.14))                              # ровная чёлка
     for sx in (-1, 1): T.ell(hair, (sx*0.3, 1.35, 0.0), (0.09, 0.19, 0.21))       # каре
     ink = T.m("dark", DARK); lens = T.m("lens", (179, 229, 252), spec=1.0)
     for sx in (-1, 1):                                                             # очки на голове
         T.torz(ink, (sx*0.12, 1.75, 0.16), 0.07, 0.016); T.ell(lens, (sx*0.12, 1.75, 0.155), (0.06, 0.06, 0.012))
+    T.inhead = False
     T.box(T.m("white", WHITE), (0, 0.95, 0.25), (0.15, 0.17, 0.006), 0.02)
     T.patch("ipatch", nick, (0, 0.98, 0.262), 0.165, 0.055)
     for sx in (-1, 1): T.cap(T.m("isl", navy), (sx*0.2, 1.13, 0.25), (sx*0.17, 0.76, 0.27), 0.035)
@@ -158,7 +169,7 @@ def igor(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
     plaid = T.m("plaid", (220, 60, 55), tex=1, tp=(9, 0.22, 0, 0, 0, 0), col2=(25, 60, 140))
     hands = body(T, "g", (220, 60, 55), (94, 88, 79), (138, 131, 121), pose, face, eyes, top=False)
     T.box(plaid, (0, 0.86, 0), (0.26, 0.29, 0.17), 0.08)
-    hair = T.m("ghair", (128, 122, 114))
+    hair = T.m("ghair", (128, 122, 114)); T.inhead = True
     T.sphere(hair, (0, HC + 0.03, -0.03), HR + 0.012); T.above(1.6)
     T.ell(hair, (0, 1.45, -0.12), (0.33, 0.28, 0.22))
     for k in range(9):                                                             # ёжик
@@ -168,6 +179,7 @@ def igor(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
     for k in range(12):                                                            # щетина
         t = -0.8 + k*0.145; x, y = math.sin(t)*0.2, 1.37 - math.cos(t)*0.12
         T.sphere(T.m("stub", (120, 110, 100)), (x, y, zf(x, y, -0.006)), 0.009)
+    T.inhead = False
     blue = T.m("blue", (30, 136, 229))
     for sx in (-1, 1): T.cap(blue, (sx*0.13, 1.13, 0.22), (sx*0.03, 0.99, 0.265), 0.013)
     T.patch("gpatch", nick, (0, 0.91, 0.27), 0.17, 0.075)
@@ -183,7 +195,7 @@ def lyuda(T, nick, pose=((0.24, 0.98, 0.36), (0.24, 0.98, 0.36)), face="smile", 
     T.box(T.m("lcard", body_c), (0, 0.93, 0), (0.24, 0.21, 0.16), 0.08)
     T.box(T.m("lskirt", (109, 76, 65)), (0, 0.6, 0), (0.29, 0.15, 0.19), 0.08)
     hands = body(T, "l", body_c, (170, 120, 100), (226, 102, 154), pose, face, eyes, top=False)
-    lav, pg = T.m("lav", (179, 157, 219)), T.m("pgrey", (232, 225, 212))
+    lav, pg = T.m("lav", (179, 157, 219)), T.m("pgrey", (232, 225, 212)); T.inhead = True
     for k in range(13):                                                            # укладка «облачком»
         a = math.pi*(0.02 + 0.96*k/12)
         T.sphere(lav if k % 2 else pg, (-math.cos(a)*0.33, HC + 0.08 + math.sin(a)*0.28, -0.06), 0.14)
@@ -191,6 +203,7 @@ def lyuda(T, nick, pose=((0.24, 0.98, 0.36), (0.24, 0.98, 0.36)), face="smile", 
     ink = T.m("dark", DARK)
     for sx in (-1, 1): T.torz(ink, (sx*0.12, 1.465, zf(sx*0.12, 1.465, 0.01)), 0.075, 0.014)
     T.cap(ink, (-0.045, 1.47, zf(-.045, 1.47, 0.01)), (0.045, 1.47, zf(.045, 1.47, 0.01)), 0.01)
+    T.inhead = False
     T.cap(T.m("amber", (245, 166, 35)), (-0.2, 1.46, zf(-.2, 1.46)), (-0.2, 1.12, 0.2), 0.008)
     for k in range(7):                                                             # бусы
         t = k/6; col = [(245, 166, 35), WHITE, (229, 57, 53)][k % 3]
@@ -207,12 +220,13 @@ def vitya(T, nick, pose=("down", "hold"), face="smile", eyes="open", prop=True):
     vest = (224, 168, 58)
     hands = body(T, "v", (240, 236, 228), (109, 76, 65), (109, 76, 65), pose, face, eyes, top=False)
     T.box(T.m("vvest", vest), (0, 0.86, 0), (0.25, 0.29, 0.17), 0.08)
-    gr = T.m("vhair", (200, 194, 184))
+    gr = T.m("vhair", (200, 194, 184)); T.inhead = True
     for sx in (-1, 1):                                                             # волосы торчком
         for dy, dx in ((0.12, 0.13), (0.0, 0.16), (-0.12, 0.12)):
             T.cap(gr, (sx*0.3, 1.45 + dy*0.6, -0.02), (sx*(0.3 + dx), 1.45 + dy*1.3, 0.0), 0.045)
     T.cap(gr, (-0.03, 1.76, 0.0), (-0.08, 1.88, 0.0), 0.03); T.cap(gr, (0.03, 1.76, 0.0), (0.07, 1.9, 0.0), 0.03)
     for sx in (-1, 1): T.ell(gr, (sx*0.085, 1.335, zf(sx*0.085, 1.335, -0.01)), (0.105, 0.05, 0.05))   # усы
+    T.inhead = False
     T.box(T.m("white", WHITE), (-0.03, 0.92, 0.25), (0.14, 0.2, 0.006), 0.02)
     T.patch("vpatch", nick, (-0.03, 0.97, 0.262), 0.135, 0.048)
 
@@ -272,3 +286,47 @@ def group(lang="ru", W=1800, H=1000):
         T = Toy(sc, x, 0.35, SCALE[who]); WHO[who](T, NICK[lang][who])
     img = draw(sc, W, H, (0, 0.95, 0), 1.78, yaw=0.1, pitch=0.22, bg=((246, 240, 228), (236, 226, 208)))
     return Image.fromarray((img*255).clip(0, 255).astype(np.uint8))
+
+
+# ---------- анимация эмоций (кадры для коротких роликов) ----------
+NF = 12
+def lerp(a, b, t): return tuple(x + (y - x)*t for x, y in zip(a, b))
+def frame_kw(emo, i, n=NF):
+    """Параметры кадра i: позы рук, лицо, глаза, прыжок, смещение головы."""
+    t = i/(n - 1); ph = 2*math.pi*t
+    if emo == "joy":
+        w = math.sin(ph*2)*0.09
+        return dict(pose=((0.5 + w, 1.86, 0.06), (0.5 - w, 1.86, 0.06)), face="big", eyes="happy", oy=0.13*abs(math.sin(ph)), head=(0, 0.02*abs(math.sin(ph))))
+    if emo == "facepalm":
+        up = min(1.0, t/0.3); hx = 0.035*math.sin((t - 0.3)*4*math.pi) if t > 0.3 else 0.0
+        hand = lerp((0.47, 0.68, 0.08), (0.04 + hx, 1.42, 0.42), up)
+        return dict(pose=("down", hand), face="line" if up >= 1 else "smile", eyes="closed" if up >= 0.8 else "open", head=(hx, -0.02*up), drop=t > 0.45)
+    if emo == "wow":
+        up = min(1.0, t/0.25); a = lerp((0.47, 0.68, 0.08), (0.5, 1.88, 0.06), up)
+        tr = 0.02*math.sin(ph*6) if up >= 1 else 0
+        hop = 0.1*math.sin(math.pi*min(1, max(0, (t - 0.2)/0.4)))
+        return dict(pose=((a[0] + tr, a[1], a[2]), (a[0] - tr, a[1], a[2])), face="o" if up > 0.5 else "smile", eyes="open", oy=hop, head=(0, 0.03*up))
+    if emo == "told":
+        up = min(1.0, t/0.25); wag = 0.08*math.sin((t - 0.25)*4*math.pi) if t > 0.25 else 0
+        a = lerp((0.47, 0.68, 0.08), (0.42 + wag, 1.95, 0.06), up)
+        return dict(pose=("hip", a), face="meh", eyes="side", head=(wag*0.25, 0), point=up >= 0.9)
+    raise KeyError(emo)
+
+def anim_frame(who, lang, emo, i, size=240, n=NF):
+    kw = frame_kw(emo, i, n); sc = Scene(); s = SCALE[who]
+    base = Toy(sc, 0, 0, s); base.cyl(base.m("base", BASE[who]), (0, -0.07, 0), 0.66, 0.07, 0.035)
+    T = Toy(sc, 0, 0, s, oy=kw.pop("oy", 0.0), head=kw.pop("head", (0, 0)))
+    drop = kw.pop("drop", False); point = kw.pop("point", False)
+    WHO[who](T, NICK[lang][who], prop=False, **kw)
+    if point:   # палец вверх у поднятой руки
+        hx, hy, hz = kw["pose"][1]; T.cap(T.m("skin", SKIN), (hx, hy, hz), (hx, hy + 0.14, hz), 0.03)
+    if drop: T.ell(T.m("drop", (108, 180, 224), spec=1.0), (0.42, 1.72, 0.2), (0.045, 0.07, 0.045))
+    img = draw(sc, size, size, (0, 0.96*s, 0), 1.26, yaw=0.32, pitch=0.2, bg=PAPER[who])
+    im = Image.fromarray((img*255).clip(0, 255).astype(np.uint8))
+    if i >= n//3: overlay(im, emo)
+    return im
+
+def anim(who, lang, emo, path, size=240, n=NF):
+    frames = [anim_frame(who, lang, emo, i, size*3//2, n).resize((size, size), Image.LANCZOS) for i in range(n)]
+    dur = [90]*(n - 1) + [1400]
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=dur, loop=0, quality=78, method=4)

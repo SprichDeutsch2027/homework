@@ -35,3 +35,5 @@
 
     cd tools/art3d && python3 export3d.py ../../words/img/fam      # ≈ 6 мин на оба языка
 Рисунки мелками семьи (tools/art/family.py) остаются в истории и могут быть возвращены export_family.py.
+Короткие 3D-ролики эмоций (анимированный webp, 240 px): `cd tools/art3d && python3 anim3d.py ../../words/img/fam` (≈ 9 мин на оба языка);
+они заменяют статичные <кто>_<эмоция>.webp. Анимация реплик на диване — CSS в words/app.css («фигурки оживают»).

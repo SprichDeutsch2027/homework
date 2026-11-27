@@ -123,3 +123,13 @@ header.top .brand b{color:var(--acc)}
 #sfm.on{background:#fbeaea;border-color:var(--bad);animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.08)}}
 @media (max-width:480px){.tvsub{font-size:19px}.tvbox{padding-right:50px}.knobs i{width:18px;height:18px}.bub img.emo{width:76px;height:76px}}
+
+/* фигурки оживают: реплики появляются по очереди, говорящий подпрыгивает, эмоция «выскакивает» */
+.bub{animation:bubIn .4s ease both;animation-delay:var(--d,0s)}
+.bub img.ava{animation:talk .5s ease 2;animation-delay:calc(var(--d,0s) + .15s);transform-origin:50% 100%}
+.bub img.emo{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d,0s)}
+@keyframes bubIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes talk{0%,100%{transform:none}30%{transform:translateY(-6px) scale(1.04,.97)}60%{transform:translateY(0) scale(.97,1.03)}}
+@keyframes pop{from{opacity:0;transform:scale(.6) rotate(-6deg)}to{opacity:1;transform:none}}
+.famscene{animation:pop .6s cubic-bezier(.3,1.4,.5,1) both}
+@media (prefers-reduced-motion:reduce){.bub,.bub img.ava,.bub img.emo,.famscene{animation:none}}

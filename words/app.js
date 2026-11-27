@@ -339,7 +339,7 @@ async function runDeck(host, cards, p, onEach) {
 
 /* ---------- Семья на диване: каналы Lindenbrück, диалоги, свободный ответ ---------- */
 const F = () => (D.fam && D.fam.ui[L]) || {};
-const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp?v=3d`;
+const famImg = (who, emo) => `img/fam/${L}/${who}${emo ? "_" + emo : ""}.webp?v=3d2`;
 const nick = who => ((D.fam.chars[who] || {}).nick || {})[L] || who;
 function knPool(it) { return Object.values(D.lex).filter(x => x.kn && x.k !== it.k && !similar(x.tr[L], it.tr[L]) && cmp(x.w) !== cmp(it.w)).sort((a, b) => (a.t === it.t ? 0 : 1) - (b.t === it.t ? 0 : 1)).slice(0, 12) }
 function knCap(kn) { const radio = kn.ch === "radio"; return `${(D.fam.channels || {})[kn.ch] || "📺"} ${esc(kn.cap)}` }
@@ -349,8 +349,9 @@ function tvScreen(kn, gap, wrong) {
     <div class="tvsub">${gap ? blank(kn.de) : kn.de}</div><div class="tvtr">${esc(kn[L])}</div>${wrong ? `<div class="tvwrong">${F().wrongCh}</div>` : ""}</div>${radio ? `<div class="dial"><i></i></div>` : `<div class="knobs"><i></i><i></i></div>`}</div>`;
 }
 function knLine(kn) { return `<div class="knline"><small class="mute">${knCap(kn)}</small><div>${kn.de} ${sayBtn(kn.de)}</div><div class="tr">${esc(kn[L])}</div></div>` }
-function bubble(who, txt, emo, extra) {
-  return `<div class="bub ${emo ? "big" : ""}"><img class="${emo ? "emo" : "ava"}" src="${famImg(who, emo || "head")}" alt=""><div class="btx"><b>${esc(nick(who))}</b><div>${esc(gform(txt))}</div>${extra || ""}</div></div>`;
+function bubble(who, txt, emo, extra, delay) {
+  const st = delay ? ` style="--d:${delay}s"` : "";
+  return `<div class="bub ${emo ? "big" : ""}"${st}><img class="${emo ? "emo" : "ava"}" src="${famImg(who, emo || "head")}" alt=""><div class="btx"><b>${esc(nick(who))}</b><div>${esc(gform(txt))}</div>${extra || ""}</div></div>`;
 }
 const fill = (s, fix) => String(s).replace(/\{fix\}/g, fix || "");
 let sofaN = 0;
@@ -363,14 +364,14 @@ function reaction(res, dv, tries) {
   sofaN++;
   const okk = res.t === "ok", emo = okk ? "joy" : "told";
   let h = bubble(item.who, fill(item[L], fix), emo);
-  if (item.then && sofaN % 3 === 1) h += bubble(item.then.who, fill(item.then[L], fix), okk ? "wow" : "facepalm");
+  if (item.then && sofaN % 3 === 1) h += bubble(item.then.who, fill(item.then[L], fix), okk ? "wow" : "facepalm", "", 0.9);
   return h;
 }
 function sofa(box, it) {
   const dv = it.dv, f = F(); if (!box || !dv) return;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   box.innerHTML = `<div class="sofa"><div class="kind">🛋 ${f.sofaT} · <span class="de">${esc(it.w)}</span></div>
-    ${dv.lines.map(x => bubble(x.who, x[L])).join("")}${bubble(dv.ask.who, dv.ask[L], null, `<div class="frame"><small class="mute">${f.frame}:</small> <span class="de">${esc(dv.frame)}</span></div>`)}
+    ${dv.lines.map((x, i) => bubble(x.who, x[L], null, "", i*0.7)).join("")}${bubble(dv.ask.who, dv.ask[L], null, `<div class="frame"><small class="mute">${f.frame}:</small> <span class="de">${esc(dv.frame)}</span></div>`, dv.lines.length*0.7)}
     <div class="row ans"><input type="text" id="sfi" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${f.answer}">
     ${SR ? `<button id="sfm" title="${f.mic}">🎤</button>` : ""}<button class="main" id="sfc">${f.check}</button></div>
     <p class="mute" id="sfn"></p><div id="sfr"></div><div class="row"><button class="ghost" id="sfs"><small>${f.sample}</small></button></div></div>`;
