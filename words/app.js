@@ -208,7 +208,7 @@ function pickType(it, p, want, ep) {
   // want: "rec" — узнавание; "hard" — самый трудный разрешённый; "prod" — L1→DE; "me" — реплика
   const ok = t => p.types.includes(t) && canType(t, it, p);
   const hi = p.l1 === "def" || p.l1 === "dict";
-  if (want === "rec") { if (gestOf(it)) return Math.random() < .8 ? "show" : (canType("tv", it, p) ? "tv" : "show"); if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
+  if (want === "rec") { if (gestOf(it) || (famOn() && it.img)) return Math.random() < .8 ? "show" : (canType("tv", it, p) ? "tv" : "show"); if (canType("tv", it, p) && Math.random() < .6) return "tv"; if (ok("img2de") && Math.random() < .5) return "img2de"; if (hi) return ok("def2de") ? "def2de" : (ok("me") ? "me" : "de2l1"); return "de2l1" }
   if (want === "prod") { if (hi) return ok("cloze") ? "cloze" : "me"; return ok("audio") && Math.random() < .3 ? "audio" : "l12de" }
   if (want === "me") { if (ok("mecloze") && Math.random() < .6) return "mecloze"; if (ok("me")) return "me"; return "l12de" }
   let c = p.types.filter(t => ok(t) && t !== "de2l1" && t !== "odd");
@@ -231,8 +231,8 @@ function makeCard(type, it, p) {
     c.subAfter = true;
   }
   else if (type === "show") {
-    const ds = distractors(it, n, "l1", p.i);
-    c.opts = shuffle([it, ...ds]).map(x => ({ label: x.tr[L], sub: x.w, ok: x.k === it.k, x }));
+    const ds = distractors(it, n, "de", p.i);
+    c.opts = shuffle([it, ...ds]).map(x => ({ label: x.w, sub: x.tr[L], ok: x.k === it.k, x }));
   }
   else if (type === "tv") {
     const ds = shuffle(knPool(it)).slice(0, Math.max(2, Math.min(3, n)));
@@ -431,7 +431,7 @@ function confetti(n) {
   document.body.appendChild(box); setTimeout(() => box.remove(), 3400);
 }
 /* ---------- Сценка: семья показывает слово, рисунок рисуется мелками, варианты — от членов семьи ---------- */
-const FG = { danya: "m", nika: "f", irina: "f", igor: "m", lyuda: "f", vitya: "m" };
+const FG = { danya: "m", nika: "f", irina: "f", igor: "m", lyuda: "f", vitya: "m", malysh: "m" };
 const gformG = (s, g) => String(s || "").replace(/\{([^}|]*)\|([^}]*)\}/g, (m, a, b) => g === "f" ? b : a);
 const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 function bubbleRaw(who, html, src, big, delay) {
@@ -443,65 +443,97 @@ function typeText(el, s, cps) {
   const tick = () => { if (!el.isConnected) return; el.textContent = s.slice(0, ++i); if (i < s.length) setTimeout(tick, cps || 38); else el.classList.remove("typing") };
   tick();
 }
-async function drawPic(el, src) {       // рисунок мелками появляется штрих за штрихом
-  if (!el) return;
-  try { const r = await fetch(src.replace(/\.webp$/, ".svg")); if (!r.ok) throw 0; el.innerHTML = await r.text() }
-  catch (e) { el.innerHTML = `<img src="${src}" alt="">`; return }
-  const svg = el.querySelector("svg"); if (!svg) return; svg.removeAttribute("width"); svg.removeAttribute("height");
-  if (reduced() || !svg.animate) return;
-  const items = [...svg.querySelectorAll("path,circle,rect,ellipse,text")].filter(x => !x.closest("defs") && !x.closest("clipPath")).slice(2);
-  const lens = items.map(e => { try { return e.getTotalLength ? e.getTotalLength() : 0 } catch (x) { return 0 } });
-  const total = lens.reduce((a, b) => a + Math.min(b, 300) + 20, 0) || 1, T = 2600; let t = 150;
-  items.forEach((e, i) => {
-    const Ln = lens[i], fl = e.getAttribute("fill"), st = e.getAttribute("stroke"), dur = Math.max(50, (Math.min(Ln, 300) + 20)/total*T);
-    if (st && st !== "none" && Ln > 0) {
-      e.style.strokeDasharray = Ln; e.style.strokeDashoffset = Ln;
-      e.animate([{ strokeDashoffset: Ln }, { strokeDashoffset: 0 }], { duration: dur, delay: t, fill: "forwards" });
-      if (fl && fl !== "none") { e.style.fillOpacity = 0; e.animate([{ fillOpacity: 0 }, { fillOpacity: 1 }], { duration: 250, delay: t + dur*0.6, fill: "forwards" }) }
-    } else { e.style.opacity = 0; e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: t, fill: "forwards" }) }
-    t += dur*0.9;
+function drawPic(el, src, crayon) {       // рисунок мелками появляется штрих за штрихом; мелок ездит по линии
+  return new Promise(async done => {
+    if (!el) return done();
+    try { const r = await fetch(src.replace(/\.webp$/, ".svg")); if (!r.ok) throw 0; el.insertAdjacentHTML("afterbegin", await r.text()) }
+    catch (e) { el.insertAdjacentHTML("afterbegin", `<img src="${src}" alt="">`); return done() }
+    const svg = el.querySelector("svg"); if (!svg) return done(); svg.removeAttribute("width"); svg.removeAttribute("height");
+    if (reduced() || !svg.animate) return done();
+    const items = [...svg.querySelectorAll("path,circle,rect,ellipse,text")].filter(x => !x.closest("defs") && !x.closest("clipPath")).slice(2);
+    const lens = items.map(e => { try { return e.getTotalLength ? e.getTotalLength() : 0 } catch (x) { return 0 } });
+    const total = lens.reduce((a, b) => a + Math.min(b, 300) + 20, 0) || 1, T = 3000; let t = 0; const plan = [];
+    items.forEach((e, i) => {
+      const Ln = lens[i], fl = e.getAttribute("fill"), st = e.getAttribute("stroke"), dur = Math.max(50, (Math.min(Ln, 300) + 20)/total*T);
+      if (st && st !== "none" && Ln > 0) {
+        e.style.strokeDasharray = Ln; e.style.strokeDashoffset = Ln;
+        e.animate([{ strokeDashoffset: Ln }, { strokeDashoffset: 0 }], { duration: dur, delay: t, fill: "forwards" });
+        if (fl && fl !== "none") { e.style.fillOpacity = 0; e.animate([{ fillOpacity: 0 }, { fillOpacity: 1 }], { duration: 250, delay: t + dur*0.6, fill: "forwards" }) }
+        plan.push({ e, t0: t, dur, Ln, col: st });
+      } else { e.style.opacity = 0; e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: t, fill: "forwards" }) }
+      t += dur*0.9;
+    });
+    const t0 = performance.now(), end = t + 200; let k = 0;
+    if (crayon) crayon.style.display = "block";
+    const tick = now => {
+      if (!el.isConnected) return done();
+      const el_ = now - t0;
+      while (k < plan.length - 1 && el_ > plan[k].t0 + plan[k].dur) k++;
+      const it = plan[k];
+      if (crayon && it) {
+        const fr = Math.min(1, Math.max(0, (el_ - it.t0)/it.dur)), pt = it.e.getPointAtLength(it.Ln*fr), w = svg.clientWidth/200;
+        crayon.style.transform = `translate(${pt.x*w}px,${pt.y*w}px) rotate(-38deg)`; crayon.style.setProperty("--c", it.col);
+      }
+      if (el_ < end) requestAnimationFrame(tick); else { if (crayon) crayon.style.display = "none"; done() }
+    };
+    requestAnimationFrame(tick);
   });
 }
 function runShow(host, c, p, meta, res) {
+  const sid = String(Math.random()); host.dataset.sid = sid;
+  const Q = q => host.dataset.sid === sid ? host.querySelector(q) : null;   // только своя карточка
   const it = c.it, f = F(), g = gestOf(it), order = shuffle(FAM6), M = D.fam.mini;
   const props = c.opts.map((o, i) => ({ o, who: order[i] }));
   P.nt.show = (P.nt.show || 0) + 1;
-  host.innerHTML = `<div class="card show"><div class="kind">${esc(f.showT)}<span style="flex:1"></span>${meta || ""}</div>
-    <div class="stage">${g ? `<div class="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}${it.img ? `<div class="draw" id="draw"></div>` : ""}</div>
-    <div class="q"><span class="de">${esc(it.w)}</span> ${sayBtn(it.w)}</div>
-    <div class="props" id="props"></div><div id="react"></div><div id="tvon"></div><div id="talk"></div><div id="fb"></div></div>`;
-  setTimeout(() => say(it.w), 300); if (it.img) drawPic($("#draw"), it.img);
-  let answered = false; const box = $("#props"), T0 = reduced() ? 200 : 1500, step = reduced() ? 150 : 1150;
+  host.innerHTML = `<div class="card show"><div class="kind">${esc(f.tableT)}<span style="flex:1"></span>${meta || ""}</div>
+    <div class="around">${FAM6.map((w, i) => `<img data-who="${w}" src="${famImg(w, "head")}" style="--i:${i}" alt="">`).join("")}</div>
+    <div class="table"><div class="sheet" id="draw">${it.img ? `<i class="crayon" id="crayon"></i>` : ""}</div>
+      <img class="kid" id="kid" src="${famImg("malysh", "draw")}" alt="">
+      ${g ? `<div class="gclip" id="gclip"><img src="img/fam/${L}/g_${g.g}.webp?v=1" alt=""><small>${esc(nick(g.who))}</small></div>` : ""}</div>
+    <div id="kidsays"></div><div class="props" id="props"></div><div id="react"></div><div id="tvon"></div><div id="talk"></div><div id="fb"></div></div>`;
+  let answered = false; const box = Q("#props"), step = reduced() ? 150 : 1150;
   const line = (arr, who) => (arr.find(x => x.who === who) || pick(arr))[L];
+  const head = who => { const h = host.querySelector(`.around [data-who="${who}"]`); if (h) { h.classList.remove("talk"); void h.offsetWidth; h.classList.add("talk") } };
   const pickProp = i => {
     if (answered) return; answered = true; const x = props[i], ok = x.o.ok, right = props.find(y => y.o.ok);
     box.querySelectorAll(".prop").forEach(b => { b.disabled = true; const pj = props[+b.dataset.i]; b.querySelector(".tw").textContent = pj.o.label; if (pj.o.ok) b.classList.add("ok") });
     if (!ok) box.querySelector(`[data-i="${i}"]`).classList.add("bad");
-    famAnswer(ok, true);
+    famAnswer(ok, true); head(x.who);
     let r = bubbleRaw(x.who, esc(line(ok ? M.ok : M.bad, x.who)), famImg(x.who, ok ? "joy" : "facepalm"), true);
     if (!ok) r += bubbleRaw(right.who, esc(f.itIs.replace("{w}", it.w).replace("{tr}", it.tr[L])), famImg(right.who, "told"), true, 0.8);
-    $("#react").innerHTML = r; say(it.w);
+    Q("#react").innerHTML = r; say(it.w);
     const talk = () => {
+      if (host.dataset.sid !== sid) return;
       const a = g ? g.who : pick(FAM6), b = pick(FAM6.filter(w => w !== a && w !== x.who)) || "lyuda";
-      $("#talk").innerHTML = bubbleRaw(a, `${gformG(it.ex.de, FG[a])} ${sayBtn(it.ex.de)}<div class="tr">${esc(gformG(it.ex[L], FG[a]))}</div>`, g ? `img/fam/${L}/g_${g.g}.webp?v=1` : famImg(a, "act"), true)
+      Q("#talk").innerHTML = bubbleRaw(a, `${gformG(it.ex.de, FG[a])} ${sayBtn(it.ex.de)}<div class="tr">${esc(gformG(it.ex[L], FG[a]))}</div>`, g ? `img/fam/${L}/g_${g.g}.webp?v=1` : famImg(a, "act"), true)
         + bubbleRaw(b, `${gformG(it.me.de, FG[b])} ${sayBtn(gformG(it.me.de, FG[b]))}<div class="tr">${esc(gformG(it.me[L], FG[b]))}</div>`, famImg(b, "act"), true, 0.9);
-      $("#fb").innerHTML = `<div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${it.dv ? `<button id="sofaB">🛋 ${f.sofa}</button>` : ""}</div><div id="sofa"></div>`;
-      $("#nx").onclick = () => res({ ok });
-      if ($("#sofaB")) $("#sofaB").onclick = () => { $("#sofaB").remove(); sofa($("#sofa"), it) };
+      Q("#fb").innerHTML = `<div class="row" style="margin-top:12px"><button class="main" id="nx">${U.next}</button>${it.dv ? `<button id="sofaB">🛋 ${f.sofa}</button>` : ""}</div><div id="sofa"></div>`;
+      Q("#nx").onclick = () => res({ ok });
+      if (Q("#sofaB")) Q("#sofaB").onclick = () => { Q("#sofaB").remove(); sofa(Q("#sofa"), it) };
     };
     if (it.kn) setTimeout(() => {
-      if (!host.isConnected) return;
-      $("#tvon").innerHTML = tvScreen(it.kn, false); const tb = $("#tvon .tvbox"); tb.classList.add("poweron", ok ? "cheer" : "groan");
+      if (!host.isConnected || host.dataset.sid !== sid) return;
+      Q("#tvon").innerHTML = tvScreen(it.kn, false); const tb = Q("#tvon .tvbox"); tb.classList.add("poweron", ok ? "cheer" : "groan");
       setTimeout(() => say(it.kn.de), 900); setTimeout(talk, reduced() ? 300 : 2600);
     }, reduced() ? 200 : 1400);
     else setTimeout(talk, 1200);
   };
-  props.forEach((x, i) => setTimeout(() => {
-    if (!box.isConnected || answered) { if (answered && box.isConnected) { const b = document.createElement("button"); b.className = "prop"; b.dataset.i = i; b.disabled = true; b.innerHTML = `<img src="${famImg(x.who, "head")}" alt=""><span class="pt"><b>${esc(nick(x.who))}</b><span class="tw">${esc(x.o.label)}</span></span>`; if (x.o.ok) b.classList.add("ok"); box.appendChild(b) } return }
+  const offer = () => props.forEach((x, i) => setTimeout(() => {
+    if (!box.isConnected || host.dataset.sid !== sid) return;
     const b = document.createElement("button"); b.className = "prop"; b.dataset.i = i;
     b.innerHTML = `<img src="${famImg(x.who, "head")}" alt=""><span class="pt"><b>${esc(nick(x.who))}</b><span class="tw"></span></span>`;
-    box.appendChild(b); typeText(b.querySelector(".tw"), x.o.label); b.onclick = () => pickProp(i);
-  }, T0 + i*step));
+    box.appendChild(b); head(x.who);
+    if (answered) { b.disabled = true; b.querySelector(".tw").textContent = x.o.label; if (x.o.ok) b.classList.add("ok"); return }
+    typeText(b.querySelector(".tw"), x.o.label); b.onclick = () => pickProp(i);
+  }, i*step));
+  const finished = () => {
+    if (!host.isConnected || host.dataset.sid !== sid) return;
+    Q("#kid").src = famImg("malysh", "joy"); const gc = Q("#gclip"); if (gc) gc.classList.add("on");
+    Q("#kidsays").innerHTML = bubbleRaw("malysh", esc(f.kidSays.replace("{tr}", it.tr[L])), famImg("malysh", "head"));
+    setTimeout(offer, reduced() ? 100 : 900);
+  };
+  if (it.img) setTimeout(() => drawPic(Q("#draw"), it.img, Q("#crayon")).then(finished), reduced() ? 0 : 500);
+  else setTimeout(finished, 600);
 }
 function gestOf(it) { return famOn() && D.gest && it && D.gest.map[it.k] ? { g: D.gest.map[it.k], who: D.gest.who[D.gest.map[it.k]] } : null }
 function gestHTML(it, intro) {

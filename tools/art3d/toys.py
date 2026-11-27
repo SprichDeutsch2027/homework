@@ -5,8 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 from ray import Scene, draw
 
 FONT = os.path.expanduser("~/.fonts/caveat-cyrillic-700-normal.ttf")
-NICK = {"ru": dict(danya="Тиктокер", nika="Тиктокерша", irina="Душнила", igor="Душнила", lyuda="Динозавр", vitya="Динозавр"),
-        "uk": dict(danya="Тіктокер", nika="Тіктокерка", irina="Душнила", igor="Душнила", lyuda="Динозавр", vitya="Динозавр")}
+NICK = {"ru": dict(danya="Тиктокер", nika="Тиктокерша", irina="Душнила", igor="Душнила", lyuda="Динозавр", vitya="Динозавр", malysh="Малыш"),
+        "uk": dict(danya="Тіктокер", nika="Тіктокерка", irina="Душнила", igor="Душнила", lyuda="Динозавр", vitya="Динозавр", malysh="Малюк")}
 SKIN, CHEEK, EYE, DARK = (244, 200, 170), (236, 130, 150), (35, 28, 24), (58, 42, 32)
 WHITE = (250, 247, 240)
 
@@ -361,3 +361,53 @@ def act_frame(who, lang, i, size=360, n=NF):
 def act(who, lang, path, size=240, n=NF):
     frames = [act_frame(who, lang, i, size*3//2, n).resize((size, size), Image.LANCZOS) for i in range(n)]
     frames[0].save(path, save_all=True, append_images=frames[1:], duration=[110]*n, loop=0, quality=78, method=4)
+
+
+# ---------- малыш рисует за столом ----------
+def malysh_scene(lang, t, mode="draw"):
+    """mode: draw — водит мелком по листу; joy — показывает рисунок, руки вверх."""
+    sc = Scene(); s = 0.72; T = Toy(sc, 0, 0, s)
+    yel, wood = (253, 216, 53), (170, 120, 70)
+    w = math.sin(2*math.pi*t*2); w2 = math.sin(2*math.pi*t*3)
+    if mode == "draw":
+        pose = ((0.36, 0.86, 0.3), (0.18 + 0.12*w, 0.86 + 0.02*w2, 0.52 + 0.08*w2)); face, eyes = "smile", "side"; head = (0.01*w, -0.04)
+    else:
+        a = 0.08*math.sin(2*math.pi*t*2)
+        pose = ((0.5 + a, 1.86, 0.06), (0.5 - a, 1.86, 0.06)); face, eyes = "big", "happy"; head = (0, 0.02)
+    T.hy = head[1]*s; T.hx = head[0]*s
+    hands = body(T, "m", yel, (108, 180, 224), (229, 57, 53), pose, face, eyes)
+    T.inhead = True
+    hair = T.m("mhair", (196, 110, 52))
+    T.sphere(hair, (0, HC + 0.03, -0.02), HR + 0.012); T.above(1.62)
+    T.cap(hair, (0, 1.76, 0.05), (0.06, 1.86, 0.08), 0.045); T.cap(hair, (0.06, 1.86, 0.08), (0.0, 1.9, 0.12), 0.035)   # хохолок
+    T.inhead = False
+    T.patch("mpatch", NICK[lang]["malysh"], (0, 0.93, 0.256), 0.17, 0.065)
+    # стол, лист, мелки
+    tb = T.m("table", wood)
+    T.box(tb, (0, 0.72, 0.62), (0.62, 0.035, 0.3), 0.02)
+    for sx in (-1, 1): T.box(tb, (sx*0.55, 0.35, 0.82), (0.035, 0.35, 0.035), 0.01)
+    T.box(T.m("sheet", WHITE), (0.05, 0.765, 0.62), (0.3, 0.008, 0.22), 0.004)
+    for k, col in enumerate(((229, 57, 53), (30, 136, 229), (67, 160, 71))):
+        T.cap(T.m(f"crayon{k}", col), (-0.45 + k*0.07, 0.775, 0.5), (-0.42 + k*0.07, 0.775, 0.68), 0.022)
+    if mode == "draw":
+        h = hands[1]; T.cap(T.m("crayon0", (229, 57, 53)), (h[0], h[1] - 0.02, h[2] + 0.02), (h[0] + 0.03, h[1] - 0.12, h[2] + 0.1), 0.026)
+        for k in range(4):   # каракули на листе
+            T.cap(T.m("scrib", (229, 57, 53)), (-0.12 + k*0.07, 0.775, 0.55 + 0.05*(k % 2)), (-0.06 + k*0.07, 0.775, 0.68 - 0.05*(k % 2)), 0.008)
+    else:
+        T.box(T.m("sheet", WHITE), (0.0, 1.95, 0.25), (0.26, 0.2, 0.006), 0.004)    # поднял рисунок над головой
+        for k in range(4): T.cap(T.m("scrib", (229, 57, 53)), (-0.15 + k*0.09, 1.85 + 0.08*(k % 2), 0.26), (-0.1 + k*0.09, 2.02 - 0.08*(k % 2), 0.26), 0.012)
+    img = draw(sc, 360, 360, (0, 0.95*s + 0.1, 0.2), 1.0, yaw=0.38, pitch=0.42, bg=((250, 243, 226), (240, 228, 204)))
+    return Image.fromarray((img*255).clip(0, 255).astype(np.uint8))
+
+def malysh_clip(lang, mode, path, size=240, n=12):
+    frames = [malysh_scene(lang, i/n, mode).resize((size, size), Image.LANCZOS) for i in range(n)]
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=[110]*n, loop=0, quality=78, method=4)
+
+def malysh_head(lang, path):
+    sc = Scene(); s = 0.72; T = Toy(sc, 0, 0, s)
+    body(T, "m", (253, 216, 53), (108, 180, 224), (229, 57, 53), ("down", "down"))
+    T.inhead = True; hair = T.m("mhair", (196, 110, 52))
+    T.sphere(hair, (0, HC + 0.03, -0.02), HR + 0.012); T.above(1.62)
+    T.cap(hair, (0, 1.76, 0.05), (0.06, 1.86, 0.08), 0.045); T.inhead = False
+    img = draw(sc, 320, 320, (0, 1.5*s, 0), 0.47*s, yaw=0.12, pitch=0.1, bg=((250, 243, 226), (240, 228, 204)))
+    Image.fromarray((img*255).clip(0, 255).astype(np.uint8)).resize((160, 160), Image.LANCZOS).save(path, quality=84)
